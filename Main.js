@@ -10,7 +10,6 @@ class Blockchain {
     this.beacon = new Beacon(beaconSignalPort, transportPort);
     this.transport = new Transport(transportPort);
     this.initialize(transportPort);
-
   }
 
   broadcast(){
@@ -45,6 +44,12 @@ class Blockchain {
     });
   }
 
+  reconnect(){
+    this.db.getStructure().then((structure)=>{
+      // console.log(structure.peers);
+    })
+  }
+
   initialize(){
     var operations = {
       "MSG": (msg)=>console.log("Receive: ", msg)
@@ -53,6 +58,7 @@ class Blockchain {
     this.setMonitors();
     this.transport.listen(operations);
     this.broadcast();
+    this.reconnect();
   }
 
 }

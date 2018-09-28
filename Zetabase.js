@@ -14,7 +14,10 @@ class Zetabase {
     this.eventEmitter.on('onChanges', (path, value)=>this.onChanges(path, value));
 
     this.monitorList = [];
-    this.prepare();
+    this.prepare().then(()=>{
+      this.sortKey("/peers")
+    });
+
   }
 
   prepare(){
@@ -136,6 +139,19 @@ class Zetabase {
 
   checksum(){
     this.structure.checksum = Crypto.createHash('sha512').update(JSON.stringify(this.structure)).digest('hex');
+  }
+
+  sortKey(path){
+    this.read(path).then((peers)=>{
+      var sorted = new Object();
+      var keys = Object.keys(peers);
+      keys.sort((a, b)=>{
+        if(a <= b) return 0;
+        else return 1;
+      })
+      for(var i in keys)
+        this.write("/peers/"+keys[i], peers[keys[i]]).then(()=>this.structure);
+    })
   }
 
   static hash(str, algorithm){

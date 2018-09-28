@@ -19,7 +19,8 @@ class Transport {
     this.server.listen(this.serPort);
     this.socketServer = SocketServer(this.server);
     this.socketServer.on("connection", (socket)=>{
-      console.log("A new connection is established");
+      var addr = socket.handshake.address;
+      console.log("Connection from ", addr.address, addr.port);
       this.sessions[socket.id] = socket;
       this.send("ACK", socket.id, null);
       for(var opt in operations)
