@@ -12,8 +12,7 @@ class Transport {
     this.socketServer = null;
     this.sessions = [];
 
-    this.socketClient = null;
-    this.socketID = null;
+    this.socketClients = [];
   }
 
   listen(operations){
@@ -28,14 +27,13 @@ class Transport {
     });
   }
 
-  connect(addr, port){
+  connect(key, addr, port){
     return new Promise((resolve, reject)=>{
-      this.socketClient = SocketClient.connect("http://"+addr+":"+port,{transports: ['websocket']});
-      this.socketClient.on("ACK", (payload)=>{
-        if(payload.message === this.socketClient.id) {
-          this.socketID = this.socketClient.id;
-          resolve(this.socketID);
-        }
+      this.socketClients[key] = new Object();
+      this.socketClients[key].socket = SocketClient.connect("http://"+addr+":"+port,{transports: ['websocket']});
+      this.socketClients[key].socket.on("ACK", (payload)=>{
+        if(payload.message === this.socketClients[key].socket.id) //ACK
+          resolve();
         else reject();
       })
     });

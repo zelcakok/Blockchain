@@ -27,9 +27,10 @@ class Blockchain {
   setMonitors(){
     this.db.monitor("/peers", (peer)=>{
       peer = JSON.parse(peer);
+      var key = Zetabase.hash((peer.ipAddr + peer.port).split(".").join(""), 'md5');
       if(peer.ipAddr !== NetAddr()) {
-        console.log("New peer");
-        this.transport.connect(peer.ipAddr, peer.port).then((id)=>{
+        console.log("New peer", key);
+        this.transport.connect(key, peer.ipAddr, peer.port).then((id)=>{
           console.log("Connected to ", peer.ipAddr, "on", peer.port);
         })
       }
