@@ -16,8 +16,9 @@ class Blockchain {
   broadcast(){
     this.beacon.setAction((signal)=>{
       var msg = JSON.parse(signal);
-      if(msg.message === "BLK_Client")
-        this.register(msg);
+      if(msg.message === "BLK_Client"){
+        this.register(signal);
+      }
     })
     this.beacon.listen();
     this.beacon.broadcast(1000);
@@ -32,10 +33,11 @@ class Blockchain {
   }
 
   register(beaconInfo){
-    this.db.containsKey("/peers").then((res)=>{
+    var info = JSON.parse(beaconInfo);
+    var key = Zetabase.hash((info.ipAddr + info.port).split(".").join(""), 'md5');
+    this.db.containsKey("/peers/" + key).then((res)=>{
       if(!res){
-        var info = JSON.parse(beaconInfo);
-        var key = Zetabase.hash((info.ipAddr+info.port).replace(new RegExp(".", "g"), ""), 'md5');
+        console.log("Update peers");
         this.db.write("/peers/"+key, beaconInfo);
       }
     });
