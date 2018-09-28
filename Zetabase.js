@@ -14,9 +14,7 @@ class Zetabase {
     this.eventEmitter.on('onChanges', (path, value)=>this.onChanges(path, value));
 
     this.monitorList = [];
-    this.prepare().then(()=>{
-      this.sortKey("/peers")
-    });
+    this.prepare();
 
   }
 
@@ -149,8 +147,10 @@ class Zetabase {
         if(a <= b) return 0;
         else return 1;
       })
-      for(var i in keys)
+      for(var i in keys) {
         this.write("/peers/"+keys[i], peers[keys[i]]).then(()=>this.structure);
+        delete peers[keys[i]];
+      }
     })
   }
 
@@ -159,6 +159,7 @@ class Zetabase {
   }
 
   invalidate(writeToFile = true){
+    this.sortKey("/peers")
     this.checksum();
     this.structure.lastUpdate = moment().valueOf();
     if(writeToFile) this.saveState();
@@ -200,6 +201,7 @@ class Zetabase {
     return new Promise((resolve, reject)=>{
       fs.readFile(this.dbPath, (err, json)=>{
         if(err) throw err;
+        console.log(json.toString());
         this.structure = JSON.parse(json);
         resolve();
       })
