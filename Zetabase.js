@@ -2,6 +2,7 @@ const fs = require('fs');
 const moment = require('moment');
 const Auth = require('./Auth');
 const Crypto = require("crypto");
+const NetAddr = require("network-address");
 const EventEmitter = require("events").EventEmitter;
 class Zetabase {
   constructor(dbPath){
@@ -13,6 +14,7 @@ class Zetabase {
     this.eventEmitter.on('onChanges', (path, value)=>this.onChanges(path, value));
 
     this.monitorList = [];
+    this.prepare();
   }
 
   prepare(){
@@ -38,17 +40,17 @@ class Zetabase {
     return {ptr: ptr, remain: remain};
   }
 
-  _traverse(dir, url){
+  _traverse(dir, url, createMissing = true){
     var rawUrl = url;
     var url = this.pathParse(url);
-    if(!dir.hasOwnProperty(url.ptr)) dir[url.ptr] = new Object();
+    if(createMissing && !dir.hasOwnProperty(url.ptr)) dir[url.ptr] = new Object();
     if(url.remain === '') return {dir: dir, ptr: url.ptr};
     return this._traverse(dir[url.ptr], url.remain);
   }
 
-  traverse(url){
+  traverse(url, createMissing = true){
     if(url === '/') return this.structure;
-    return this._traverse(this.structure, url);
+    return this._traverse(this.structure, url, createMissing);
   }
 
   prev(url){
@@ -56,10 +58,10 @@ class Zetabase {
     return url.split("/")[0];
   }
 
-  read(path){
+  read(path, createMissing = true){
     return new Promise((resolve, reject)=>{
       this.prepare().then(()=>{
-        var url = this.traverse(path);
+        var url = this.traverse(path, createMissing);
         return resolve(url.dir[url.ptr]);
       });
     });
@@ -136,11 +138,21 @@ class Zetabase {
     this.structure.checksum = Crypto.createHash('sha512').update(JSON.stringify(this.structure)).digest('hex');
   }
 
+  static hash(str, algorithm){
+    return Crypto.createHash(algorithm).update(str).digest('hex');
+  }
+
   invalidate(writeToFile = true){
     this.checksum();
     this.structure.lastUpdate = moment().valueOf();
     if(writeToFile) this.saveState();
     // console.log(this.structure);
+  }
+
+  containsKey(key){
+    return new Promise((resolve, reject)=>{
+      this.read(key, false).then((dir)=>resolve(Object.keys(dir).length>0));
+    });
   }
 
   sysStart(){
