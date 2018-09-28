@@ -40,10 +40,7 @@ class Blockchain {
     var info = JSON.parse(beaconInfo);
     var key = Zetabase.hash((info.ipAddr + info.port).split(".").join(""), 'md5');
     this.db.containsKey("/peers/" + key).then((res)=>{
-      if(!res){
-        console.log("Update peers");
-        this.db.write("/peers/"+key, beaconInfo);
-      }
+      if(!res) this.db.write("/peers/"+key, beaconInfo);
     });
   }
 
