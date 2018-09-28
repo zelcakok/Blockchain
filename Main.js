@@ -26,9 +26,13 @@ class Blockchain {
 
   setMonitors(){
     this.db.monitor("/peers", (peer)=>{
-      this.transport.connect(peer.ipAddr, peer.port).then((id)=>{
-        console.log("Connected to ", peer.ipAddr, "on", peer.port);
-      })
+      peer = JSON.parse(peer);
+      if(peer.ipAddr !== NetAddr()) {
+        console.log("New peer");
+        this.transport.connect(peer.ipAddr, peer.port).then((id)=>{
+          console.log("Connected to ", peer.ipAddr, "on", peer.port);
+        })
+      }
     })
   }
 
@@ -48,6 +52,7 @@ class Blockchain {
       "MSG": (msg)=>console.log("Receive: ", msg)
     }
     this.register(this.beacon.getSelfMsg());
+    this.setMonitors();
     this.transport.listen(operations);
     this.broadcast();
   }
