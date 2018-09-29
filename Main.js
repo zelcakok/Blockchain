@@ -31,6 +31,9 @@ class Blockchain {
         console.log("New peer", key);
         this.transport.connect(key, peer.ipAddr, peer.port).then((id)=>{
           console.log("Connected to ", peer.ipAddr, "on", peer.port);
+          console.log("Start to exchange the peer information.");
+          this.db.sortKey("/peers");
+          // this.transport.send("[PEER]", )
         })
       }
     })

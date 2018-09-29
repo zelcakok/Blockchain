@@ -15,7 +15,6 @@ class Zetabase {
 
     this.monitorList = [];
     this.prepare();
-
   }
 
   prepare(){
@@ -159,7 +158,6 @@ class Zetabase {
   }
 
   invalidate(writeToFile = true){
-    this.sortKey("/peers")
     this.checksum();
     this.structure.lastUpdate = moment().valueOf();
     if(writeToFile) this.saveState();

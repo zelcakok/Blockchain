@@ -33,8 +33,7 @@ class Transport {
       this.socketClients[key] = new Object();
       this.socketClients[key].socket = SocketClient.connect("http://"+addr+":"+port,{transports: ['websocket']});
       this.socketClients[key].socket.on("ACK", (payload)=>{
-        if(payload.message === this.socketClients[key].socket.id) //ACK
-          resolve();
+        if(payload.message === this.socketClients[key].socket.id) resolve();
         else reject();
       })
     });
