@@ -24,11 +24,10 @@ class Transport {
       Log.d("A new connection is established, ID: ", socket.id);
       this.sessions[socket.id] = socket;
       this.send("ACK", socket.id, socket.id);
-      for(var opt in operations){
-        // console.log("Setting up listener: ", opt);
-        Log.d("Setting up listener: " + opt);
+      for(var opt in operations)
         socket.on(opt, (data)=>operations[opt].action(data));
-      }
+      Log.d("Listeners are on");
+      this.send("MSG", "Start communication", socket.id);
     });
   }
 
