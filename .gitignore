@@ -15,6 +15,6 @@
 .env.development.local
 .env.test.local
 .env.production.local
-.zetabase.db
+.zetabase.json
 
 npm-debug.log*

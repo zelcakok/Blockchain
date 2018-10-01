@@ -19,7 +19,7 @@ class Transport {
     this.server.listen(this.serPort);
     this.socketServer = SocketServer(this.server);
     this.socketServer.on("connection", (socket)=>{
-      console.log("Connection from >>>", socket);
+      console.log("A new connection is established, ID: ", socket.id);
       this.sessions[socket.id] = socket;
       this.send("ACK", socket.id, null);
       for(var opt in operations)
