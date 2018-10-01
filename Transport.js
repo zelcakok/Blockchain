@@ -20,8 +20,7 @@ class Transport {
     this.socketServer = SocketServer(this.server);
     this.socketServer.on("connection", (socket)=>{
       console.log("A new connection is established, ID: ", socket.id);
-      socket.on("MSG", (msg)=>console.log("HEY I've received: ", msg));
-            
+
       this.sessions[socket.id] = socket;
       this.send("ACK", socket.id, socket.id);
       // for(var opt in operations)
@@ -30,6 +29,8 @@ class Transport {
 
 
     });
+
+    this.socketServer.on("MSG", (msg)=>console.log("HEY: ", msg))
   }
 
   connect(key, addr, port){
