@@ -32,7 +32,7 @@ class Blockchain {
         this.transport.connect(key, peer.ipAddr, peer.port).then((id)=>{
           console.log("Connected to ", peer.ipAddr, "on", peer.port);
           console.log("Start to exchange the peer information.");
-          this.db.sortKey("/peers");
+          // this.db.sortKey("/peers");
           // this.transport.send("[PEER]", )
         })
       }
@@ -68,30 +68,4 @@ class Blockchain {
 
 }
 
-var blockchain = new Blockchain("./.zetabase.db", 36490, 3000);
-
-
-//Keep broadcasting the beacon signal for updating the Peers.
-
-// var zetabase = new Zetabase("./zetabase.db");
-
-// zetabase.monitor("/peers", (value)=>console.log("new client found: ", value));
-
-
-
-
-
-// var transport = new Transport();
-// transport.startServer();
-
-// var b = new Beacon(15011, 3000, (msg)=>{
-//   console.log("R: ", msg);
-// });
-// b.listen();
-// b.broadcast(1000);
-
-// var trans = new Transport(3000);
-// trans.listen()
-// trans.connect("localhost", 3000).then((id)=>{
-//   console.log("ID: ", id);
-// })
+var blockchain = new Blockchain("./.zetabase.json", 3049, 3000);
