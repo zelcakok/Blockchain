@@ -21,10 +21,11 @@ class Transport {
     this.socketServer = SocketServer(this.server);
     this.socketServer.on("connection", (socket)=>{
       Log.d("A new connection is established, ID: ", socket.id);
+      Log.d("Info", socket);
       this.sessions[socket.id] = socket;
-      this.send("ACK", socket.id, socket.id);
       for(var opt in operations)
         socket.on(opt, (data)=>operations[opt].action(data));
+      this.send("ACK", socket.id, socket.id);
       this.send("MSG", "Start communication", socket.id);
     });
   }
@@ -35,7 +36,7 @@ class Transport {
       this.socketClients[key].socket = SocketClient.connect("http://"+addr+":"+port,{transports: ['websocket']});
       this.socketClients[key].socket.on("ACK", (payload)=>{
         if(payload.message === this.socketClients[key].socket.id) {
-          Log.d("Received ACK on peer, connection is established.");
+          Log.d("Received ACK, connection is established.");
           resolve(this.socketClients[key].socket);
         }
         else reject();
