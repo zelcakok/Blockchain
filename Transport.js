@@ -20,13 +20,11 @@ class Transport {
     this.server.listen(this.serPort);
     this.socketServer = SocketServer(this.server);
     this.socketServer.on("connection", (socket)=>{
-      // console.log("A new connection is established, ID: ", socket.id);
       Log.d("A new connection is established, ID: ", socket.id);
       this.sessions[socket.id] = socket;
       this.send("ACK", socket.id, socket.id);
       for(var opt in operations)
         socket.on(opt, (data)=>operations[opt].action(data));
-      Log.d("Listeners are on");
       this.send("MSG", "Start communication", socket.id);
     });
   }
@@ -42,18 +40,18 @@ class Transport {
         }
         else reject();
       })
+      this.socketClients[key].socket.on("MSG", (msg)=>Transport.dePacket(msg));
     });
+  }
+
+  static dePacket(packet){
+    Log.d("=>", packet.ipAddr+":"+packet.port, "\""+packet.message+"\"");
   }
 
   send(channel, msg, socketId = null){
     var payload = {ipAddr: NetAddr(), port: this.serPort, message: msg};
     if(socketId) this.socketServer.to(socketId).emit(channel, payload);
     else this.socketServer.emit(channel, payload);
-  }
-
-  sendViaSocket(channel, msg, socket){
-    var payload = {ipAddr: NetAddr(), port: this.serPort, message: msg};
-    socket.send(channel, msg);
   }
 }
 

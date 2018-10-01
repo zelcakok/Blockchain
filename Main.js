@@ -31,12 +31,7 @@ class Blockchain {
       if(peer.ipAddr !== NetAddr()) {
         Log.d("New peer", key);
         this.transport.connect(key, peer.ipAddr, peer.port).then((socket)=>{
-          Log.d("Connected to ", peer.ipAddr, "on", peer.port);
-          Log.d("Start to exchange the peer information.");
-          Log.d("Sending info to ID: ", socket.id);
-          this.transport.sendViaSocket("MSG", "This is the message.", socket)
-          // this.db.sortKey("/peers");
-          // this.transport.send("[PEER]", )
+          
         })
       }
     })
