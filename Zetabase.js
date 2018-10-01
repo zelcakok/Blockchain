@@ -205,5 +205,11 @@ class Zetabase {
       })
     });
   }
+
+  static removeDB(dbPath){
+    return new Promise((resolve, reject)=>{
+      fs.unlink(dbPath, ()=>resolve());
+    });
+  }
 }
 module.exports = Zetabase;
