@@ -3,6 +3,7 @@ const Beacon = require("./Beacon");
 const Transport = require("./Transport");
 const NetAddr = require("network-address");
 const Crypto = require("crypto");
+const Log = require("./Log");
 
 class Blockchain {
   constructor(dbPath, beaconSignalPort, transportPort){
@@ -28,11 +29,11 @@ class Blockchain {
       peer = JSON.parse(peer);
       var key = Zetabase.hash((peer.ipAddr + peer.port).split(".").join(""), 'md5');
       if(peer.ipAddr !== NetAddr()) {
-        console.log("New peer", key);
+        Log.d("New peer", key);
         this.transport.connect(key, peer.ipAddr, peer.port).then((socket)=>{
-          console.log("Connected to ", peer.ipAddr, "on", peer.port);
-          console.log("Start to exchange the peer information.");
-          console.log("Sending info to ID: ", socket.id);
+          Log.d("Connected to ", peer.ipAddr, "on", peer.port);
+          Log.d("Start to exchange the peer information.");
+          Log.d("Sending info to ID: ", socket.id);
           this.transport.sendViaSocket("MSG", "This is the message.", socket)
           // this.db.sortKey("/peers");
           // this.transport.send("[PEER]", )
@@ -53,7 +54,7 @@ class Blockchain {
 
   initialize(){
     var operations = {
-      MSG: (msg)=>console.log("Receive: ", msg)
+      MSG: (msg)=>Log.d("Receive: ", msg)
     }
     this.register(this.beacon.getSelfMsg());
     this.setMonitors();

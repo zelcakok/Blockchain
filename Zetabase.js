@@ -4,6 +4,8 @@ const Auth = require('./Auth');
 const Crypto = require("crypto");
 const NetAddr = require("network-address");
 const EventEmitter = require("events").EventEmitter;
+const Log = require("./Log");
+
 class Zetabase {
   constructor(dbPath){
     this.structure = null;
@@ -82,7 +84,7 @@ class Zetabase {
     return new Promise((resolve, reject)=>{
       this.prepare().then(()=>{
         var url = this.traverse(path);
-        console.log("URL:",url);
+        Log.d("URL:",url);
         url.dir[url.ptr][this.genKey()] = data;
         this.eventEmitter.emit('onChanges', path, data);
         resolve();
@@ -161,7 +163,7 @@ class Zetabase {
     this.checksum();
     this.structure.lastUpdate = moment().valueOf();
     if(writeToFile) this.saveState();
-    // console.log(this.structure);
+    // Log.d(this.structure);
   }
 
   containsKey(key){
@@ -191,7 +193,7 @@ class Zetabase {
   saveState(){
     fs.writeFile(this.dbPath, this.prepareState(), (err)=>{
       if(err) throw err;
-      // console.log("State is saved");
+      // Log.d("State is saved");
     })
   }
 
@@ -199,7 +201,7 @@ class Zetabase {
     return new Promise((resolve, reject)=>{
       fs.readFile(this.dbPath, (err, json)=>{
         if(err) throw err;
-        console.log(json.toString());
+        Log.d(json.toString());
         this.structure = JSON.parse(json);
         resolve();
       })
