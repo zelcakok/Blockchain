@@ -1,5 +1,6 @@
 const dgram = require('dgram');
 const NetAddr = require('network-address');
+const Log = require("./Log");
 class Beacon {
   constructor(listenPort, socketPort, action = null){
     this.listenPort = listenPort;
@@ -22,7 +23,7 @@ class Beacon {
   listen(){
     if(this.action === null) throw("Please setup the action first.");
     this.listener.on('listening',
-      ()=>console.log("listen:", this.listenPort)
+      ()=>Log.d("listen:", this.listenPort)
     );
     this.listener.on('message',
       (msg)=>{
