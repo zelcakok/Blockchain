@@ -21,7 +21,7 @@ class Transport {
     this.socketServer = SocketServer(this.server);
     this.socketServer.on("connection", (socket)=>{
       Log.d("A new connection is established, ID: ", socket.id);
-      Log.d("Info", socket);
+      Log.d("Info", JSON.stringify(socket.handshake));
       this.sessions[socket.id] = socket;
       for(var opt in operations)
         socket.on(opt, (data)=>operations[opt].action(data));
