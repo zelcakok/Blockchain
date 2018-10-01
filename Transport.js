@@ -12,11 +12,11 @@ const Zetabase = require("./Zetabase");
   Case: hostA connect to hostB.
 
   1. hostA connect ==> hostB.
-  2. hostB CONN_INFO_REQUEST ==> hostA.
+  2. hostB CONN_QUERY ==> hostA.
         hostB waiting for info.
   3. hostA CONN_INFO ==> hostB.
   4. hostB connect ==> hostA.
-  5. hostA CONN_INFO_REQUEST ==> hostB. (This part can be removed once the info can be found on socket.)
+  5. hostA CONN_QUERY ==> hostB. (This part can be removed once the info can be found on socket.)
         hostA waiting for info.
   6. hostB CONN_INFO ==> hostA.
   7. hostA CONN_EST ==> hostB.
@@ -44,7 +44,7 @@ class Transport {
 
       Log.d("Peer", socket.id, "is trying to connect...");
       Log.d("Waiting for peer", socket.id, "information");
-      this.send("CONN_INFO_REQUEST", socket.id, socket.id);
+      this.send("CONN_QUERY", socket.id, socket.id);
       this.sessions[socket.id] = socket;
 
       socket.on("CONN_INFO", (peer)=>{
@@ -73,7 +73,7 @@ class Transport {
       this.socketClients[key] = new Object();
       this.socketClients[key].socket = SocketClient.connect("http://"+addr+":"+port,{transports: ['websocket']});
 
-      this.socketClients[key].socket.on("CONN_INFO_REQUEST", (payload)=>{
+      this.socketClients[key].socket.on("CONN_QUERY", (payload)=>{
         if(payload.message === this.socketClients[key].socket.id) {
           Log.d("Peer", payload.message, "accepted to connect.");
           Log.d("Sending information to peer", payload.message);
