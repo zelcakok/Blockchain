@@ -20,17 +20,16 @@ class Transport {
     this.socketServer = SocketServer(this.server);
     this.socketServer.on("connection", (socket)=>{
       console.log("A new connection is established, ID: ", socket.id);
-
       this.sessions[socket.id] = socket;
       this.send("ACK", socket.id, socket.id);
-      // for(var opt in operations)
-      //   socket.on(opt, (data)=>operations[opt].action(data));
+      for(var opt in operations){
+        console.log("Setting up listener: ", opt);
+        socket.on(opt, (data)=>operations[opt].action(data));
+      }
 
 
 
     });
-
-    this.socketServer.on("MSG", (msg)=>console.log("HEY: ", msg))
   }
 
   connect(key, addr, port){
