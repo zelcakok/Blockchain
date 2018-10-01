@@ -29,9 +29,8 @@ class Blockchain {
       peer = JSON.parse(peer);
       var key = Zetabase.hash((peer.ipAddr + peer.port).split(".").join(""), 'md5');
       if(peer.ipAddr !== NetAddr()) {
-        Log.d("New peer", key);
         this.transport.connect(key, peer.ipAddr, peer.port).then((socket)=>{
-          
+
         })
       }
     })
@@ -48,12 +47,9 @@ class Blockchain {
   }
 
   initialize(){
-    var operations = {
-      MSG: (msg)=>Log.d("Receive: ", msg)
-    }
     this.register(this.beacon.getSelfMsg());
     this.setMonitors();
-    this.transport.listen(operations);
+    this.transport.listen();
     this.broadcast();
   }
 

@@ -4,6 +4,24 @@ const SocketClient = require("socket.io-client");
 const promise = require("promise");
 const NetAddr = require("network-address");
 const Log = require("./Log");
+const Zetabase = require("./Zetabase");
+
+/*
+  Handshake protocol
+
+  Case: hostA connect to hostB.
+
+  1. hostA connect ==> hostB.
+  2. hostB CONN_INFO_REQUEST ==> hostA.
+        hostB waiting for info.
+  3. hostA CONN_INFO ==> hostB.
+  4. hostB connect ==> hostA.
+  5. hostA CONN_INFO_REQUEST ==> hostB. (This part can be removed once the info can be found on socket.)
+        hostA waiting for info.
+  6. hostB CONN_INFO ==> hostA.
+  7. hostA CONN_EST ==> hostB.
+  Connection is established.
+*/
 
 class Transport {
   constructor(serPort){
@@ -19,29 +37,51 @@ class Transport {
   listen(operations){
     this.server.listen(this.serPort);
     this.socketServer = SocketServer(this.server);
+
     this.socketServer.on("connection", (socket)=>{
-      Log.d("A new connection is established, ID: ", socket.id);
-      Log.d("Info", JSON.stringify(socket.handshake));
+      console.log("T1", socket.request.connection.remoteAddress);
+
+
+      Log.d("Peer", socket.id, "is trying to connect...");
+      Log.d("Waiting for peer", socket.id, "information");
+      this.send("CONN_INFO_REQUEST", socket.id, socket.id);
       this.sessions[socket.id] = socket;
-      for(var opt in operations)
-        socket.on(opt, (data)=>operations[opt].action(data));
-      this.send("ACK", socket.id, socket.id);
-      this.send("MSG", "Start communication", socket.id);
+
+      socket.on("CONN_INFO", (peer)=>{
+        Log.d("Peer", socket.id, "information is received.");
+        Log.d("Connecting to peer", socket.id, "...");
+        var key = Zetabase.hash((peer.ipAddr + peer.port).split(".").join(""), 'md5');
+        this.connect(key, peer.ipAddr, peer.port);
+      });
+
+      socket.on("CONN_EST", (peer)=>{
+        Log.d("Connection is established on ", peer.ipAddr+":"+peer.port);
+      })
     });
+
   }
 
   connect(key, addr, port){
     return new Promise((resolve, reject)=>{
+      if(key in this.socketClients) {
+        Log.d("Connection is established on ", addr+":"+port);
+        this.sendViaSocket("CONN_EST", {ipAddr: NetAddr(), port: this.serPort}, this.socketClients[key].socket);
+        resolve();
+        return;
+      }
+      Log.d("Trying to connect", addr+":"+port);
       this.socketClients[key] = new Object();
       this.socketClients[key].socket = SocketClient.connect("http://"+addr+":"+port,{transports: ['websocket']});
-      this.socketClients[key].socket.on("ACK", (payload)=>{
+
+      this.socketClients[key].socket.on("CONN_INFO_REQUEST", (payload)=>{
         if(payload.message === this.socketClients[key].socket.id) {
-          Log.d("Received ACK, connection is established.");
-          resolve(this.socketClients[key].socket);
+          Log.d("Peer", payload.message, "accepted to connect.");
+          Log.d("Sending information to peer", payload.message);
+          this.sendViaSocket("CONN_INFO", {ipAddr: NetAddr(), port: this.serPort}, this.socketClients[key].socket);
+          resolve();
         }
         else reject();
       })
-      this.socketClients[key].socket.on("MSG", (msg)=>Transport.dePacket(msg));
     });
   }
 
@@ -53,6 +93,11 @@ class Transport {
     var payload = {ipAddr: NetAddr(), port: this.serPort, message: msg};
     if(socketId) this.socketServer.to(socketId).emit(channel, payload);
     else this.socketServer.emit(channel, payload);
+  }
+
+  sendViaSocket(channel, msg, socket){
+    var payload = {ipAddr: NetAddr(), port: this.serPort, message: msg};
+    socket.emit(channel, msg);
   }
 }
 
