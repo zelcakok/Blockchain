@@ -32,6 +32,7 @@ class Blockchain {
         this.transport.connect(key, peer.ipAddr, peer.port).then((id)=>{
           console.log("Connected to ", peer.ipAddr, "on", peer.port);
           console.log("Start to exchange the peer information.");
+          console.log("Sending info to ID: ", id);
           this.transport.send("MSG", "This is the message, ID: ", id)
           // this.db.sortKey("/peers");
           // this.transport.send("[PEER]", )
@@ -50,21 +51,14 @@ class Blockchain {
     });
   }
 
-  reconnect(){
-    this.db.getStructure().then((structure)=>{
-      // console.log(structure.peers);
-    })
-  }
-
   initialize(){
     var operations = {
-      "MSG": (msg)=>console.log("Receive: ", msg)
+      MSG: (msg)=>console.log("Receive: ", msg)
     }
     this.register(this.beacon.getSelfMsg());
     this.setMonitors();
     this.transport.listen(operations);
     this.broadcast();
-    this.reconnect();
   }
 
 }

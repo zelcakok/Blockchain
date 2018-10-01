@@ -22,8 +22,11 @@ class Transport {
       console.log("A new connection is established, ID: ", socket.id);
       this.sessions[socket.id] = socket;
       this.send("ACK", socket.id, socket.id);
-      for(var opt in operations)
-        socket.on(opt, (data)=>operations[opt].action(data));
+      // for(var opt in operations)
+      //   socket.on(opt, (data)=>operations[opt].action(data));
+
+      socket.on("MSG", (msg)=>console.log("HEY I've received: ", msg));
+
     });
   }
 
@@ -33,8 +36,8 @@ class Transport {
       this.socketClients[key].socket = SocketClient.connect("http://"+addr+":"+port,{transports: ['websocket']});
       this.socketClients[key].socket.on("ACK", (payload)=>{
         if(payload.message === this.socketClients[key].socket.id) {
-          console.log("Confirmation: Connected to peer.");
-          resolve();
+          console.log("Received ACK on peer, connection is established.");
+          resolve(payload.message);
         }
         else reject();
       })
