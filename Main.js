@@ -29,11 +29,11 @@ class Blockchain {
       var key = Zetabase.hash((peer.ipAddr + peer.port).split(".").join(""), 'md5');
       if(peer.ipAddr !== NetAddr()) {
         console.log("New peer", key);
-        this.transport.connect(key, peer.ipAddr, peer.port).then((id)=>{
+        this.transport.connect(key, peer.ipAddr, peer.port).then((socket)=>{
           console.log("Connected to ", peer.ipAddr, "on", peer.port);
           console.log("Start to exchange the peer information.");
-          console.log("Sending info to ID: ", id);
-          this.transport.send("MSG", "This is the message, ID: ", id)
+          console.log("Sending info to ID: ", socket.id);
+          this.transport.sendViaSocket("MSG", "This is the message.", socket)
           // this.db.sortKey("/peers");
           // this.transport.send("[PEER]", )
         })

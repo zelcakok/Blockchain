@@ -20,12 +20,14 @@ class Transport {
     this.socketServer = SocketServer(this.server);
     this.socketServer.on("connection", (socket)=>{
       console.log("A new connection is established, ID: ", socket.id);
+      socket.on("MSG", (msg)=>console.log("HEY I've received: ", msg));
+            
       this.sessions[socket.id] = socket;
       this.send("ACK", socket.id, socket.id);
       // for(var opt in operations)
       //   socket.on(opt, (data)=>operations[opt].action(data));
 
-      socket.on("MSG", (msg)=>console.log("HEY I've received: ", msg));
+
 
     });
   }
@@ -37,7 +39,7 @@ class Transport {
       this.socketClients[key].socket.on("ACK", (payload)=>{
         if(payload.message === this.socketClients[key].socket.id) {
           console.log("Received ACK on peer, connection is established.");
-          resolve(payload.message);
+          resolve(this.socketClients[key].socket);
         }
         else reject();
       })
@@ -48,6 +50,11 @@ class Transport {
     var payload = {ipAddr: NetAddr(), port: this.serPort, message: msg};
     if(socketId) this.socketServer.to(socketId).emit(channel, payload);
     else this.socketServer.emit(channel, payload);
+  }
+
+  sendViaSocket(channel, msg, socket){
+    var payload = {ipAddr: NetAddr(), port: this.serPort, message: msg};
+    socket.send(channel, msg);
   }
 }
 
