@@ -39,20 +39,25 @@ class Transport {
     this.socketServer = SocketServer(this.server);
 
     this.socketServer.on("connection", (socket)=>{
-      console.log("T1", socket.request.connection.remoteAddress.replace("::ffff:",""));
-
-
-      Log.d("Peer", socket.id, "is trying to connect...");
-      Log.d("Waiting for peer", socket.id, "information");
-      this.send("CONN_QUERY", socket.id, socket.id);
       this.sessions[socket.id] = socket;
+      var clientAddr = socket.request.connection.remoteAddress.replace("::ffff:","");
+      var clientPort = socket.request.connection.remotePort;
+      var key = Zetabase.hash((clientAddr + clientPort).split(".").join(""), 'md5');
 
-      socket.on("CONN_INFO", (peer)=>{
-        Log.d("Peer", socket.id, "information is received.");
-        Log.d("Connecting to peer", socket.id, "...");
-        var key = Zetabase.hash((peer.ipAddr + peer.port).split(".").join(""), 'md5');
-        this.connect(key, peer.ipAddr, peer.port);
-      });
+      if(clientAddr.split(".").length === 4 && clientPort !== null){
+        this.connect(key, clientAddr, clientPort);
+      } else {
+        Log.d("Peer", socket.id, "is trying to connect...");
+        Log.d("Waiting for peer", socket.id, "information");
+        this.send("CONN_QUERY", socket.id, socket.id);
+
+        socket.on("CONN_INFO", (peer)=>{
+          Log.d("Peer", socket.id, "information is received.");
+          Log.d("Connecting to peer", socket.id, "...");
+          var key = Zetabase.hash((peer.ipAddr + peer.port).split(".").join(""), 'md5');
+          this.connect(key, peer.ipAddr, peer.port);
+        });
+      }
 
       socket.on("CONN_EST", (peer)=>{
         Log.d("Incoming channel is established on ", peer.ipAddr+":"+peer.port);
