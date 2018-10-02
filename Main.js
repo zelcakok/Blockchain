@@ -6,10 +6,10 @@ const Crypto = require("crypto");
 const Log = require("./Log");
 
 class Blockchain {
-  constructor(dbPath, beaconSignalPort, transportPort){
+  constructor(dbPath, beaconSignalPort, transportPort, verbose){
     this.db = new Zetabase(dbPath);
     this.beacon = new Beacon(beaconSignalPort, transportPort);
-    this.transport = new Transport(transportPort);
+    this.transport = new Transport(transportPort, verbose);
     this.initialize(transportPort);
   }
 
@@ -30,7 +30,8 @@ class Blockchain {
       var key = Zetabase.hash((peer.ipAddr + peer.port).split(".").join(""), 'md5');
       if(peer.ipAddr !== NetAddr()) {
         this.transport.connect(key, peer.ipAddr, peer.port).then((socket)=>{
-
+          console.log("Connection is established.");
+          this.transport.sendViaSocket("MSG", "This is the message", socket);
         })
       }
     })
@@ -47,13 +48,16 @@ class Blockchain {
   }
 
   initialize(){
+    var operations = {
+      MSG: (msg)=>console.log("Incoming message: ", msg)
+    }
     this.register(this.beacon.getSelfMsg());
     this.setMonitors();
-    this.transport.listen();
+    this.transport.listen(operations);
     this.broadcast();
   }
 
 }
 Zetabase.removeDB("./.zetabase.json").then(()=>{
-  var blockchain = new Blockchain("./.zetabase.json", 3049, 3000);
+  var blockchain = new Blockchain("./.zetabase.json", 3049, 3000, false);
 })
