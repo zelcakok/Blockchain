@@ -39,7 +39,7 @@ class Transport {
     this.socketServer = SocketServer(this.server);
 
     this.socketServer.on("connection", (socket)=>{
-      console.log("T1", socket.request.connection.remoteAddress);
+      console.log("T1", socket.request.connection.remoteAddress.replace("::ffff:",""));
 
 
       Log.d("Peer", socket.id, "is trying to connect...");
@@ -55,7 +55,7 @@ class Transport {
       });
 
       socket.on("CONN_EST", (peer)=>{
-        Log.d("Connection is established on ", peer.ipAddr+":"+peer.port);
+        Log.d("Passive: Connection is established on ", peer.ipAddr+":"+peer.port);
       })
     });
 
@@ -64,7 +64,7 @@ class Transport {
   connect(key, addr, port){
     return new Promise((resolve, reject)=>{
       if(key in this.socketClients) {
-        Log.d("Connection is established on ", addr+":"+port);
+        Log.d("Active: Connection is established on ", addr+":"+port);
         this.sendViaSocket("CONN_EST", {ipAddr: NetAddr(), port: this.serPort}, this.socketClients[key].socket);
         resolve();
         return;
