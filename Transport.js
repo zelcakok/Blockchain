@@ -55,7 +55,7 @@ class Transport {
       socket.on("CONN_EST", (peer)=>{
         if(this.verbose) Log.d("Incoming channel is established on ", peer.ipAddr+":"+peer.port);
       })
-      
+
       // Object.keys(operations).map((key)=>{
       //   socket.on(key, (payload)=>operations[key](payload))
       // })
@@ -84,8 +84,6 @@ class Transport {
         }
         else reject();
       })
-
-      this.socketClients[key].socket.on("MSG", (payload)=>console.log("HEYHEY", payload));
     });
   }
 

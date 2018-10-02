@@ -32,6 +32,7 @@ class Blockchain {
         this.transport.connect(key, peer.ipAddr, peer.port).then((socket)=>{
           console.log("Connection is established.");
           // this.transport.sendViaSocket("MSG", "This is the message", socket);
+          socket.on("MSG", (payload)=>console.log("HEYHEY", payload));
           this.transport.send("MSG", "This is the message", socket.id);
         })
       }
