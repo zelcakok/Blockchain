@@ -16,5 +16,6 @@
 .env.test.local
 .env.production.local
 .zetabase.json
+package-lock.json
 
 npm-debug.log*
