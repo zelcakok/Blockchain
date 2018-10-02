@@ -55,7 +55,7 @@ class Transport {
       });
 
       socket.on("CONN_EST", (peer)=>{
-        Log.d("Receive channel is established on ", peer.ipAddr+":"+peer.port);
+        Log.d("Incoming channel is established on ", peer.ipAddr+":"+peer.port);
       })
     });
 
@@ -64,7 +64,7 @@ class Transport {
   connect(key, addr, port){
     return new Promise((resolve, reject)=>{
       if(key in this.socketClients) {
-        Log.d("Active channel is established on ", addr+":"+port);
+        Log.d("Outgoing channel is established on ", addr+":"+port);
         this.sendViaSocket("CONN_EST", {ipAddr: NetAddr(), port: this.serPort}, this.socketClients[key].socket);
         resolve();
         return;
