@@ -56,9 +56,9 @@ class Transport {
         if(this.verbose) Log.d("Incoming channel is established on ", peer.ipAddr+":"+peer.port);
       })
 
-      // Object.keys(operations).map((key)=>{
-      //   socket.on(key, (payload)=>operations[key](payload))
-      // })
+      Object.keys(operations).map((key)=>{
+        socket.on(key, (payload)=>operations[key](payload))
+      })
     });
 
   }
