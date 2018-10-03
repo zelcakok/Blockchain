@@ -66,7 +66,6 @@ class Zetabase {
     return new Promise((resolve, reject)=>{
       this.prepare().then(()=>{
         var url = this.traverse(path, createMissing);
-        console.log("HIHI", url);
         return resolve(url.dir[url.ptr], url.dir);
       });
     });
