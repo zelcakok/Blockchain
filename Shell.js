@@ -1,10 +1,10 @@
 const { spawn } = require('child_process');
 var IO = null;
-var msgQueue = [];
+var msgQueue = [], username = "";
 class Shell {
   constructor(io){
     IO = io;
-    this.username = "Please login";
+    username = "Please login";
     msgQueue = [];
     this.operations = [];
   }
@@ -13,8 +13,8 @@ class Shell {
     this.operations = operations;
   }
 
-  setUsername(username){
-    this.username = username;
+  static setUsername(username){
+    username = username;
   }
 
   queueMsg(msg){
@@ -52,7 +52,7 @@ class Shell {
 
   prompt(){
     this.floodMsg().then(()=>{
-      IO.ask("Blockchain ["+this.username+"]>").then((cmd)=>{
+      IO.ask("Blockchain ["+username+"]>").then((cmd)=>{
         if(cmd.trim() === "exit") {
           IO.println("System exited.");
           process.exit(0);

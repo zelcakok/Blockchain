@@ -73,9 +73,7 @@ Zetabase.removeDB("./.zetabase.json").then(()=>{
   var blockchain = new Blockchain("./.zetabase.json", 3049, 3000, false);
   var opts = {
     gitpull: ()=>Shell.system("git pull"),
-    gitpush: ()=>{
-      Shell.system("gitpush")
-    }
+    gitpush: ()=>Shell.system("gitpush")
   }
   blockchain.startShell(opts);
 })
