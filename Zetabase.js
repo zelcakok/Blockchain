@@ -155,7 +155,8 @@ class Zetabase {
       for(var i in keys) {
         this.write(path+"/"+keys[i], data[keys[i]]).then(()=>this.structure, false);
       }
-      this.invalidate();
+      console.log(this.structure);
+      // this.invalidate();
     })
   }
 
