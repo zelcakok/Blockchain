@@ -30,11 +30,8 @@ class Blockchain {
       var key = Zetabase.hash((peer.ipAddr + peer.port).split(".").join(""), 'md5');
       if(peer.ipAddr !== NetAddr()) {
         this.transport.connect(key, peer.ipAddr, peer.port).then((socket)=>{
-          // this.transport.sendViaSocket("MSG", "This is " + NetAddr(), socket)
+          Log.d("Connection is established to peer", peer.ipAddr+":"+peer.port);
           this.transport.sendViaKey("MSG", "This is " + NetAddr(), key)
-
-
-
         })
       }
     })
@@ -62,5 +59,5 @@ class Blockchain {
 
 }
 Zetabase.removeDB("./.zetabase.json").then(()=>{
-  var blockchain = new Blockchain("./.zetabase.json", 3049, 3000, false);
+  var blockchain = new Blockchain("./.zetabase.json", 3049, 3000, true);
 })
