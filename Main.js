@@ -63,5 +63,5 @@ class Blockchain {
 
 }
 Zetabase.removeDB("./.zetabase.json").then(()=>{
-  var blockchain = new Blockchain("./.zetabase.json", 3049, 3000, false);
+  var blockchain = new Blockchain("./.zetabase.json", 3049, 3000, true);
 })
