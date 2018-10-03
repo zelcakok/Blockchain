@@ -155,12 +155,7 @@ class Zetabase {
       })
       for(var i in keys)
         sorted[keys[i]] = data[keys[i]];
-      this.wipe(path).then(()=>{
-        this.write(path, sorted, false).then(()=>{
-          console.log(this.structure);
-        })
-      })
-
+      console.log(dir);
       // this.invalidate();
     })
   }
