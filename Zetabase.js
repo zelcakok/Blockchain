@@ -146,20 +146,20 @@ class Zetabase {
   sortKey(path){
     this.read(path).then((data)=>{
       console.log("READ");
-      // var sorted = new Object();
-      // var keys = Object.keys(data);
-      // keys.sort((a, b)=>{
-      //   if(a <= b) return 0;
-      //   else return 1;
-      // })
-      // for(var i in keys){
-      //   sorted[keys[i]] = data[keys[i]];
-      //   delete data[keys[i]];
-      // }
-      // for(var i in keys){
-      //   data[keys[i]] = sorted[keys[i]];
-      //   delete sorted[keys[i]];
-      // }
+      var sorted = new Object();
+      var keys = Object.keys(data);
+      keys.sort((a, b)=>{
+        if(a <= b) return 0;
+        else return 1;
+      })
+      for(var i in keys){
+        sorted[keys[i]] = data[keys[i]];
+        delete data[keys[i]];
+      }
+      for(var i in keys){
+        data[keys[i]] = sorted[keys[i]];
+        delete sorted[keys[i]];
+      }
       // this.invalidate();
     })
   }
