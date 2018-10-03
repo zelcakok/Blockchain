@@ -157,7 +157,8 @@ class Zetabase {
         // this.write(path+"/"+keys[i], dir[keys[i]]).then(()=>this.structure, false);
       }
       console.log(sorted);
-      // this.invalidate();
+      dir = sorted;
+      this.invalidate();
     })
   }
 
