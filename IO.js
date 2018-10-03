@@ -1,8 +1,7 @@
-const Readline = require("readline");
-var io = Readline.createInterface({
+const readline = require("readline");
+var io = readline.createInterface({
   input : process.stdin,
-  output : process.stdout,
-  terminal: true
+  output : process.stdout
 });
 
 class IO {
@@ -15,15 +14,11 @@ class IO {
   }
 
   static print(str){
-    io.terminal = true;
     io.write(str);
-    io.terminal = false;
   }
 
   static println(str){
-    io.terminal = true;
     io.write(str+"\r\n");
-    io.terminal = false;
   }
 }
 

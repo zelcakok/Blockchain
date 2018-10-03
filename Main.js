@@ -60,9 +60,10 @@ class Blockchain {
     this.broadcast();
   }
 
-  prompt(){
+  startShell(operations){
     setTimeout(()=>{
       Log.out("Shell service is started.");
+      this.shell.setOperation(operations);
       this.shell.prompt();
     }, 100);
   }
@@ -70,5 +71,11 @@ class Blockchain {
 
 Zetabase.removeDB("./.zetabase.json").then(()=>{
   var blockchain = new Blockchain("./.zetabase.json", 3049, 3000, false);
-  blockchain.prompt();
+  var opts = {
+    appUpdate: ()=>Shell.system("git pull"),
+    appPush: ()=>{
+      Shell.system("gitpush")
+    }
+  }
+  blockchain.startShell(opts);
 })

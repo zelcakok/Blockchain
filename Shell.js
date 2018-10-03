@@ -1,10 +1,16 @@
+const { spawn } = require('child_process');
 var IO = null;
+var msgQueue = [];
 class Shell {
   constructor(io){
     IO = io;
     this.username = "Please login";
-    this.msgQueue = [];
+    msgQueue = [];
     this.operations = [];
+  }
+
+  setOperation(operations){
+    this.operations = operations;
   }
 
   setUsername(username){
@@ -12,16 +18,28 @@ class Shell {
   }
 
   queueMsg(msg){
-    this.msgQueue.push(msg);
+    msgQueue.push(msg);
   }
 
   floodMsg(){
     return new Promise((resolve, reject)=>{
-      var hasMsg = this.msgQueue.length > 0;
-      this.msgQueue.forEach((msg)=>IO.println(msg));
-      this.msgQueue = [];
+      var hasMsg = msgQueue.length > 0;
+      msgQueue.forEach((msg)=>{
+        IO.println(msg)
+      });
+      msgQueue = [];
       if(hasMsg) IO.println("")
       resolve();
+    });
+  }
+
+  static system(cmd){
+    cmd = cmd.split(" ");
+    var command = cmd[0];
+    cmd.shift();
+    var result = spawn(command, cmd);
+    result.stdout.on('data', (data)=>{
+      msgQueue.push(data.toString())
     });
   }
 
@@ -32,10 +50,6 @@ class Shell {
     this.prompt();
   }
 
-  setPrompt(msg){
-    IO.prompt = msg;
-  }
-
   prompt(){
     this.floodMsg().then(()=>{
       IO.ask("Blockchain ["+this.username+"]>").then((cmd)=>{
@@ -43,7 +57,7 @@ class Shell {
           IO.println("System exited.");
           process.exit(0);
         }
-        else this.react(cmd.split(" "));
+        else this.react(cmd);
       })
     })
   }
