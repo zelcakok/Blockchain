@@ -145,7 +145,6 @@ class Zetabase {
 
   sortKey(path){
     this.read(path).then((data)=>{
-      console.log("READ");
       var sorted = new Object();
       var keys = Object.keys(data);
       keys.sort((a, b)=>{
@@ -160,6 +159,7 @@ class Zetabase {
         data[keys[i]] = sorted[keys[i]];
         delete sorted[keys[i]];
       }
+      console.log("READ", this.structure);
       // this.invalidate();
     })
   }
