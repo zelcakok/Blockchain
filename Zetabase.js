@@ -77,7 +77,6 @@ class Zetabase {
       this.prepare().then(()=>{
         var url = this.traverse(path);
         url.dir[url.ptr] = typeof(data) === "string"? data : JSON.stringify(data);
-        console.log("Fire: ", fireEvent);
         if(fireEvent) this.eventEmitter.emit('onChanges', path, data);
         resolve();
       });
