@@ -153,9 +153,9 @@ class Zetabase {
         else return 1;
       })
       for(var i in keys) {
-        this.write(path+"/"+keys[i], data[keys[i]]).then(()=>this.structure, false);
+        console.log(data[keys[i]]);
+        // this.write(path+"/"+keys[i], data[keys[i]]).then(()=>this.structure, false);
       }
-      console.log(this.structure);
       // this.invalidate();
     })
   }
