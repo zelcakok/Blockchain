@@ -4,6 +4,7 @@ const Auth = require('./Auth');
 const Crypto = require("crypto");
 const NetAddr = require("network-address");
 const EventEmitter = require("events").EventEmitter;
+const Checksum = require("checksum");
 var Log = null;
 
 class Zetabase {
@@ -138,7 +139,7 @@ class Zetabase {
   }
 
   checksum(){
-    this.structure.checksum = Crypto.createHash('sha512').update(JSON.stringify(this.structure)).digest('hex');
+    this.structure.checksum = Checksum(JSON.stringify(this.structure));
   }
 
   sortKey(path){
