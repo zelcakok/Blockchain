@@ -137,6 +137,9 @@ class Zetabase {
     return Crypto.createHash('md5').update(Math.random() + moment().valueOf().toString()).digest('hex');
   }
 
+  //Check to a particular part of db.
+  //Read then remove checksum, lastUpdate
+  //sortKey path
   checksum(){
     delete this.structure["checksum"];
     delete this.structure["lastUpdate"];

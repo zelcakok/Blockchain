@@ -4,10 +4,14 @@ const Transport = require("./Transport");
 const NetAddr = require("network-address");
 const Crypto = require("crypto");
 const Log = require("./Log");
+const IO = require("./IO");
+const Shell = require('./Shell');
 
 class Blockchain {
   constructor(dbPath, beaconSignalPort, transportPort, verbose){
+    this.shell = new Shell(IO);
     Log.setVerbose(verbose);
+    Log.bind(this.shell);
     this.db = new Zetabase(dbPath, Log);
     this.beacon = new Beacon(beaconSignalPort, transportPort, Log);
     this.transport = new Transport(transportPort, Log);
@@ -56,7 +60,15 @@ class Blockchain {
     this.broadcast();
   }
 
+  prompt(){
+    setTimeout(()=>{
+      Log.out("Shell service is started.");
+      this.shell.prompt();
+    }, 100);
+  }
 }
+
 Zetabase.removeDB("./.zetabase.json").then(()=>{
   var blockchain = new Blockchain("./.zetabase.json", 3049, 3000, false);
+  blockchain.prompt();
 })
