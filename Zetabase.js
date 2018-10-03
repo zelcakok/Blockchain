@@ -152,11 +152,14 @@ class Zetabase {
         if(a <= b) return 0;
         else return 1;
       })
-      for(var i in keys) {
+      for(var i in keys)
         sorted[keys[i]] = data[keys[i]];
-      }
-      dir = sorted;
-      console.log(this.structure);
+      this.wipe(path).then(()=>{
+        this.write(path, sorted, false).then(()=>{
+          console.log(this.structure);
+        })
+      })
+
       // this.invalidate();
     })
   }
