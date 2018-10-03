@@ -49,7 +49,7 @@ class Blockchain {
 
   initialize(){
     var operations = {
-      MSG: (msg)=>console.log("Incoming message: ", msg)
+      MSG: (msg)=>Transport.dePacket(msg)
     }
     this.register(this.beacon.getSelfMsg());
     this.setMonitors();
