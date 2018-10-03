@@ -33,14 +33,6 @@ class Blockchain {
           Log.d("Connection is established to peer", peer.ipAddr+":"+peer.port);
           this.transport.sendViaKey("MSG", "This is " + NetAddr(), key)
           this.db.sortKey("/peers");
-
-          setTimeout(()=>{
-            this.db.getStructure().then((structure)=>{
-              console.log(structure.checksum);
-            })  
-          }, 5000);
-
-
         })
       }
     })
