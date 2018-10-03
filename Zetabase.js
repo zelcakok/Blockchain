@@ -156,9 +156,9 @@ class Zetabase {
         sorted[keys[i]] = dir[keys[i]];
         // this.write(path+"/"+keys[i], dir[keys[i]]).then(()=>this.structure, false);
       }
-      console.log(sorted);
       dir = sorted;
-      this.invalidate();
+      console.log(this.structure);
+      // this.invalidate();
     })
   }
 
