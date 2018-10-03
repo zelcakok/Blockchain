@@ -49,12 +49,12 @@ class Transport {
 
   sendViaSocket(channel, msg, socket){
     var payload = {ipAddr: NetAddr(), port: this.serPort, message: msg};
-    socket.emit(channel, msg);
+    socket.emit(channel, payload);
   }
 
   sendViaKey(channel, msg, key){
     var payload = {ipAddr: NetAddr(), port: this.serPort, message: msg};
-    this.socketClients[key].emit(channel, msg);
+    this.socketClients[key].emit(channel, payload);
   }
 }
 
