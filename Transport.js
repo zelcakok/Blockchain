@@ -82,6 +82,12 @@ class Transport {
     var payload = {ipAddr: NetAddr(), port: this.serPort, message: msg};
     socket.emit(channel, msg);
   }
+
+  sendViaKey(channel, msg, key){
+    var payload = {ipAddr: NetAddr(), port: this.serPort, message: msg};
+    this.socketClients[key].emit(channel, msg);
+    // socket.emit(channel, msg);
+  }
 }
 
 module.exports = Transport;
