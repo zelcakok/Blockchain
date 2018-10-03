@@ -145,16 +145,16 @@ class Zetabase {
   }
 
   sortKey(path){
-    this.read(path).then((data)=>{
+    this.read(path).then((dir)=>{
       var sorted = new Object();
-      var keys = Object.keys(data);
+      var keys = Object.keys(dir);
       keys.sort((a, b)=>{
-        if(b <= a) return 0;
+        if(a <= b) return 0;
         else return 1;
       })
       for(var i in keys) {
-        console.log(data[keys[i]]);
-        // this.write(path+"/"+keys[i], data[keys[i]]).then(()=>this.structure, false);
+        console.log(dir[keys[i]]);
+        // this.write(path+"/"+keys[i], dir[keys[i]]).then(()=>this.structure, false);
       }
       // this.invalidate();
     })
