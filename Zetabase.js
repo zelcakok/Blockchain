@@ -155,8 +155,6 @@ class Zetabase {
         sorted[keys[i]] = data[keys[i]];
         delete data[keys[i]];
       }
-      console.log("Sorted:", sorted);
-      console.log("DATA: ", data);
       // this.invalidate();
     })
   }
