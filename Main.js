@@ -32,7 +32,7 @@ class Blockchain {
         this.transport.connect(key, peer.ipAddr, peer.port).then((socket)=>{
           Log.d("Connection is established to peer", peer.ipAddr+":"+peer.port);
           // this.transport.sendViaKey("MSG", "This is " + NetAddr(), key)
-          // this.db.sortKey("/peers");
+          this.db.sortKey("/peers");
         })
       }
     })
@@ -58,5 +58,5 @@ class Blockchain {
 
 }
 Zetabase.removeDB("./.zetabase.json").then(()=>{
-  var blockchain = new Blockchain("./.zetabase.json", 3049, 3000, true);
+  var blockchain = new Blockchain("./.zetabase.json", 3049, 3000, false);
 })
