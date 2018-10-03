@@ -51,15 +51,15 @@ class Shell {
   }
 
   prompt(){
-    this.floodMsg().then(()=>{
-      IO.ask("Blockchain ["+username+"]"+(msgQueue.length>0? "*":"")+">").then((cmd)=>{
+    this.floodMsg().then(()=>{})
+      IO.ask("Blockchain ["+username+"]>").then((cmd)=>{
         if(cmd.trim() === "exit") {
           IO.println("System exited.");
           process.exit(0);
         }
         else this.react(cmd);
       })
-    })
+
   }
 }
 module.exports = Shell;
