@@ -51,7 +51,7 @@ class Shell {
   }
 
   prompt(){
-    this.floodMsg().then(()=>{})
+    this.floodMsg().then(()=>{
       IO.ask("Blockchain ["+username+"]>").then((cmd)=>{
         if(cmd.trim() === "exit") {
           IO.println("System exited.");
@@ -59,7 +59,7 @@ class Shell {
         }
         else this.react(cmd);
       })
-
+    })
   }
 }
 module.exports = Shell;
