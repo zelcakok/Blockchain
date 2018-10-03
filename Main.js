@@ -31,11 +31,6 @@ class Blockchain {
       if(peer.ipAddr !== NetAddr()) {
         this.transport.connect(key, peer.ipAddr, peer.port).then((socket)=>{
           console.log("Connection is established.");
-
-          Object.keys(this.transport.socketClients).map((key)=>{
-            this.transport.socketClients[key].socket.emit("MSG", "HI")
-          })
-
         })
       }
     })
