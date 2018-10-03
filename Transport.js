@@ -53,9 +53,8 @@ class Transport {
       //   return;
       // }
       Log.d("Trying to connect", addr+":"+port);
-      this.socketClients[key] = new Object();
-      var socket = SocketClient.connect("http://"+addr+":"+port,{transports: ['websocket']});
-      resolve(socket);
+      this.socketClients[key] = SocketClient.connect("http://"+addr+":"+port,{transports: ['websocket']});
+      resolve(this.socketClients[key]);
       // this.socketClients[key].socket.on("CONN_QUERY", (payload)=>{
       //   if(payload.message === this.socketClients[key].socket.id) {
       //     Log.d("Peer", payload.message, "accepted to connect.");
@@ -85,7 +84,7 @@ class Transport {
 
   sendViaKey(channel, msg, key){
     var payload = {ipAddr: NetAddr(), port: this.serPort, message: msg};
-    this.socketClients[key].socket.emit(channel, msg);
+    this.socketClients[key].emit(channel, msg);
     // socket.emit(channel, msg);
   }
 }
