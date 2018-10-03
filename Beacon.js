@@ -44,7 +44,7 @@ class Beacon {
     return JSON.stringify({
       ipAddr: NetAddr(),
       port: this.socketPort,
-      message: "BLK_Client"
+      message: Zetabase.hash("BLK_Client", "md5")
     });
   }
 
