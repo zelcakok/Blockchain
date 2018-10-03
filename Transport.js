@@ -71,7 +71,7 @@ class Transport {
       // }
       Log.d("Trying to connect", addr+":"+port);
       this.socketClients[key] = new Object();
-      this.socketClients[key].socket = SocketClient.connect("http://"+addr+":"+port,{transports: ['websocket']});
+      var socket = SocketClient.connect("http://"+addr+":"+port,{transports: ['websocket']}, ()=>console.log("HDHDHD"));
       Log.out("A Connection is established ID:", this.socketClients[key].socket.id);
       resolve(this.socketClients[key].socket);
       // this.socketClients[key].socket.on("CONN_QUERY", (payload)=>{
