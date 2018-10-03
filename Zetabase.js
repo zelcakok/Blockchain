@@ -71,12 +71,12 @@ class Zetabase {
     });
   }
 
-  write(path, data){
+  write(path, data, fireEvent = true){
     return new Promise((resolve, reject)=>{
       this.prepare().then(()=>{
         var url = this.traverse(path);
         url.dir[url.ptr] = typeof(data) === "string"? data : JSON.stringify(data);
-        this.eventEmitter.emit('onChanges', path, data);
+        if(fireEvent) this.eventEmitter.emit('onChanges', path, data);
         resolve();
       });
     });
@@ -139,6 +139,8 @@ class Zetabase {
   }
 
   checksum(){
+    delete this.structure["checksum"];
+    delete this.structure["lastUpdate"];
     this.structure.checksum = Checksum(JSON.stringify(this.structure));
   }
 
@@ -151,9 +153,10 @@ class Zetabase {
         else return 1;
       })
       for(var i in keys) {
-        this.write("/peers/"+keys[i], peers[keys[i]]).then(()=>this.structure);
-        delete peers[keys[i]];
+        delete this.structure[path][keys[i]];
+        this.write(path+"/"+keys[i], peers[keys[i]]).then(()=>this.structure, false);
       }
+      this.invalidate();
     })
   }
 
