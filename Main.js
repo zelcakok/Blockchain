@@ -31,6 +31,9 @@ class Blockchain {
       if(peer.ipAddr !== NetAddr()) {
         this.transport.connect(key, peer.ipAddr, peer.port).then((socket)=>{
           console.log("Connection is established.");
+
+          this.transport.sendViaSocket("MSG", "This is " + NewAddr(), socket)
+
         })
       }
     })

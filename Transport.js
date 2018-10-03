@@ -49,7 +49,7 @@ class Transport {
         if(this.verbose) Log.d("Peer", socket.id, "information is received.");
         if(this.verbose) Log.d("Connecting to peer", socket.id, "...");
         var key = Zetabase.hash((peer.ipAddr + peer.port).split(".").join(""), 'md5');
-        this.socketClients[key].socket = socket;
+        // this.socketClients[key].socket = socket;
         // this.connect(key, peer.ipAddr, peer.port);
       });
 
