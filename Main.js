@@ -30,7 +30,7 @@ class Blockchain {
       var key = Zetabase.hash((peer.ipAddr + peer.port).split(".").join(""), 'md5');
       if(peer.ipAddr !== NetAddr()) {
         this.transport.connect(key, peer.ipAddr, peer.port).then((socket)=>{
-          console.log("Connection is established.");
+          console.log("Connection is established ID: ", socket.id);
           this.transport.sendViaSocket("MSG", "This is " + NetAddr(), socket)
         })
       }
