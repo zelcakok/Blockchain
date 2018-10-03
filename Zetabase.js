@@ -149,7 +149,7 @@ class Zetabase {
       var sorted = new Object();
       var keys = Object.keys(data);
       keys.sort((a, b)=>{
-        if(a <= b) return 0;
+        if(b <= a) return 0;
         else return 1;
       })
       for(var i in keys) {
