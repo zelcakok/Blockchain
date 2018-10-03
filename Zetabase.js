@@ -66,8 +66,7 @@ class Zetabase {
     return new Promise((resolve, reject)=>{
       this.prepare().then(()=>{
         var url = this.traverse(path, createMissing);
-        console.log("CHK", url.dir);
-        return resolve(url.dir[url.ptr], url.dir);
+        return resolve(url.dir[url.ptr]);
       });
     });
   }
@@ -87,7 +86,6 @@ class Zetabase {
     return new Promise((resolve, reject)=>{
       this.prepare().then(()=>{
         var url = this.traverse(path);
-        Log.d("URL:",url);
         url.dir[url.ptr][this.genKey()] = data;
         this.eventEmitter.emit('onChanges', path, data);
         resolve();
@@ -146,16 +144,19 @@ class Zetabase {
   }
 
   sortKey(path){
-    this.read(path).then((data, dir)=>{
+    this.read(path).then((data)=>{
       var sorted = new Object();
       var keys = Object.keys(data);
       keys.sort((a, b)=>{
         if(a <= b) return 0;
         else return 1;
       })
-      for(var i in keys)
+      for(var i in keys){
         sorted[keys[i]] = data[keys[i]];
-      console.log(dir);
+        delete data[keys[i]];
+      }
+      console.log("Sorted:", sorted);
+      console.log("DATA: ", data);
       // this.invalidate();
     })
   }
