@@ -38,7 +38,7 @@ class Transport {
   }
 
   static dePacket(packet){
-    Log.d("=>", packet.ipAddr+":"+packet.port, "\""+packet.message+"\"");
+    Log.out("=>", packet.ipAddr+":"+packet.port, "\""+packet.message+"\"");
   }
 
   send(channel, msg, socketId = null){
