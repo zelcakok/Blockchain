@@ -50,7 +50,7 @@ class Transport {
         if(this.verbose) Log.d("Connecting to peer", socket.id, "...");
         var key = Zetabase.hash((peer.ipAddr + peer.port).split(".").join(""), 'md5');
         // this.socketClients[key].socket = socket;
-        // this.connect(key, peer.ipAddr, peer.port);
+        this.connect(key, peer.ipAddr, peer.port);
       });
 
       socket.on("CONN_EST", (peer)=>{
