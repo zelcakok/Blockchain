@@ -1,8 +1,17 @@
 const moment = require("moment");
-
+var verbose = false;
 class Log {
   static d(...msg){
-    console.log(msg.join("\t"), "\t["+moment().format("HH:mm:ss") + "]");
+    if(!verbose) return;
+    console.log(msg.join("  "), "\t["+moment().format("HH:mm:ss") + "]");
+  }
+
+  static out(...msg){
+    console.log(msg.join("  "), "\t["+moment().format("HH:mm:ss") + "]");
+  }
+
+  static setVerbose(action){
+    verbose = action;
   }
 }
 

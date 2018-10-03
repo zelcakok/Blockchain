@@ -1,8 +1,10 @@
 const dgram = require('dgram');
 const NetAddr = require('network-address');
-const Log = require("./Log");
+// const Log = require("./Log");
+var Log = null;
 class Beacon {
-  constructor(listenPort, socketPort, action = null){
+  constructor(listenPort, socketPort, logger){
+    Log = logger;
     this.listenPort = listenPort;
     this.listener = dgram.createSocket('udp4');
     this.listener.bind(listenPort);
@@ -13,7 +15,7 @@ class Beacon {
     );
 
     this.socketPort = socketPort;
-    this.action = action;
+    this.action = null;
   }
 
   setAction(action){
@@ -23,7 +25,7 @@ class Beacon {
   listen(){
     if(this.action === null) throw("Please setup the action first.");
     this.listener.on('listening',
-      ()=>Log.d("listen:", this.listenPort)
+      ()=>Log.out("Beacon service is started", this.listenPort)
     );
     this.listener.on('message',
       (msg)=>{

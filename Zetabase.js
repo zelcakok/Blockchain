@@ -4,10 +4,11 @@ const Auth = require('./Auth');
 const Crypto = require("crypto");
 const NetAddr = require("network-address");
 const EventEmitter = require("events").EventEmitter;
-const Log = require("./Log");
+var Log = null;
 
 class Zetabase {
-  constructor(dbPath){
+  constructor(dbPath, logger){
+    Log = logger;
     this.structure = null;
     this.dbPath = dbPath;
     // this.auth = Auth.getInstance();

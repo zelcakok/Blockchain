@@ -7,18 +7,18 @@ const Log = require("./Log");
 
 class Blockchain {
   constructor(dbPath, beaconSignalPort, transportPort, verbose){
-    this.db = new Zetabase(dbPath);
-    this.beacon = new Beacon(beaconSignalPort, transportPort);
-    this.transport = new Transport(transportPort, verbose);
+    Log.setVerbose(verbose);
+    this.db = new Zetabase(dbPath, Log);
+    this.beacon = new Beacon(beaconSignalPort, transportPort, Log);
+    this.transport = new Transport(transportPort, Log);
     this.initialize(transportPort);
   }
 
   broadcast(){
     this.beacon.setAction((signal)=>{
       var msg = JSON.parse(signal);
-      if(msg.message === "BLK_Client"){
+      if(msg.message === "BLK_Client")
         this.register(signal);
-      }
     })
     this.beacon.listen();
     this.beacon.broadcast(1000);
@@ -59,5 +59,5 @@ class Blockchain {
 
 }
 Zetabase.removeDB("./.zetabase.json").then(()=>{
-  var blockchain = new Blockchain("./.zetabase.json", 3049, 3000, true);
+  var blockchain = new Blockchain("./.zetabase.json", 3049, 3000, false);
 })
