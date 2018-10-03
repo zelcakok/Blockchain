@@ -159,7 +159,7 @@ class Zetabase {
         data[keys[i]] = sorted[keys[i]];
         delete sorted[keys[i]];
       }
-      console.log("READ", this.structure);
+      sorted = null;
       this.invalidate();
     })
   }
