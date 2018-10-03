@@ -5,22 +5,6 @@ const promise = require("promise");
 const NetAddr = require("network-address");
 const Zetabase = require("./Zetabase");
 var Log = null;
-/*
-  Handshake protocol
-
-  Case: hostA connect to hostB.
-
-  1. hostA connect ==> hostB.
-  2. hostB CONN_QUERY ==> hostA.
-        hostB waiting for info.
-  3. hostA CONN_INFO ==> hostB.
-  4. hostB connect ==> hostA.
-  5. hostA CONN_QUERY ==> hostB. (This part can be removed once the info can be found on socket.)
-        hostA waiting for info.
-  6. hostB CONN_INFO ==> hostA.
-  7. hostA CONN_EST ==> hostB.
-  Connection is established.
-*/
 
 class Transport {
   constructor(serPort, logger){
@@ -37,8 +21,7 @@ class Transport {
     this.socketServer = SocketServer(this.server);
 
     this.socketServer.on("connection", (socket)=>{
-      this.sessions[socket.id] = socket;
-      Log.out("Connection is established ID: ", socket.id);
+      Log.d("A new connection is established");
       // Log.d("Peer", socket.id, "is trying to connect...");
       // Log.d("Waiting for peer", socket.id, "information");
       // this.send("CONN_QUERY", socket.id, socket.id);

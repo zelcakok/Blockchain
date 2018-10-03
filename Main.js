@@ -17,7 +17,7 @@ class Blockchain {
   broadcast(){
     this.beacon.setAction((signal)=>{
       var msg = JSON.parse(signal);
-      if(msg.message === "BLK_Client")
+      if(msg.message === Zetabase.hash("BLK_Client", "md5"))
         this.register(signal);
     })
     this.beacon.listen();
@@ -30,7 +30,6 @@ class Blockchain {
       var key = Zetabase.hash((peer.ipAddr + peer.port).split(".").join(""), 'md5');
       if(peer.ipAddr !== NetAddr()) {
         this.transport.connect(key, peer.ipAddr, peer.port).then((socket)=>{
-          console.log("Connection is established ID: ", socket.id);
           this.transport.sendViaSocket("MSG", "This is " + NetAddr(), socket)
         })
       }
