@@ -29,7 +29,7 @@ class Transport {
   }
 
   static execute(classObj, func, ...param){
-    classObj[func](param[0], param[1]);
+    
   }
 
   connect(key, addr, port){
