@@ -39,9 +39,8 @@ class Blockchain {
         this.transport.connect(key, peer.ipAddr, peer.port).then((socket)=>{
           Log.d("Connection is established to peer", peer.ipAddr+":"+peer.port);
           setInterval(()=>{
-            this.transport.sendViaKey("MSG", "This is " + NetAddr(), key)
+            this.transport.sendViaKey("WRITE", "This is " + NetAddr(), key)
           }, 5000);
-
         })
       }
     })
@@ -57,7 +56,8 @@ class Blockchain {
 
   initialize(){
     var operations = {
-      MSG: (msg)=>Transport.dePacket(msg)
+      MSG: (msg)=>Transport.dePacket(msg),
+      WRITE: (data)=>Transport.execute(this, "append", "/data", data)
     }
     this.register(this.beacon.getSelfMsg());
     this.setMonitors();

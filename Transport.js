@@ -26,7 +26,10 @@ class Transport {
         socket.on(key, (payload)=>operations[key](payload))
       })
     });
+  }
 
+  static execute(classObj, func, ...param){
+    classObj[func](param[0], param[1]);
   }
 
   connect(key, addr, port){
