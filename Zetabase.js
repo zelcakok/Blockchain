@@ -5,6 +5,8 @@ const Crypto = require("crypto");
 const NetAddr = require("network-address");
 const EventEmitter = require("events").EventEmitter;
 const Checksum = require("checksum");
+const Entry = require('./Entry');
+
 var Log = null;
 
 class Zetabase {
@@ -53,8 +55,8 @@ class Zetabase {
   }
 
   traverse(url, createMissing = true){
-    if(url === '/') return this.structure;
-    return this._traverse(this.structure, url, createMissing);
+    if(url === '/') return this.structure.slot;
+    return this._traverse(this.structure.slot, url, createMissing);
   }
 
   prev(url){
@@ -75,7 +77,8 @@ class Zetabase {
     return new Promise((resolve, reject)=>{
       this.prepare().then(()=>{
         var url = this.traverse(path);
-        url.dir[url.ptr] = typeof(data) === "string"? data : JSON.stringify(data);
+        // url.dir[url.ptr] = typeof(data) === "string"? data : JSON.stringify(data);
+        url.dir[url.ptr] = new Entry(data)._checksum();
         if(fireEvent) this.eventEmitter.emit('onChanges', path, data);
         resolve();
       });
@@ -86,7 +89,9 @@ class Zetabase {
     return new Promise((resolve, reject)=>{
       this.prepare().then(()=>{
         var url = this.traverse(path);
-        url.dir[url.ptr][this.genKey()] = data;
+        // url.dir[url.ptr][this.genKey()] = data;
+        var entry = new Entry(data)._checksum().toJSON();
+        url.dir[url.ptr][this.genKey()] = entry;
         this.eventEmitter.emit('onChanges', path, data);
         resolve();
       });
@@ -172,8 +177,8 @@ class Zetabase {
   }
 
   invalidate(writeToFile = true){
-    this.checksum();
-    this.structure.lastUpdate = moment().valueOf();
+    // this.checksum();
+    // this.structure.lastUpdate = moment().valueOf();
     if(writeToFile) this.saveState();
     // Log.d(this.structure);
   }
@@ -185,12 +190,16 @@ class Zetabase {
   }
 
   sysStart(){
-    this.structure = {
+    // this.structure = {
+    //   data: new Object(),
+    //   peers: new Object(),
+    //   lastUpdate: null,
+    //   checksum: null
+    // }
+    this.structure = new Entry({
       data: new Object(),
-      peers: new Object(),
-      lastUpdate: null,
-      checksum: null
-    }
+      peers: new Object()
+    })._checksum();
     this.invalidate();
   }
 
