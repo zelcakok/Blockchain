@@ -38,9 +38,10 @@ class Blockchain {
       if(peer.ipAddr !== NetAddr()) {
         this.transport.connect(key, peer.ipAddr, peer.port).then((socket)=>{
           Log.d("Connection is established to peer", peer.ipAddr+":"+peer.port);
+          this.transport.sendViaKey("WRITE", "This is " + NetAddr(), key)
           setInterval(()=>{
             this.transport.sendViaKey("WRITE", "This is " + NetAddr(), key)
-          }, 5000);
+          }, 10000);
         })
       }
     })
@@ -58,7 +59,6 @@ class Blockchain {
     var operations = {
       MSG: (msg)=>Transport.dePacket(msg),
       WRITE: (data)=>this.db.append("/data", data)
-      // WRITE: (data)=>Transport.execute(this.db, "append", "/data", data)
     }
     this.register(this.beacon.getSelfMsg());
     this.setMonitors();

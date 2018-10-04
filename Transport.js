@@ -28,10 +28,6 @@ class Transport {
     });
   }
 
-  static execute(classObj, func, ...param){
-    
-  }
-
   connect(key, addr, port){
     return new Promise((resolve, reject)=>{
       Log.d("Trying to connect", addr+":"+port);
