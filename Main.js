@@ -11,7 +11,7 @@ class Blockchain {
   constructor(dbPath, beaconSignalPort, transportPort, verbose){
     this.shell = new Shell(IO);
     Log.setVerbose(verbose);
-    Log.bind(this.shell);
+    // Log.bind(this.shell);
     this.db = new Zetabase(dbPath, Log);
     this.beacon = new Beacon(beaconSignalPort, transportPort, Log);
     this.transport = new Transport(transportPort, Log);
@@ -71,9 +71,9 @@ class Blockchain {
 
 Zetabase.removeDB("./.zetabase.json").then(()=>{
   var blockchain = new Blockchain("./.zetabase.json", 3049, 3000, false);
-  var opts = {
-    gitpull: ()=>Shell.system("git pull"),
-    gitpush: ()=>Shell.system("gitpush")
-  }
-  blockchain.startShell(opts);
+  // var opts = {
+  //   gitpull: ()=>Shell.system("git pull"),
+  //   gitpush: ()=>Shell.system("gitpush")
+  // }
+  // blockchain.startShell(opts);
 })
