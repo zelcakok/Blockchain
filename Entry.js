@@ -30,7 +30,7 @@ class Entry {
     var entry = new Entry(obj.slot);
     entry.lastUpdate = obj.lastUpdate;
     entry.checksum = obj.checksum;
-    if(!entry.validate()) throw "Entry is being edited.";
+    if(!entry.validate()) throw "Database is compromised.";
     return entry;
   }
 }
