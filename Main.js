@@ -7,16 +7,18 @@ const Log = require("./Log");
 const IO = require("./IO");
 const Shell = require('./Shell');
 const Entry = require("./Entry");
+const Web = require("./Web");
 
 class Blockchain {
-  constructor(dbPath, beaconSignalPort, transportPort, verbose){
+  constructor(dbPath, beaconSignalPort, transportPort, webPort, verbose){
     this.shell = new Shell(IO);
     Log.setVerbose(verbose);
     // Log.bind(this.shell);
     this.db = new Zetabase(dbPath, Log);
     this.beacon = new Beacon(beaconSignalPort, transportPort, Log);
     this.transport = new Transport(transportPort, Log);
-    this.initialize(transportPort);
+    this.web = new Web(webPort,this, Log);
+    this.initialize();
   }
 
   broadcast(){
@@ -37,7 +39,7 @@ class Blockchain {
         this.transport.connect(key, peer.ipAddr, peer.port).then((socket)=>{
           Log.d("Connection is established to peer", peer.ipAddr+":"+peer.port);
           setInterval(()=>{
-            this.transport.sendViaKey("MSG", "This is " + NetAddr(), key)  
+            this.transport.sendViaKey("MSG", "This is " + NetAddr(), key)
           }, 5000);
 
         })
@@ -61,6 +63,7 @@ class Blockchain {
     this.setMonitors();
     this.transport.listen(operations);
     this.broadcast();
+    this.web.listen(this);
   }
 
   startShell(operations){
@@ -72,23 +75,6 @@ class Blockchain {
   }
 }
 
-// Zetabase.removeDB("./.zetabase.json").then(()=>{
-  // var db = new Zetabase("./.zetabase.json", Log);
-  // db.write("/data/Students/koktshozelca", {name: "ZelcaKok", age:10}).then(()=>{
-    // db.read("/data/Students").then((data)=>{
-    //   Object.keys(data).map((key)=>{
-    //     var entry = Entry.parse(data[key]);
-    //     console.log(entry);
-    //   })
-    // })
-  // })
-// });
-
 Zetabase.removeDB("./.zetabase.json").then(()=>{
-  var blockchain = new Blockchain("./.zetabase.json", 3049, 3000, false);
-  // var opts = {
-  //   gitpull: ()=>Shell.system("git pull"),
-  //   gitpush: ()=>Shell.system("gitpush")
-  // }
-  // blockchain.startShell(opts);
+  var blockchain = new Blockchain("./.zetabase.json", 3049, 3000, 8080, false);
 })
