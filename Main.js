@@ -57,7 +57,7 @@ class Blockchain {
   initialize(){
     var operations = {
       MSG: (msg)=>Transport.dePacket(msg),
-      WRITE: (data)=>Transport.execute(this, "append", "/data", data)
+      WRITE: (data)=>Transport.execute(this.db, "append", "/data", data)
     }
     this.register(this.beacon.getSelfMsg());
     this.setMonitors();
