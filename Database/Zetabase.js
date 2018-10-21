@@ -1,10 +1,10 @@
 const fs = require('fs');
 const moment = require('moment');
-const Auth = require('./Auth');
 const Crypto = require("crypto");
 const NetAddr = require("network-address");
 const EventEmitter = require("events").EventEmitter;
 const Checksum = require("checksum");
+const Auth = require('../OAuth/Auth');
 const Entry = require('./Entry');
 
 var Log = null;

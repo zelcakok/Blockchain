@@ -1,13 +1,13 @@
-const Zetabase = require("./Zetabase");
-const Beacon = require("./Beacon");
-const Transport = require("./Transport");
+const Zetabase = require("./Database/Zetabase");
+const Entry = require("./Database/Entry");
+const Beacon = require("./Network/Beacon");
+const Transport = require("./Network/Transport");
 const NetAddr = require("network-address");
 const Crypto = require("crypto");
 const Log = require("./Log");
-const IO = require("./IO");
-const Shell = require('./Shell');
-const Entry = require("./Entry");
-const Web = require("./Web");
+const IO = require("./CommandLine/IO");
+const Shell = require('./CommandLine/Shell');
+const Web = require("./Web/WebServer");
 
 class Blockchain {
   constructor(dbPath, beaconSignalPort, transportPort, webPort, verbose){
@@ -76,13 +76,16 @@ class Blockchain {
   }
 }
 
-Zetabase.removeDB("./.zetabase.json").then(()=>{
-  console.clear();
-  var blockchain = new Blockchain("./.zetabase.json", 3049, 3000, 8080, false);
-  blockchain.db.read("/data").then((data)=>{
-    Object.keys(data).map((key)=>{
-      var entry = Entry.parse(data[key]);
-      console.log(entry);
-    })
-  })
-})
+
+
+
+// Zetabase.removeDB("./.zetabase.json").then(()=>{
+//   console.clear();
+//   var blockchain = new Blockchain("./.zetabase.json", 3049, 3000, 8080, false);
+//   blockchain.db.read("/data").then((data)=>{
+//     Object.keys(data).map((key)=>{
+//       var entry = Entry.parse(data[key]);
+//       console.log(entry);
+//     })
+//   })
+// })

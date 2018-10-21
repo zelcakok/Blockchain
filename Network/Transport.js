@@ -3,7 +3,7 @@ const SocketServer = require('socket.io');
 const SocketClient = require("socket.io-client");
 const promise = require("promise");
 const NetAddr = require("network-address");
-const Zetabase = require("./Zetabase");
+const Zetabase = require("../Database/Zetabase");
 var Log = null;
 
 class Transport {

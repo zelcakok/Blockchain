@@ -1,6 +1,6 @@
 const dgram = require('dgram');
 const NetAddr = require('network-address');
-const Zetabase = require('./Zetabase');
+const Zetabase = require('../Database/Zetabase');
 var Log = null;
 class Beacon {
   constructor(listenPort, socketPort, logger){
