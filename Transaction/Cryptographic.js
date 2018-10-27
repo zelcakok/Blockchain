@@ -14,5 +14,11 @@ class Cryptographic {
     bytes.forEach((byte)=>msg += base58.encode(parseInt(byte, 10)));
     return msg;
   }
+
+  static base58Decode(bytes){
+    var msg = "";
+    bytes.forEach((byte)=>msg += base58.decode(parseInt(byte, 10)));
+    return msg;
+  }
 }
 module.exports = Cryptographic;
