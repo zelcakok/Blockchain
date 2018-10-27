@@ -14,17 +14,27 @@ class Transport {
     this.socketServer = null;
     this.sessions = [];
     this.socketClients = [];
+
+    this.protocols = [];
   }
 
-  listen(operations){
+  listen(){
     this.server.listen(this.serPort);
     this.socketServer = SocketServer(this.server);
     this.socketServer.on("connection", (socket)=>{
       Log.d("A new connection is established");
-      Object.keys(operations).map((key)=>{
-        socket.on(key, (payload)=>operations[key](payload))
+      Object.keys(this.protocols).map((key)=>{
+        socket.on(key, (payload)=>this.protocols[key](payload))
       })
     });
+  }
+
+  addProtocol(protocol, action){
+    this.protocols[protocol] = action;
+  }
+
+  addProtocols(protocols){
+    Object.keys(this.protocols).map((key)=>this.addProtocol(key, protocols[key]))
   }
 
   connect(key, addr, port){

@@ -7,9 +7,9 @@ const Crypto = require("crypto");
 const Log = require("./Log");
 const Shell = require("./Shell/Shell");
 const Web = require("./Web/WebServer");
-const Protocols = require("./Network/Protocols");
 
-const protocols = new Protocols();
+const Broker = require("./Transaction/Broker");
+
 var identity = null;
 
 class Wallet {
@@ -21,6 +21,7 @@ class Wallet {
     this.beacon = new Beacon(beaconSignalPort, transportPort, Log);
     this.transport = new Transport(transportPort, Log);
     this.web = new Web(webPort,this, Log);
+    this.broker = new Broker(this);
     this.initialize();
   }
 
@@ -59,15 +60,9 @@ class Wallet {
   }
 
   initialize(){
-    var pTrans = protocols.TRANSACTION;
-    var operations = {
-      MSG: (msg)=>Transport.dePacket(msg),
-      WRITE: (data)=>this.db.append("/data", data),
-      pTrans : (trans)=>Transport.dePacket(trans),
-    }
     this.register(this.beacon.getSelfMsg());
     this.setMonitors();
-    this.transport.listen(operations);
+    this.transport.listen();
     this.broadcast();
     this.web.listen(this);
   }
@@ -77,8 +72,6 @@ class Wallet {
   }
 }
 
-
-
 Zetabase.removeDB("./.zetabase.json").then(()=>{
   console.clear();
   var wallet = new Wallet("./.zetabase.json", 3049, 3000, 8080, false);
@@ -86,8 +79,8 @@ Zetabase.removeDB("./.zetabase.json").then(()=>{
   var debug = {
     Desc: "NULL | DEBUG",
     func: ()=>{
-      console.log("HELLO");
-      wallet.transport.broadcast(protocols.TRANSACTION, "HEY Wallet !!!")
+      console.log("Broker test");
+      wallet.broker.createPayment(null);
     }
   }
   wallet.shell.addOperation("debug", debug);
