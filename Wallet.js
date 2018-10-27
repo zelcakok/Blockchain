@@ -5,15 +5,16 @@ const Transport = require("./Network/Transport");
 const NetAddr = require("network-address");
 const Crypto = require("crypto");
 const Log = require("./Log");
-const IO = require("./CommandLine/IO");
-const Shell = require('./CommandLine/Shell');
+const Shell = require("./Shell/Shell");
 const Web = require("./Web/WebServer");
 
-class Blockchain {
+var identity = null;
+
+class Wallet {
   constructor(dbPath, beaconSignalPort, transportPort, webPort, verbose){
-    this.shell = new Shell(IO);
+    this.shell = new Shell();
     Log.setVerbose(verbose);
-    // Log.bind(this.shell);
+    Log.bind(this.shell);
     this.db = new Zetabase(dbPath, Log);
     this.beacon = new Beacon(beaconSignalPort, transportPort, Log);
     this.transport = new Transport(transportPort, Log);
@@ -38,10 +39,10 @@ class Blockchain {
       if(peer.ipAddr !== NetAddr()) {
         this.transport.connect(key, peer.ipAddr, peer.port).then((socket)=>{
           Log.d("Connection is established to peer", peer.ipAddr+":"+peer.port);
-          this.transport.sendViaKey("WRITE", "This is " + NetAddr(), key)
-          setInterval(()=>{
-            this.transport.sendViaKey("WRITE", "This is " + NetAddr(), key)
-          }, 10000);
+          // this.transport.sendViaKey("WRITE", "This is " + NetAddr(), key)
+          // setInterval(()=>{
+          //   this.transport.sendViaKey("WRITE", "This is " + NetAddr(), key)
+          // }, 10000);
         })
       }
     })
@@ -58,7 +59,8 @@ class Blockchain {
   initialize(){
     var operations = {
       MSG: (msg)=>Transport.dePacket(msg),
-      WRITE: (data)=>this.db.append("/data", data)
+      WRITE: (data)=>this.db.append("/data", data),
+      WALLET: (data)=>Transport.dePacket(msg),
     }
     this.register(this.beacon.getSelfMsg());
     this.setMonitors();
@@ -67,25 +69,15 @@ class Blockchain {
     this.web.listen(this);
   }
 
-  startShell(operations){
-    setTimeout(()=>{
-      Log.out("Shell service is started.");
-      this.shell.setOperation(operations);
-      this.shell.prompt();
-    }, 100);
+  startShell(){
+    this.shell.prompt();
   }
 }
 
 
 
-
-// Zetabase.removeDB("./.zetabase.json").then(()=>{
-//   console.clear();
-//   var blockchain = new Blockchain("./.zetabase.json", 3049, 3000, 8080, false);
-//   blockchain.db.read("/data").then((data)=>{
-//     Object.keys(data).map((key)=>{
-//       var entry = Entry.parse(data[key]);
-//       console.log(entry);
-//     })
-//   })
-// })
+Zetabase.removeDB("./.zetabase.json").then(()=>{
+  console.clear();
+  var blockchain = new Wallet("./.zetabase.json", 3049, 3000, 8080, true);
+  blockchain.startShell();
+})

@@ -12,7 +12,7 @@ class Web {
 
   listen(){
     this.server.use(pretty({ query: 'pretty' }));
-    this.server.use(express.static("UI"));
+    this.server.use(express.static(__dirname+"/public"));
     this.server.use("/db", (req, res)=>{
       this.blockchain.db.getStructure().then((structure)=>{
         res.json(structure);

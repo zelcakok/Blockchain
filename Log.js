@@ -4,17 +4,13 @@ var shell = null;
 class Log {
   static d(...msg){
     if(!verbose) return;
-    if(shell === null)
-      console.log(msg.join("  "), "\t["+moment().format("HH:mm:ss") + "]");
-    else
-      shell.queueMsg(msg.join("  ")+"\t\t["+moment().format("HH:mm:ss") + "]");
+    var m = Log.record(msg);
+    Log.serve(m);
   }
 
   static out(...msg){
-    if(shell === null)
-      console.log(msg.join("  "), "\t["+moment().format("HH:mm:ss") + "]");
-    else
-      shell.queueMsg(msg.join("  ")+"\t\t["+moment().format("HH:mm:ss") + "]");
+    var m = Log.record(msg);
+    Log.serve(m);
   }
 
   static setVerbose(action){
@@ -23,6 +19,15 @@ class Log {
 
   static bind(Shell){
     shell = Shell;
+  }
+
+  static record(msg){
+    return msg.join("\t")+"".padStart(20)+"["+moment().format("HH:mm:ss") + "]";
+  }
+
+  static serve(m){
+    if(shell) shell.queueMsg(m);
+    else console.log(m);
   }
 }
 

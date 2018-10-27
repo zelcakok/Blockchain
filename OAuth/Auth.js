@@ -1,5 +1,4 @@
 const firebase = require('firebase');
-const promise = require('promise');
 
 var instance = null;
 class Auth {
@@ -7,7 +6,10 @@ class Auth {
     var config = {
       apiKey: "AIzaSyCffQlrQXqYcwOQZWLPsnsaeGHk6q8W6kw",
       authDomain: "blockchain-1077f.firebaseapp.com",
+      databaseURL: "https://blockchain-1077f.firebaseio.com",
       projectId: "blockchain-1077f",
+      storageBucket: "blockchain-1077f.appspot.com",
+      messagingSenderId: "650452753735"
     };
     firebase.initializeApp(config);
     this.fbAuth = firebase.auth();
@@ -18,34 +20,8 @@ class Auth {
     return instance;
   }
 
-  getInput(label, masked = false){
-    return new Promise((resolve, reject)=>{
-      process.stdout.write(label+": ");
-      var stdIn = process.openStdin();
-      stdIn.addListener('data', (data)=>resolve(data.toString().trim()));
-    });
-  }
-
-  startConsoleSignIn(){
-    console.clear();
-    return new Promise((resolve, reject)=>{
-      var username = "", password = "";
-      this.getInput("Username").then((username)=>{
-        this.getInput("Password").then((password)=>{
-          resolve({username: username, password: password});
-        })
-      })
-    });
-  }
-
-  emailAuth(){
-    return new Promise((resolve, reject)=>{
-      this.startConsoleSignIn().then((cred)=>{
-        this.fbAuth.signInWithEmailAndPassword(cred.username, cred.password)
-        .then(()=>resolve(this.fbAuth.currentUser))
-        .catch((error)=>reject(error));
-      })
-    });
+  emailAuth(email, password){
+    return this.fbAuth.signInWithEmailAndPassword(email, password);
   }
 }
 
