@@ -60,7 +60,7 @@ class Wallet {
     var operations = {
       MSG: (msg)=>Transport.dePacket(msg),
       WRITE: (data)=>this.db.append("/data", data),
-      WALLET: (data)=>Transport.dePacket(msg),
+      WALLET: (data)=>Transport.dePacket(data),
     }
     this.register(this.beacon.getSelfMsg());
     this.setMonitors();

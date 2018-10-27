@@ -57,7 +57,7 @@ class Transport {
 
   broadcast(channel, msg){
     Object.keys(this.socketClients).map((key)=>{
-      this.sendViaSocket(channel, msg, key);
+      this.sendViaKey(channel, msg, key);
     })
   }
 }
