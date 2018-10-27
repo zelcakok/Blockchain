@@ -91,8 +91,5 @@ Zetabase.removeDB("./.zetabase.json").then(()=>{
     }
   }
   wallet.shell.addOperation("debug", debug);
-
-  console.log(protocols.TRANSACTION);
-
-  // wallet.startShell();
+  wallet.startShell();
 })
