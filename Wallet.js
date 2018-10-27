@@ -78,6 +78,16 @@ class Wallet {
 
 Zetabase.removeDB("./.zetabase.json").then(()=>{
   console.clear();
-  var blockchain = new Wallet("./.zetabase.json", 3049, 3000, 8080, true);
-  blockchain.startShell();
+  var wallet = new Wallet("./.zetabase.json", 3049, 3000, 8080, false);
+
+  var debug = {
+    Desc: "NULL | DEBUG",
+    func: ()=>{
+      console.log("HELLO");
+      wallet.transport.broadcast("WALLET", "HEY Wallet !!!")
+    }
+  }
+  wallet.shell.addOperation("debug", debug);
+
+  wallet.startShell();
 })

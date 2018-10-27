@@ -19,7 +19,6 @@ class Transport {
   listen(operations){
     this.server.listen(this.serPort);
     this.socketServer = SocketServer(this.server);
-
     this.socketServer.on("connection", (socket)=>{
       Log.d("A new connection is established");
       Object.keys(operations).map((key)=>{
@@ -54,6 +53,12 @@ class Transport {
   sendViaKey(channel, msg, key){
     var payload = {ipAddr: NetAddr(), port: this.serPort, message: msg};
     this.socketClients[key].emit(channel, payload);
+  }
+
+  broadcast(channel, msg){
+    Object.keys(this.socketClients).map((key)=>{
+      this.sendViaSocket(channel, msg, key);
+    })
   }
 }
 

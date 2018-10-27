@@ -78,12 +78,6 @@ class Shell {
       wallet: {
         Desc: "NULL".padEnd(20) + "Get the wallet information.",
         func: ()=> this.showWallet()
-      },
-      debug: {
-        Desc: "NULL".padEnd(20) + "DEBUG",
-        func: ()=>{
-          console.log("Wallet address: ", Wallet.identity.getBitcoinAddress());
-        }
       }
     }
     this.addOperations(operations);
