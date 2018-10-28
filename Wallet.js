@@ -42,12 +42,16 @@ class Wallet {
       if(peer.ipAddr !== NetAddr()) {
         this.transport.connect(key, peer.ipAddr, peer.port).then((socket)=>{
           Log.d("Connection is established to peer", peer.ipAddr+":"+peer.port);
-          // this.transport.sendViaKey("WRITE", "This is " + NetAddr(), key)
-          // setInterval(()=>{
-          //   this.transport.sendViaKey("WRITE", "This is " + NetAddr(), key)
-          // }, 10000);
         })
       }
+    })
+
+    this.db.monitor("/blocks", (block)=>{
+      Log.out("A new block is created, " + block.toString())
+    })
+
+    this.db.monitor("/pending", (transaction)=>{
+      Log.out("A new transaction is pending, " + transaction.toString())
     })
   }
 
@@ -76,13 +80,4 @@ Zetabase.removeDB("./.zetabase.json").then(async ()=>{
   console.clear();
   var wallet = new Wallet("./.zetabase.json", 3049, 3000, 8080, false);
   wallet.startShell();
-
-  var debug = {
-    Desc: "NULL | DEBUG",
-    func: ()=>{
-      console.log("Broker test");
-      wallet.broker.createPayment(null, 100);
-    }
-  }
-  wallet.shell.addOperation("debug", debug);
 })
