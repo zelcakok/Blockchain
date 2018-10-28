@@ -22,7 +22,7 @@ class Broker {
       var payment = trans.payment;
       var scriptPubKey = trans.scriptPubKey;
 
-      console.log(scriptSig);
+      console.log(JSON.parse(scriptSig));
 
       var verification = await Payment.verify(scriptSig.pubKey, scriptSig.sig, payment);
       Log.out("Verification: ", verification);
@@ -54,7 +54,7 @@ class Broker {
       payment: payment,
       scriptPubKey: Cryptographic.base58Decode(tarAddr).toString(16)
     }
-    transaction = JSON.stringify(transaction);
+    // transaction = JSON.stringify(transaction);
     this.wallet.transport.broadcast(PROTOCOLS_TRANSACTION, transaction);
   }
 }
