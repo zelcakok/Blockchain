@@ -8,6 +8,7 @@ class Payment {
     this.id = crypto.createHash("md5").update(prevId + tarAddr + amount + moment().valueOf().toString()).digest("hex");
     this.tarAddr = tarAddr;
     this.amount = amount;
+    this.timestamp = moment().valueOf();
   }
 
   static prepare(trans){
@@ -21,7 +22,5 @@ class Payment {
       .then(()=>{return true})
       .catch(()=>{return false})
   }
-
-
 }
 module.exports = Payment;

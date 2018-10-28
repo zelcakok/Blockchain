@@ -44,15 +44,7 @@ class Wallet {
           Log.d("Connection is established to peer", peer.ipAddr+":"+peer.port);
         })
       }
-    })
-
-    this.db.monitor("/blocks", (block)=>{
-      Log.out("A new block is created, " + block.toString())
-    })
-
-    this.db.monitor("/pending", (transaction)=>{
-      Log.out("A new transaction is waiting for approval, " + transaction.toString())
-    })
+    })    
   }
 
   register(beaconInfo){
