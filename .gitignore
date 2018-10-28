@@ -19,4 +19,4 @@
 package-lock.json
 
 npm-debug.log*
-.credential
+.credential.json
