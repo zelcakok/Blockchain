@@ -15,7 +15,7 @@ class Broker {
 
   fillProtocols(){
     this.wallet.transport.addProtocol(PROTOCOLS_TRANSACTION, (msg)=>{
-      Log.out("New Transaction comes:\n", msg);
+      Log.out("New Transaction comes:\n", JSON.stringify(msg, null, 2));
     })
     var pay = {
       Desc: "[email address]".padEnd(20) + "Pay to other user.",
