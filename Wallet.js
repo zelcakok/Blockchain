@@ -10,7 +10,7 @@ const Web = require("./Web/WebServer");
 
 const Broker = require("./Transaction/Broker");
 
-var identity = null;
+var WALLET_IDENTITY = null;
 
 class Wallet {
   constructor(dbPath, beaconSignalPort, transportPort, webPort, verbose){
@@ -72,17 +72,17 @@ class Wallet {
   }
 }
 
-Zetabase.removeDB("./.zetabase.json").then(()=>{
+Zetabase.removeDB("./.zetabase.json").then(async ()=>{
   console.clear();
   var wallet = new Wallet("./.zetabase.json", 3049, 3000, 8080, false);
+  wallet.startShell();
 
   var debug = {
     Desc: "NULL | DEBUG",
     func: ()=>{
       console.log("Broker test");
-      wallet.broker.createPayment(null);
+      wallet.broker.createPayment(null, 100);
     }
   }
   wallet.shell.addOperation("debug", debug);
-  wallet.startShell();
 })

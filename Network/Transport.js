@@ -30,7 +30,6 @@ class Transport {
   }
 
   addProtocol(protocol, action){
-    console.log("Add P", protocol);
     this.protocols[protocol] = action;
   }
 

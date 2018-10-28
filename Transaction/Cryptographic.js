@@ -15,9 +15,10 @@ class Cryptographic {
     return msg;
   }
 
-  static base58Decode(bytes){
+  static base58Decode(bytestr){
+    return base58.decode(bytestr);
     var msg = "";
-    bytes.forEach((byte)=>msg += base58.decode(parseInt(byte, 10)));
+    // bytestr.split("").forEach((byte)=>msg += base58.decode(parseInt(byte, 10)));
     return msg;
   }
 }
