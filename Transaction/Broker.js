@@ -21,11 +21,14 @@ class Broker {
       var scriptSig = trans.scriptSig;
       var payment = trans.payment;
 
-      var verification = await Payment.verify(scriptSig.pubKey, scriptSig.sig, payment);
-      Log.out("Verification: ", verification);
+      var isTransExist = await this.wallet.db.containsKey(trans.payment.id);
+      if(isTransExist) {
+        Log.out("The Transaction is exist, I will ignore it.");
+      } else {
+        var verification = await Payment.verify(scriptSig.pubKey, scriptSig.sig, payment);
+        Log.out("Verification: ", verification);
 
-      if(verification) {
-        this.negotiate(trans);
+        if(verification) this.negotiate(trans);
       }
     })
     var pay = {
