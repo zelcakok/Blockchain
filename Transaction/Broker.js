@@ -66,7 +66,7 @@ class Broker {
   }
 
   negotiate(transaction){
-    this.wallet.db.write("/pending/"+transaction.id, transaction).then(()=>{
+    this.wallet.db.write("/pending/"+transaction.payment.id, transaction).then(()=>{
       Log.out("The transaction is added to /pending, waiting for approval");
     })
   }
