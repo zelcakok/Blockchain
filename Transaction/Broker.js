@@ -15,7 +15,7 @@ class Broker {
 
   fillProtocols(){
     this.wallet.transport.addProtocol(PROTOCOLS_TRANSACTION, (msg)=>{
-      console.log("TRNAS: ", msg);
+      Log.out("New Transaction comes:\n", msg);
     })
     var pay = {
       Desc: "[email address]".padEnd(20) + "Pay to other user.",
