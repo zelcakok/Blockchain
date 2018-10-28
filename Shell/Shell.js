@@ -79,7 +79,7 @@ class Shell {
   showWallet(){
     console.log("\n");
     console.log("".padEnd(3)+"Current amount".padEnd(20)+0+" BTC");
-    console.log("".padEnd(3)+"Wallet Address".padEnd(20)+Wallet.identity.getBitcoinAddress());
+    console.log("".padEnd(3)+"Wallet Address".padEnd(20)+Wallet.WALLET_IDENTITY.getBitcoinAddress());
     console.log("\n");
   }
 
