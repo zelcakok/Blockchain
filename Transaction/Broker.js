@@ -22,7 +22,7 @@ class Broker {
       var payment = trans.payment;
       var scriptPubKey = trans.scriptPubKey;
 
-      var verification = await Payment(scriptSig.pubKey, scriptSig.sig, payment);
+      var verification = await Payment.verify(scriptSig.pubKey, scriptSig.sig, payment);
       Log.out("Verification: ", verification);
 
     })
