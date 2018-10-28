@@ -37,20 +37,10 @@ class Broker {
       }
     }
     this.wallet.shell.addOperation("pay", pay);
-
-    this.wallet.db.monitor("/blocks", (block)=>{
-      Log.out("A new block is created, " + block.toString())
-    })
-
-    this.wallet.db.monitor("/pending", (transaction)=>{
-      Log.out("A new transaction is added, it is waiting for your approval");
-
-    })
   }
 
   async createPayment(tarAddr, amount){
     tarAddr = Wallet.WALLET_IDENTITY.getBitcoinAddress();
-
     var payment = new Payment(null, tarAddr, amount);
     var sig = await Wallet.WALLET_IDENTITY.sign(payment);
     var transaction = {
@@ -62,12 +52,16 @@ class Broker {
       scriptPubKey: Cryptographic.base58Decode(tarAddr).toString(16)
     }
 
-    this.wallet.transport.broadcast(PROTOCOLS_TRANSACTION, transaction);
+    this.wallet.db.write("/blocks"+transaction.payment.id, transaction).then(()=>{
+      Log.out("My transaction is added to /blocks, broadcasting...");
+      this.wallet.transport.broadcast(PROTOCOLS_TRANSACTION, transaction);
+    });
   }
 
   negotiate(transaction){
-    this.wallet.db.write("/pending/"+transaction.payment.id, transaction).then(()=>{
-      Log.out("The transaction is added to /pending, waiting for approval");
+    this.wallet.db.write("/blocks"+transaction.payment.id, transaction).then(()=>{
+      Log.out("The transaction is added to /blocks, broadcasting...");
+      this.wallet.transport.broadcast(PROTOCOLS_TRANSACTION, transaction);
     })
   }
 }
