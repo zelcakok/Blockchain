@@ -51,7 +51,7 @@ class Wallet {
     })
 
     this.db.monitor("/pending", (transaction)=>{
-      Log.out("A new transaction is pending, " + transaction.toString())
+      Log.out("A new transaction is waiting for approval, " + transaction.toString())
     })
   }
 
