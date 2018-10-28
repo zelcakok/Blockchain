@@ -21,7 +21,7 @@ class Broker {
       var scriptSig = trans.scriptSig;
       var payment = trans.payment;
 
-      var isTransExist = await this.wallet.db.containsKey(trans.payment.id);
+      var isTransExist = await this.wallet.db.containsKey("/blocks/"+trans.payment.id);
       if(isTransExist) {
         Log.out("The Transaction is exist, I will ignore it.");
       } else {
