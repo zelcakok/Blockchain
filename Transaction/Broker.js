@@ -1,7 +1,7 @@
 const Wallet = require("../Wallet");
 const Cryptographic = require("./Cryptographic");
 const Payment = require("./Payment");
-const Transaction = require("./Transaction");
+const Transaction = require("./Payment");
 
 const PROTOCOLS_TRANSACTION = Cryptographic.md5("&ptrans;");
 
@@ -22,7 +22,7 @@ class Broker {
       var payment = trans.payment;
       var scriptPubKey = trans.scriptPubKey;
 
-      var verification = await Transaction(scriptSig.pubKey, scriptSig.sig, payment);
+      var verification = await Payment(scriptSig.pubKey, scriptSig.sig, payment);
       Log.out("Verification: ", verification);
 
     })
