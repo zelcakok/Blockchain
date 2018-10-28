@@ -21,7 +21,7 @@ class Wallet {
     this.beacon = new Beacon(beaconSignalPort, transportPort, Log);
     this.transport = new Transport(transportPort, Log);
     this.web = new Web(webPort,this, Log);
-    this.broker = new Broker(this);
+    this.broker = new Broker(this, Log);
     this.initialize();
   }
 

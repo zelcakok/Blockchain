@@ -4,8 +4,11 @@ const Payment = require("./Payment");
 
 const PROTOCOLS_TRANSACTION = Cryptographic.md5("&ptrans;");
 
+var Log = null;
+
 class Broker {
-  constructor(wallet){
+  constructor(wallet, logger){
+    Log = logger;
     this.wallet = wallet;
     this.fillProtocols();
   }
