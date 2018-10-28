@@ -40,7 +40,7 @@ class Broker {
         pubKey: Wallet.WALLET_IDENTITY.getPublicKey()
       },
       payment: payment,
-      scriptPubKey: Cryptographic.base58Decode(tarAddr)
+      scriptPubKey: Cryptographic.base58Decode(tarAddr).toString()
     }
     transaction = JSON.stringify(transaction);
     this.wallet.transport.broadcast(PROTOCOLS_TRANSACTION, transaction);
