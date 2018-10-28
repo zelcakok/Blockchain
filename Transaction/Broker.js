@@ -1,8 +1,8 @@
-const PROTOCOLS_TRANSACTION = "&ptrans;";
-
 const Wallet = require("../Wallet");
 const Cryptographic = require("./Cryptographic");
 const Payment = require("./Payment");
+
+const PROTOCOLS_TRANSACTION = Cryptographic.md5("&ptrans;");
 
 class Broker {
   constructor(wallet){
@@ -14,6 +14,15 @@ class Broker {
     this.wallet.transport.addProtocol(PROTOCOLS_TRANSACTION, (msg)=>{
       console.log("TRNAS: ", msg);
     })
+    var pay = {
+      Desc: "[email address]".padEnd(20) + "Pay to other user.",
+      func: (...param)=> {
+        var tarAddr = param[1];
+        var amount = param[2];
+        this.createPayment(tarAddr, amount);
+      }
+    }
+    this.wallet.shell.addOperation("pay", pay);
   }
 
   async createPayment(tarAddr, amount){

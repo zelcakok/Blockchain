@@ -68,13 +68,6 @@ class Shell {
         Desc: "NULL".padEnd(20) + "Upgrade Wallet system",
         func: async ()=>await this.upgrade()
       },
-      pay: {
-        Desc: "[email address]".padEnd(20) + "Pay to other user.",
-        func: async ()=> await this.authentication().then((auth)=>{
-          if(auth) console.log("Proceed");
-          else console.log("Terminate");
-        })
-      },
       wallet: {
         Desc: "NULL".padEnd(20) + "Get the wallet information.",
         func: ()=> this.showWallet()
@@ -196,7 +189,6 @@ class Shell {
           //Generate the private key using digest
           // Wallet.identity = new Identity(credential.signature);
           Wallet.WALLET_IDENTITY = new Identity(credential.signature);
-          console.log("Identity is restored", Wallet.WALLET_IDENTITY);
           resolve()
         })
       } catch (err){

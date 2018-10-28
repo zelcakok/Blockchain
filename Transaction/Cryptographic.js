@@ -21,5 +21,9 @@ class Cryptographic {
     // bytestr.split("").forEach((byte)=>msg += base58.decode(parseInt(byte, 10)));
     return msg;
   }
+
+  static md5(plaintext){
+    return crypto.createHash("md5").update(plaintext).digest("hex");
+  }
 }
 module.exports = Cryptographic;
