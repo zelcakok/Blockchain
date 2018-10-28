@@ -1,6 +1,7 @@
 const Wallet = require("../Wallet");
 const Cryptographic = require("./Cryptographic");
 const Payment = require("./Payment");
+const Transaction = require("./Transaction");
 
 const PROTOCOLS_TRANSACTION = Cryptographic.md5("&ptrans;");
 
