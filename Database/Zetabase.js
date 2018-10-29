@@ -6,29 +6,27 @@ const EventEmitter = require("events").EventEmitter;
 const Checksum = require("checksum");
 const Auth = require('../OAuth/Auth');
 const Entry = require('./Entry');
+const Wallet = require("../Wallet/Wallet");
+const Cryptographic = require("../Transaction/Cryptographic");
+const Shell = require("../Shell/Shell");
 
 var Log = null;
 
 class Zetabase {
-  constructor(dbPath, logger){
+  constructor(dbPath, logger, wallet){
     Log = logger;
     this.structure = null;
     this.dbPath = dbPath;
-    // this.auth = Auth.getInstance();
-
     this.eventEmitter = new EventEmitter();
     this.eventEmitter.on('onChanges', (path, value)=>this.onChanges(path, value));
-
     this.monitorList = [];
-    this.prepare();
+    this.wallet = wallet;
   }
 
-  prepare(){
-    return new Promise((resolve, reject)=>{
-      if(this.structure !== null) return resolve();
-      if(fs.existsSync(this.dbPath)) return resolve(this.sysResume());
-      else return resolve(this.sysStart());
-    });
+  async prepare(){
+    if(this.structure !== null) return Promise.resolve();
+    if(fs.existsSync(this.dbPath)) return await this.sysResume() ? Promise.resolve() : Promise.reject();
+    else return Promise.resolve(this.sysStart());
   }
 
   onChanges(path, value){
@@ -64,12 +62,12 @@ class Zetabase {
     return url.split("/")[0];
   }
 
-  read(path, createMissing = true){
+  async read(path, createMissing = true){
     return new Promise((resolve, reject)=>{
-      this.prepare().then(()=>{
+      this.prepare().then(async ()=>{
         var url = this.traverse(path, createMissing);
         return resolve(url.dir[url.ptr]);
-      });
+      }).catch((err)=>{if(err) {console.log(err); this.wallet.emergency()}})
     });
   }
 
@@ -77,11 +75,10 @@ class Zetabase {
     return new Promise((resolve, reject)=>{
       this.prepare().then(()=>{
         var url = this.traverse(path);
-        // url.dir[url.ptr] = typeof(data) === "string"? data : JSON.stringify(data);
-        url.dir[url.ptr] = new Entry(data)._checksum();
+        url.dir[url.ptr] = typeof(data) === "string"? data : JSON.stringify(data);
         if(fireEvent) this.eventEmitter.emit('onChanges', path, data);
         resolve();
-      });
+      }).catch((err)=>{if(err) {console.log(err); this.wallet.emergency()}});
     });
   }
 
@@ -89,24 +86,26 @@ class Zetabase {
     return new Promise((resolve, reject)=>{
       this.prepare().then(()=>{
         var url = this.traverse(path);
-        // url.dir[url.ptr][this.genKey()] = data;
-        var entry = new Entry(data)._checksum().toJSON();
-        url.dir[url.ptr][this.genKey()] = entry;
+        url.dir[url.ptr][this.genKey()] = data;
         this.eventEmitter.emit('onChanges', path, data);
         resolve();
-      });
+      }).catch((err)=>{lo(err)});
     });
   }
 
   wipe(path){
-    return new Promise((resolve, reject)=>{
+    return new Promise(async (resolve, reject)=>{
+      if(path === "/") {
+        await Zetabase.removeDB(this.dbPath);
+        return resolve(this.sysStart());
+      }
       this.prepare().then(()=>{
         var url = this.traverse(path);
         url.dir[url.ptr] = null;
         delete url.dir[url.ptr];
         this.eventEmitter.emit('onChanges', path, null);
         resolve();
-      });
+      }).catch((err)=>{if(err) {console.log(err); this.wallet.emergency()}});
     });
   }
 
@@ -121,7 +120,7 @@ class Zetabase {
     return new Promise((resolve, reject)=>{
       this.prepare().then(()=>{
         resolve(this.structure);
-      })
+      }).catch((err)=>{if(err) {console.log(err); this.wallet.emergency()}});
     });
   }
 
@@ -142,13 +141,8 @@ class Zetabase {
     return Crypto.createHash('md5').update(Math.random() + moment().valueOf().toString()).digest('hex');
   }
 
-  //Check to a particular part of db.
-  //Read then remove checksum, lastUpdate
-  //sortKey path
   checksum(){
-    delete this.structure["checksum"];
-    delete this.structure["lastUpdate"];
-    this.structure.checksum = Checksum(JSON.stringify(this.structure));
+    this.structure.checksum = Cryptographic.sha256(JSON.stringify(this.structure.slot));
   }
 
   sortKey(path){
@@ -177,44 +171,29 @@ class Zetabase {
   }
 
   invalidate(writeToFile = true){
-    // this.checksum();
-    // this.structure.lastUpdate = moment().valueOf();
+    this.checksum();
+    this.structure.lastUpdate = moment().valueOf();
     if(writeToFile) this.saveState();
-    // Log.d(this.structure);
   }
 
   async containsKey(key){
     var data = await this.read(key, false);
     if(typeof data === "undefined") return false;
     return true;
-    // return new Promise((resolve, reject)=>{
-    //   this.read(key, false)
-    //   .then((dir)=>resolve(Object.keys(dir).length>0))
-    //   .catch((err)=>{
-    //     console.log("Error occur, key = "+ key);
-    //     console.log(err);
-    //     process.exit(1);
-    //   })
-    // });
   }
 
   sysStart(){
-    // this.structure = {
-    //   data: new Object(),
-    //   peers: new Object(),
-    //   lastUpdate: null,
-    //   checksum: null
-    // }
     this.structure = new Entry({
-      data: new Object(),
       peers: new Object(),
       blocks: new Object()
     })._checksum();
     this.invalidate();
   }
 
-  sysResume(){
-    return this.retrieveState();
+  async sysResume(){
+    var auditing = await this.retrieveState();
+    if(!auditing) throw "System failure: Wallet database is compromised.";
+    return false;
   }
 
   prepareState(){
@@ -224,19 +203,23 @@ class Zetabase {
   saveState(){
     fs.writeFile(this.dbPath, this.prepareState(), (err)=>{
       if(err) throw err;
-      // Log.d("State is saved");
     })
   }
 
   retrieveState(){
     return new Promise((resolve, reject)=>{
-      fs.readFile(this.dbPath, (err, json)=>{
+      fs.readFile(this.dbPath, async (err, json)=>{
         if(err) throw err;
-        Log.d(json.toString());
         this.structure = JSON.parse(json);
-        resolve();
+        resolve(await this.auditing());
       })
     });
+  }
+
+  async auditing(){
+    var oldCS = this.structure.checksum;
+    var plaintext = JSON.stringify(this.structure.slot);
+    return oldCS === Cryptographic.sha256(plaintext);
   }
 
   static removeDB(dbPath){

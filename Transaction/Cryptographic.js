@@ -25,5 +25,9 @@ class Cryptographic {
   static md5(plaintext){
     return crypto.createHash("md5").update(plaintext).digest("hex");
   }
+
+  static sha256(plaintext){
+    return crypto.createHash("sha256").update(plaintext).digest("hex");
+  }
 }
 module.exports = Cryptographic;

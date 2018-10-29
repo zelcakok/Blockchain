@@ -1,28 +1,29 @@
-const Zetabase = require("./Database/Zetabase");
-const Entry = require("./Database/Entry");
-const Beacon = require("./Network/Beacon");
-const Transport = require("./Network/Transport");
+const Zetabase = require("../Database/Zetabase");
+const Entry = require("../Database/Entry");
+const Beacon = require("../Network/Beacon");
+const Transport = require("../Network/Transport");
 const NetAddr = require("network-address");
 const Crypto = require("crypto");
 const Log = require("./Log");
-const Shell = require("./Shell/Shell");
-const Web = require("./Web/WebServer");
+const Shell = require("../Shell/Shell");
+const Web = require("../Web/WebServer");
 
-const Broker = require("./Transaction/Broker");
+const Broker = require("../Transaction/Broker");
 
 var WALLET_IDENTITY = null;
 
 class Wallet {
   constructor(dbPath, beaconSignalPort, transportPort, webPort, verbose){
+    this.sysHealth = true;
     this.shell = new Shell();
     Log.setVerbose(verbose);
     Log.bind(this.shell);
-    this.db = new Zetabase(dbPath, Log);
+    this.db = new Zetabase(dbPath, Log, this);
     this.beacon = new Beacon(beaconSignalPort, transportPort, Log);
     this.transport = new Transport(transportPort, Log);
     this.web = new Web(webPort,this, Log);
     this.broker = new Broker(this, Log);
-    this.initialize();
+    this.initialize()
   }
 
   broadcast(){
@@ -50,11 +51,9 @@ class Wallet {
   async register(beaconInfo){
     var info = JSON.parse(beaconInfo);
     var key = Zetabase.hash((info.ipAddr + info.port).split(".").join(""), 'md5');
+
     var isExist = await this.db.containsKey("/peers/" + key);
     if(!isExist) this.db.write("/peers/"+key, beaconInfo);
-    // this.db.containsKey("/peers/" + key).then((res)=>{
-    //   if(!res) this.db.write("/peers/"+key, beaconInfo);
-    // });
   }
 
   initialize(){
@@ -65,13 +64,29 @@ class Wallet {
     this.web.listen(this);
   }
 
+  resetDatabase(){
+    this.db.wipe("/");
+  }
+
   startShell(){
     this.shell.prompt();
   }
+
+  async emergency(){
+    try{
+      clearInterval(this.shell.io.msgControl);
+      var ans = await this.shell.io.ask("EMERGENCY", "Do you want to wipe the whole database now [y/N]");
+      if(Object.keys(ans).includes("EMERGENCY") && ans.EMERGENCY.toUpperCase() === "Y") {
+        await Zetabase.removeDB("./.zetabase.json");
+        console.log("Database is wiped.");
+      }
+    } catch(err){
+      console.log(err);
+    } finally {
+      console.log("Wallet exit");
+      process.exit(1);
+    }
+  }
 }
 
-Zetabase.removeDB("./.zetabase.json").then(async ()=>{
-  console.clear();
-  var wallet = new Wallet("./.zetabase.json", 3049, 3000, 8080, false);
-  wallet.startShell();
-})
+module.exports = Wallet;

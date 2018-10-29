@@ -1,4 +1,4 @@
-const Wallet = require("../Wallet");
+const Wallet = require("../Wallet/Wallet");
 const Cryptographic = require("./Cryptographic");
 const Payment = require("./Payment");
 const Transaction = require("./Payment");

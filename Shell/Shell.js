@@ -4,7 +4,7 @@ const Auth = require("../OAuth/Auth");
 const fs = require('fs');
 const crypto = require("crypto");
 
-const Wallet = require("../Wallet");
+const Wallet = require("../Wallet/Wallet");
 const Identity = require("../OAuth/Identity");
 
 const CREDENTIAL_FILE = "./.credential.json";
@@ -250,6 +250,6 @@ class Shell {
 
   queueMsg(msg){
     this.io.queueMsg(msg);
-  }
+  }  
 }
 module.exports = Shell;
