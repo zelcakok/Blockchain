@@ -44,15 +44,17 @@ class Wallet {
           Log.d("Connection is established to peer", peer.ipAddr+":"+peer.port);
         })
       }
-    })    
+    })
   }
 
-  register(beaconInfo){
+  async register(beaconInfo){
     var info = JSON.parse(beaconInfo);
     var key = Zetabase.hash((info.ipAddr + info.port).split(".").join(""), 'md5');
-    this.db.containsKey("/peers/" + key).then((res)=>{
-      if(!res) this.db.write("/peers/"+key, beaconInfo);
-    });
+    var isExist = await this.db.containsKey("/peers/" + key);
+    if(!isExist) this.db.write("/peers/"+key, beaconInfo);
+    // this.db.containsKey("/peers/" + key).then((res)=>{
+    //   if(!res) this.db.write("/peers/"+key, beaconInfo);
+    // });
   }
 
   initialize(){

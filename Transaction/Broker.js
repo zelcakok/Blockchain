@@ -15,6 +15,11 @@ class Broker {
   }
 
   fillProtocols(){
+    this.fillTransportProtocols();
+    this.fillShellProtocols();
+  }
+
+  fillTransportProtocols(){
     this.wallet.transport.addProtocol(PROTOCOLS_TRANSACTION, async (msg)=>{
       var trans = msg.message;
       var scriptSig = trans.scriptSig;
@@ -31,15 +36,22 @@ class Broker {
           Log.out("Drop the invalid transaction.");
         }
       } else {
-        Log.out("The transaction is exist in database.");
+        // Log.out("The transaction is exist in database.");
       }
     })
+  }
+
+  fillShellProtocols(){
     var pay = {
-      Desc: "[email address]".padEnd(20) + "Pay to other user.",
+      Desc: "[Wallet Address]".padEnd(20) + "Transfer money to others.",
       func: (...param)=> {
         var tarAddr = param[1];
         var amount = param[2];
-        this.createPayment(tarAddr, amount);
+
+        if(tarAddr === Wallet.WALLET_IDENTITY.getBitcoinAddress())
+          Log.out("Cannot transfer money to yourself.");
+        else
+          this.createPayment(tarAddr, amount);
       }
     }
     this.wallet.shell.addOperation("pay", pay);
