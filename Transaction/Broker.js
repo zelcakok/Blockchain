@@ -21,15 +21,10 @@ class Broker {
       var scriptSig = trans.scriptSig;
       var payment = trans.payment;
 
-      var isTransExist = await this.wallet.db.containsKey("/blocks/"+trans.payment.id);
-      if(isTransExist) {
-        Log.out("The Transaction is exist, I will ignore it.");
-      } else {
-        var verification = await Payment.verify(scriptSig.pubKey, scriptSig.sig, payment);
-        Log.out("Verification: ", verification);
+      var verification = await Payment.verify(scriptSig.pubKey, scriptSig.sig, payment);
+      Log.out("Verification: ", verification);
 
-        if(verification) this.negotiate(trans);
-      }
+      if(verification) this.negotiate(trans);
     })
     var pay = {
       Desc: "[email address]".padEnd(20) + "Pay to other user.",
@@ -55,14 +50,14 @@ class Broker {
       scriptPubKey: Cryptographic.base58Decode(tarAddr).toString(16)
     }
 
-    this.wallet.db.write("/blocks"+transaction.payment.id, transaction).then(()=>{
+    this.wallet.db.write("/blocks/"+transaction.payment.id, transaction).then(()=>{
       Log.out("My transaction is added to /blocks, broadcasting...");
       this.wallet.transport.broadcast(PROTOCOLS_TRANSACTION, transaction);
     });
   }
 
   negotiate(transaction){
-    this.wallet.db.write("/blocks"+transaction.payment.id, transaction).then(()=>{
+    this.wallet.db.write("/blocks/"+transaction.payment.id, transaction).then(()=>{
       Log.out("The transaction is added to /blocks, broadcasting...");
       this.wallet.transport.broadcast(PROTOCOLS_TRANSACTION, transaction);
     })
