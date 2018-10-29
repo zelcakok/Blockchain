@@ -51,7 +51,7 @@ class Zetabase {
     var url = this.pathParse(url);
     if(createMissing && !dir.hasOwnProperty(url.ptr)) dir[url.ptr] = new Object();
     if(url.remain === '') return {dir: dir, ptr: url.ptr};
-    return this._traverse(dir[url.ptr], url.remain);
+    return this._traverse(dir[url.ptr], url.remain, createMissing);
   }
 
   traverse(url, createMissing = true){
@@ -183,10 +183,19 @@ class Zetabase {
     // Log.d(this.structure);
   }
 
-  containsKey(key){
-    return new Promise((resolve, reject)=>{
-      this.read(key, false).then((dir)=>resolve(Object.keys(dir).length>0));
-    });
+  async containsKey(key){
+    var data = await this.read(key, false);
+    if(typeof data === "undefined") return false;
+    return true;
+    // return new Promise((resolve, reject)=>{
+    //   this.read(key, false)
+    //   .then((dir)=>resolve(Object.keys(dir).length>0))
+    //   .catch((err)=>{
+    //     console.log("Error occur, key = "+ key);
+    //     console.log(err);
+    //     process.exit(1);
+    //   })
+    // });
   }
 
   sysStart(){
@@ -198,7 +207,8 @@ class Zetabase {
     // }
     this.structure = new Entry({
       data: new Object(),
-      peers: new Object()
+      peers: new Object(),
+      blocks: new Object()
     })._checksum();
     this.invalidate();
   }
