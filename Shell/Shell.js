@@ -74,16 +74,6 @@ class Shell {
       wallet: {
         Desc: "NULL".padEnd(20) + "Get the wallet information.",
         func: ()=>this.showWallet()
-      },
-      portal: {
-        Desc: "NULL".padEnd(20) + "Open the web interface.",
-        func: ()=>{
-          try {
-            opn("http://localhost:8080")
-          } catch(err){
-            Log.out("Please visit http://localhost:8080 manually.");
-          }
-        }
       }
     }
     this.addOperations(operations);
