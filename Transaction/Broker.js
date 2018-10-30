@@ -25,12 +25,13 @@ class Broker {
 
   fillDBProtocols(){
     this.wallet.db.monitor("/blocks", async (newBlk)=>{
+      console.log(newBlk);
       // var payload = JSON.parse(newBlk.payload);
-      var isTransExist = await this.wallet.db.containsKey("/candidates/"+payload.key);
-      if(isTransExist) {
-        Log.out("WIPE candidates");
+      // var isTransExist = await this.wallet.db.containsKey("/candidates/"+payload.key);
+      // if(isTransExist) {
+        // Log.out("WIPE candidates");
         // this.wallet.db.wipe("/candidates/"+payload.key);
-      }
+      // }
     });
   }
 
