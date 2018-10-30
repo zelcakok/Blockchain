@@ -19,6 +19,12 @@ class Broker {
   fillProtocols(){
     this.fillTransportProtocols();
     this.fillShellProtocols();
+    this.fillDBProtocols();
+  }
+
+  fillDBProtocols(){
+    var newBlk = await this.wallet.db.monitor("/blocks");
+    console.log(newBlk);
   }
 
   fillTransportProtocols(){
