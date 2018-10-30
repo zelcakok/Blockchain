@@ -31,6 +31,9 @@ class Broker {
         Log.out("WIPE candidates");
         var old = await this.wallet.db.read("/candidates/"+payload.key);
         console.log("OLD:", old);
+        this.wallet.db.write("/candidates/"+payload.key, "").then(()=>{
+          console.log("/candidates/"+payload.key, "is cleared");
+        });
       }
     });
     this.wallet.db.monitor("/candidates", async (trans)=>{
