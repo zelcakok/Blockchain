@@ -51,14 +51,6 @@ class Broker {
           var newBlk = new Block(blocks.hash, trans);
           newBlk.setDifficulty(4);
           await Block.mining(newBlk);
-
-          this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+trans.key, newBlk);
-
-          // this.wallet.db.write("/blocks/"+trans.key, JSON.stringify(newBlk)).then(()=>{
-          //   Log.out("A new block is added to /blocks, broadcasting...");
-          //
-          // })
-
         } else {
           Log.out("Drop the invalid transaction.");
         }
