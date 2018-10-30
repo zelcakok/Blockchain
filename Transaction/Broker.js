@@ -40,7 +40,8 @@ class Broker {
       newBlk.setDifficulty(4);
       await Block.mining(newBlk);
       newBlk.payload = JSON.parse(newBlk.payload);
-      this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+trans.key, newBlk);
+      console.log("???", trans.key);
+      // this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+trans.key, newBlk);
     });
   }
 
