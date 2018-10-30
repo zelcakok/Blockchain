@@ -67,7 +67,6 @@ class Broker {
 
     this.wallet.transport.addProtocol(PROTOCOLS_NEW_BLK, async (msg)=>{
       var newBlk = msg.message;
-      // console.log(newBlk.payload);
       var payload = newBlk.payload;
       var isTransExist = await this.wallet.db.containsKey("/candidates/"+payload.key);
       if(isTransExist){
@@ -75,8 +74,8 @@ class Broker {
         // this.wallet.db.write("/blocks/"+payload.key, newBlk).then(()=>{
           // Log.out("A new block is added to /blocks");
         // })
+        this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+payload.key, newBlk);
       }
-        // this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+payload.key, newBlk);
     });
   }
 
