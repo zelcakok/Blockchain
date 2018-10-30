@@ -6,18 +6,21 @@ const crypto = require("crypto");
 
 const Wallet = require("../Wallet/Wallet");
 const Identity = require("../OAuth/Identity");
-
 const CREDENTIAL_FILE = "./.credential.json";
 
+const opn = require("opn");
+
+var Log = null;
 var CREDENTIAL_STATE = false;
 
 class Shell {
-  constructor(label = "Wallet [Login required]", loadOpt = true){
+  constructor(logger){
+    Log = logger;
     this.io = new IO();
     this.operations = new Object();
     this.auth = Auth.getInstance();
-    this.label = label;
-    if(loadOpt) this.loadStandardOpt();
+    this.label = "Wallet [Login required]";
+    this.loadStandardOpt();
   }
 
   addOperation(key, func){
@@ -70,13 +73,22 @@ class Shell {
       },
       wallet: {
         Desc: "NULL".padEnd(20) + "Get the wallet information.",
-        func: ()=> this.showWallet()
+        func: ()=>this.showWallet()
+      },
+      portal: {
+        Desc: "NULL".padEnd(20) + "Open the web interface.",
+        func: ()=>opn("http://localhost:8080")
       }
     }
     this.addOperations(operations);
   }
 
+  isLoggedIn(){
+    return CREDENTIAL_STATE;
+  }
+
   showWallet(){
+    if(!CREDENTIAL_STATE) return Log.out("Error: Please login first.");
     console.log("\n");
     console.log("".padEnd(3)+"Current amount".padEnd(20)+0+" BTC");
     console.log("".padEnd(3)+"Wallet Address".padEnd(20)+Wallet.WALLET_IDENTITY.getBitcoinAddress());
@@ -115,6 +127,7 @@ class Shell {
   }
 
   async logout(){
+    if(!CREDENTIAL_STATE) return Log.out("Error: You are not logged in.");
     return new Promise((resolve, reject)=>{
       this.setLabel("Wallet [Login required]");
       this.queueMsg("Logout successfully");
@@ -250,6 +263,6 @@ class Shell {
 
   queueMsg(msg){
     this.io.queueMsg(msg);
-  }  
+  }
 }
 module.exports = Shell;

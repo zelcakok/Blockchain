@@ -15,7 +15,7 @@ var WALLET_IDENTITY = null;
 class Wallet {
   constructor(dbPath, beaconSignalPort, transportPort, webPort, verbose){
     this.sysHealth = true;
-    this.shell = new Shell();
+    this.shell = new Shell(Log);
     Log.setVerbose(verbose);
     Log.bind(this.shell);
     this.db = new Zetabase(dbPath, Log, this);

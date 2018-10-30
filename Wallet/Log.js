@@ -22,7 +22,7 @@ class Log {
   }
 
   static record(msg){
-    return msg.join("\t")+"".padStart(20)+"["+moment().format("HH:mm:ss") + "]";
+    return msg.join("\t")+"".padStart(15)+"["+moment().format("HH:mm:ss") + "]";
   }
 
   static serve(m){

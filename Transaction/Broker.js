@@ -45,9 +45,10 @@ class Broker {
     var pay = {
       Desc: "[Wallet Address]".padEnd(20) + "Transfer money to others.",
       func: (...param)=> {
+        if(!this.wallet.shell.isLoggedIn()) return Log.out("Error: Please login first.");
+        if(param.length < 2) return Log.out("Please specify the target address and the amount.");
         var tarAddr = param[1];
         var amount = param[2];
-
         if(tarAddr === Wallet.WALLET_IDENTITY.getBitcoinAddress())
           Log.out("Cannot transfer money to yourself.");
         else
