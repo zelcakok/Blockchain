@@ -29,7 +29,7 @@ class Broker {
       var isTransExist = await this.wallet.db.containsKey("/candidates/"+payload.key);
       if(isTransExist) {
         Log.out("WIPE candidates");
-        var old = await this.wallet.db.read("/candidates/"+payload.key);
+        var old = await this.wallet.db.read("/candidates/"+payload.key,false);
         console.log("OLD:", old);
         this.wallet.db.write("/candidates/"+payload.key, "").then(()=>{
           console.log("/candidates/"+payload.key, "is cleared");
