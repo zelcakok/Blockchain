@@ -2,6 +2,7 @@ const Wallet = require("../Wallet/Wallet");
 const Cryptographic = require("./Cryptographic");
 const Payment = require("./Payment");
 const Transaction = require("./Payment");
+const Block = require("../Blocks/Block");
 
 const PROTOCOLS_TRANSACTION = Cryptographic.md5("&ptrans;");
 
@@ -30,13 +31,17 @@ class Broker {
         var verification = await Payment.verify(scriptSig.pubKey, scriptSig.sig, payment);
         Log.out("New transaction comes, verification: ", verification);
         if(verification) {
-          Log.out("Broadcasting the valid transaction.");
+          Log.out("The transaction is valid, forwarding to peers.");
           this.negotiate(trans);
+
+          Log.out("Start mining the new block");
+          var blocks = await this.wallet.db.read("/blocks/GENESIS");
+          console.log(blocks);
         } else {
           Log.out("Drop the invalid transaction.");
         }
       } else {
-        // Log.out("The transaction is exist in database.");
+        Log.out("The transaction is exist in database.");
       }
     })
   }
