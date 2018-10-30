@@ -6,6 +6,7 @@ const Transaction = require("./Payment");
 const Block = require("../Blocks/Block");
 
 const PROTOCOLS_TRANSACTION = Cryptographic.md5("&ptrans;");
+const PROTOCOLS_NEW_BLK = Cryptographic.md5("&pnewblk;");
 
 var Log = null;
 
@@ -43,7 +44,7 @@ class Broker {
         Log.out("New transaction comes, verification: ", verification);
         if(verification) {
           Log.out("The transaction is valid, forwarding to peers.");
-          this.negotiate(trans);
+          this.negotiate(PROTOCOLS_TRANSACTION, "/candidates/"+trans.key, trans);
 
           Log.out("Start mining the new block");
           var blocks = await this.wallet.db.read("/blocks/GENESIS");
@@ -51,8 +52,11 @@ class Broker {
           newBlk.setDifficulty(4);
           await Block.mining(newBlk);
 
+          // this.negotiate(PROTOCOLS_NEW_BLK, "/blocks/"+trans.key, newBlk);
+
           this.wallet.db.write("/blocks/"+trans.key, newBlk).then(()=>{
-            Log.out("A new block is added to /blocks");
+            Log.out("A new block is added to /blocks, broadcasting...");
+
           })
 
         } else {
@@ -62,6 +66,10 @@ class Broker {
         Log.out("The transaction is exist in database.");
       }
     })
+
+    this.wallet.transport.addProtocol(PROTOCOLS_NEW_BLK, async (msg)=>{
+      console.log("RECEIVE: ", msg);
+    });
   }
 
   fillShellProtocols(){
@@ -112,9 +120,9 @@ class Broker {
     });
   }
 
-  negotiate(transaction){
-    this.wallet.db.write("/candidates/"+transaction.key, transaction).then(()=>{
-      this.wallet.transport.broadcast(PROTOCOLS_TRANSACTION, transaction);
+  negotiate(protocol, key, payload){
+    this.wallet.db.write(key, payload).then(()=>{
+      this.wallet.transport.broadcast(PROTOCOLS_TRANSACTION, payload);
     })
   }
 }
