@@ -25,6 +25,7 @@ class Broker {
 
   fillDBProtocols(){
     this.wallet.db.monitor("/blocks", async (newBlk)=>{
+      newBlk = JSON.parse(newBlk);
       var isTransExist = await this.wallet.db.containsKey("/candidates/"+newBlk.payload.key);
       if(isTransExist) {
         this.wallet.db.wipe("/candidates/"+newBlk.payload.key);
@@ -44,7 +45,7 @@ class Broker {
         Log.out("New transaction comes, verification: ", verification);
         if(verification) {
           Log.out("The transaction is valid, forwarding to peers.");
-          this.negotiate(PROTOCOLS_TRANSACTION, "/candidates/"+trans.key, trans);
+          this.propagate(PROTOCOLS_TRANSACTION, "/candidates/"+trans.key, trans);
 
           Log.out("Start mining the new block");
           var blocks = await this.wallet.db.read("/blocks/GENESIS");
@@ -52,12 +53,12 @@ class Broker {
           newBlk.setDifficulty(4);
           await Block.mining(newBlk);
 
-          // this.negotiate(PROTOCOLS_NEW_BLK, "/blocks/"+trans.key, newBlk);
+          this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+trans.key, newBlk);
 
-          this.wallet.db.write("/blocks/"+trans.key, JSON.stringify(newBlk)).then(()=>{
-            Log.out("A new block is added to /blocks, broadcasting...");
-
-          })
+          // this.wallet.db.write("/blocks/"+trans.key, JSON.stringify(newBlk)).then(()=>{
+          //   Log.out("A new block is added to /blocks, broadcasting...");
+          //
+          // })
 
         } else {
           Log.out("Drop the invalid transaction.");
@@ -120,7 +121,7 @@ class Broker {
     });
   }
 
-  negotiate(protocol, key, payload){
+  propagate(protocol, key, payload){
     this.wallet.db.write(key, payload).then(()=>{
       this.wallet.transport.broadcast(PROTOCOLS_TRANSACTION, payload);
     })
