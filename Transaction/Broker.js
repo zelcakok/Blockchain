@@ -116,10 +116,12 @@ class Broker {
       scriptPubKey: Cryptographic.base58Decode(tarAddr).toString(16)
     }
 
-    this.wallet.db.write("/candidates/"+transaction.key, transaction).then(()=>{
-      Log.out("Tranaction", transaction.payment.id, "is added to /candidates");
-      this.wallet.transport.broadcast(PROTOCOLS_TRANSACTION, transaction);
-    });
+    this.propagate(PROTOCOLS_TRANSACTION, "/candidates/"+transaction.key, transaction);
+
+    // this.wallet.db.write("/candidates/"+transaction.key, transaction).then(()=>{
+    //   Log.out("Tranaction", transaction.payment.id, "is added to /candidates");
+    //   this.wallet.transport.broadcast(PROTOCOLS_TRANSACTION, transaction);
+    // });
   }
 
   propagate(protocol, key, payload){
