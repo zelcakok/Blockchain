@@ -51,7 +51,8 @@ class Wallet {
   async register(beaconInfo){
     var info = JSON.parse(beaconInfo);
     var key = Zetabase.hash((info.ipAddr + info.port).split(".").join(""), 'md5');
-
+    delete info.message;
+    beaconInfo = JSON.stringify(info);
     var isExist = await this.db.containsKey("/peers/" + key);
     if(!isExist) this.db.write("/peers/"+key, beaconInfo);
   }
