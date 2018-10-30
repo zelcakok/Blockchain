@@ -51,6 +51,11 @@ class Broker {
           var newBlk = new Block(blocks.hash, trans);
           newBlk.setDifficulty(4);
           await Block.mining(newBlk);
+
+          this.wallet.db.write("/blocks/"+trans.key, newBlk).then(()=>{
+            Log.out("A new block is added to /blocks");
+          })
+
         } else {
           Log.out("Drop the invalid transaction.");
         }
