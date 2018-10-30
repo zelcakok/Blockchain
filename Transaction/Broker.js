@@ -103,7 +103,7 @@ class Broker {
   }
 
   negotiate(transaction){
-    this.wallet.db.write("/candidates/"+transaction.payment.id, transaction).then(()=>{
+    this.wallet.db.write("/candidates/"+transaction.key, transaction).then(()=>{
       this.wallet.transport.broadcast(PROTOCOLS_TRANSACTION, transaction);
     })
   }
