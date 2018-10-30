@@ -81,14 +81,14 @@ class Broker {
       scriptPubKey: Cryptographic.base58Decode(tarAddr).toString(16)
     }
 
-    this.wallet.db.write("/blocks/"+transaction.payment.id, transaction).then(()=>{
+    this.wallet.db.write("/candidates/"+transaction.payment.id, transaction).then(()=>{
       Log.out("Tranaction", transaction.payment.id, "is added to /candidates");
       this.wallet.transport.broadcast(PROTOCOLS_TRANSACTION, transaction);
     });
   }
 
   negotiate(transaction){
-    this.wallet.db.write("/blocks/"+transaction.payment.id, transaction).then(()=>{
+    this.wallet.db.write("/candidates/"+transaction.payment.id, transaction).then(()=>{
       this.wallet.transport.broadcast(PROTOCOLS_TRANSACTION, transaction);
     })
   }
