@@ -25,7 +25,7 @@ class Broker {
       var scriptSig = trans.scriptSig;
       var payment = trans.payment;
 
-      var isTransExist = await this.wallet.db.containsKey("/blocks/"+payment.id);
+      var isTransExist = await this.wallet.db.containsKey("/candidates/"+payment.id);
       if(!isTransExist){
         var verification = await Payment.verify(scriptSig.pubKey, scriptSig.sig, payment);
         Log.out("New transaction comes, verification: ", verification);
