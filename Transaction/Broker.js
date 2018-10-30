@@ -65,6 +65,7 @@ class Broker {
 
     this.wallet.transport.addProtocol(PROTOCOLS_NEW_BLK, async (msg)=>{
       var newBlk = msg.message;
+      console.log(newBlk.merkleRoot);
       var payload = JSON.parse(newBlk.payload);
       // var isTransExist = await this.wallet.db.containsKey("/candidates/"+payload.key);
       // if(isTransExist)
