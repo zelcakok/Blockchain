@@ -35,13 +35,12 @@ class Broker {
     });
     this.wallet.db.monitor("/candidates", async (trans)=>{
       Log.out("Start mine the new block");
-      console.log(trans.key);
-      // var blocks = await this.wallet.db.read("/blocks/GENESIS");
-      // var newBlk = new Block(blocks.hash, trans);
-      // newBlk.setDifficulty(4);
-      // await Block.mining(newBlk);
-      // newBlk.payload = JSON.parse(newBlk.payload);
-      // this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+trans.key, newBlk);
+      var blocks = await this.wallet.db.read("/blocks/GENESIS");
+      var newBlk = new Block(blocks.hash, trans);
+      newBlk.setDifficulty(4);
+      await Block.mining(newBlk);
+      newBlk.payload = JSON.parse(newBlk.payload);
+      this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+trans.key, newBlk);
     });
   }
 
