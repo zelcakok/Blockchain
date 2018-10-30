@@ -28,7 +28,8 @@ class Broker {
       var payload = JSON.parse(newBlk.payload);
       var isTransExist = await this.wallet.db.containsKey("/candidates/"+payload.key);
       if(isTransExist) {
-        this.wallet.db.wipe("/candidates/"+payload.key);
+        Log.out("WIPE candidates");
+        // this.wallet.db.wipe("/candidates/"+payload.key);
       }
     });
   }
@@ -42,12 +43,12 @@ class Broker {
       var isTransExist = await this.wallet.db.containsKey("/candidates/"+trans.key);
       if(!isTransExist){
         var verification = await Payment.verify(scriptSig.pubKey, scriptSig.sig, payment);
-        Log.out("New transaction comes, verification: ", verification);
+        // Log.out("New transaction comes, verification: ", verification);
         if(verification) {
-          Log.out("The transaction is valid, forwarding to peers.");
+          // Log.out("The transaction is valid, forwarding to peers.");
           this.propagate(PROTOCOLS_TRANSACTION, "/candidates/"+trans.key, trans);
 
-          Log.out("Start mining the new block");
+          // Log.out("Start mining the new block");
           var blocks = await this.wallet.db.read("/blocks/GENESIS");
           var newBlk = new Block(blocks.hash, trans);
           newBlk.setDifficulty(4);
@@ -56,10 +57,10 @@ class Broker {
           this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+trans.key, newBlk);
 
         } else {
-          Log.out("Drop the invalid transaction.");
+          // Log.out("Drop the invalid transaction.");
         }
       } else {
-        Log.out("The transaction is exist in database.");
+        // Log.out("The transaction is exist in database.");
       }
     })
 
@@ -68,9 +69,9 @@ class Broker {
       var payload = JSON.parse(newBlk.payload);
       var isTransExist = await this.wallet.db.containsKey("/candidates/"+payload.key);
       if(isTransExist){
-        Log.out("BLK exist in candidates:", isTransExist);
+        // Log.out("BLK exist in candidates:", isTransExist);
         this.wallet.db.write("/blocks/"+payload.key, newBlk).then(()=>{
-          Log.out("A new block is added to /blocks");
+          // Log.out("A new block is added to /blocks");
         })
       }
         // this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+payload.key, newBlk);
