@@ -53,10 +53,10 @@ class Broker {
           var newBlk = new Block(blocks.hash, trans);
           newBlk.setDifficulty(4);
           await Block.mining(newBlk);
-
+          newBlk.payload = JSON.parse(newBlk.payload);
           console.log(newBlk);
 
-          // this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+trans.key, newBlk);
+          this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+trans.key, newBlk);
 
         } else {
           // Log.out("Drop the invalid transaction.");
