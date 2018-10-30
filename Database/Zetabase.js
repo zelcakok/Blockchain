@@ -186,7 +186,7 @@ class Zetabase {
     this.structure = new Entry({
       peers: new Object(),
       blocks: new Object(),
-      candidate: new Object()
+      candidates: new Object()
     })._checksum();
     this.invalidate();
   }
