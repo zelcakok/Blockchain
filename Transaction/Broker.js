@@ -33,6 +33,15 @@ class Broker {
         this.wallet.db.wipe("/candidates/"+payload.key);
       }
     });
+    this.wallet.db.monitor("/candidates", async (trans)=>{
+      Log.out("Start mine the new block");
+      var blocks = await this.wallet.db.read("/blocks/GENESIS");
+      var newBlk = new Block(blocks.hash, trans);
+      newBlk.setDifficulty(4);
+      await Block.mining(newBlk);
+      newBlk.payload = JSON.parse(newBlk.payload);
+      this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+trans.key, newBlk);
+    });
   }
 
   fillTransportProtocols(){
@@ -42,22 +51,13 @@ class Broker {
       var payment = trans.payment;
 
       var isTransExist = await this.wallet.db.containsKey("/candidates/"+trans.key);
-      isTransExist &= await this.wallet.db.containsKey("/blocks/"+trans.key);
+      isTransExist = isTransExist && await this.wallet.db.containsKey("/blocks/"+trans.key);
       if(!isTransExist){
         var verification = await Payment.verify(scriptSig.pubKey, scriptSig.sig, payment);
         // Log.out("New transaction comes, verification: ", verification);
         if(verification) {
           // Log.out("The transaction is valid, forwarding to peers.");
           this.propagate(PROTOCOLS_TRANSACTION, "/candidates/"+trans.key, trans);
-
-          // Log.out("Start mining the new block");
-          var blocks = await this.wallet.db.read("/blocks/GENESIS");
-          var newBlk = new Block(blocks.hash, trans);
-          newBlk.setDifficulty(4);
-          await Block.mining(newBlk);
-          newBlk.payload = JSON.parse(newBlk.payload);
-          this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+trans.key, newBlk);
-
         } else {
           // Log.out("Drop the invalid transaction.");
         }
