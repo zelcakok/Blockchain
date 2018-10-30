@@ -56,6 +56,16 @@ class Broker {
       }
     }
     this.wallet.shell.addOperation("pay", pay);
+
+    var resetWallet = {
+      Desc: "NULL".padEnd(20) + "Reset to default.",
+      func: async ()=>{
+        await this.wallet.shell.logout();
+        await this.wallet.emergency();
+      }
+    }
+
+    this.wallet.shell.addOperation("resetWallet", resetWallet);
   }
 
   async createPayment(tarAddr, amount){
@@ -72,7 +82,7 @@ class Broker {
     }
 
     this.wallet.db.write("/blocks/"+transaction.payment.id, transaction).then(()=>{
-      Log.out("Tranaction", transaction.payment.id, "is added to /blocks");
+      Log.out("Tranaction", transaction.payment.id, "is added to /candidates");
       this.wallet.transport.broadcast(PROTOCOLS_TRANSACTION, transaction);
     });
   }
