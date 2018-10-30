@@ -10,7 +10,7 @@ class QueueNode {
   }
 
   static pack(data){
-    var QueueNode = require("./Node");
+    var QueueNode = require("./QueueNode");
     return new QueueNode(data);
   }
 }

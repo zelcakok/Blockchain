@@ -1,3 +1,4 @@
+const moment = require("moment");
 const Wallet = require("../Wallet/Wallet");
 const Cryptographic = require("./Cryptographic");
 const Payment = require("./Payment");
@@ -26,7 +27,7 @@ class Broker {
       var scriptSig = trans.scriptSig;
       var payment = trans.payment;
 
-      var isTransExist = await this.wallet.db.containsKey("/candidates/"+payment.id);
+      var isTransExist = await this.wallet.db.containsKey("/candidates/"+trans.key);
       if(!isTransExist){
         var verification = await Payment.verify(scriptSig.pubKey, scriptSig.sig, payment);
         Log.out("New transaction comes, verification: ", verification);
@@ -36,7 +37,15 @@ class Broker {
 
           Log.out("Start mining the new block");
           var blocks = await this.wallet.db.read("/blocks/GENESIS");
-          console.log(blocks);
+          var newBlk = new Block(blocks.hash, trans);
+          newBlk.setDifficulty(4);
+          await Block.mining(newBlk);
+
+          var key = Cryptographic.encryptTimestamp(moment().valueOf());
+          this.wallet.db.write("/blocks/"+key, newBlk).then(()=>{
+            Log.out("A new block is added to /blocks");
+          })
+
         } else {
           Log.out("Drop the invalid transaction.");
         }
@@ -77,7 +86,9 @@ class Broker {
     tarAddr = Wallet.WALLET_IDENTITY.getBitcoinAddress();
     var payment = new Payment(null, tarAddr, amount);
     var sig = await Wallet.WALLET_IDENTITY.sign(payment);
+
     var transaction = {
+      key: Cryptographic.encryptTimestamp(moment().valueOf()),
       scriptSig: {
         sig: sig,
         pubKey: Wallet.WALLET_IDENTITY.getPublicKey()
@@ -86,7 +97,7 @@ class Broker {
       scriptPubKey: Cryptographic.base58Decode(tarAddr).toString(16)
     }
 
-    this.wallet.db.write("/candidates/"+transaction.payment.id, transaction).then(()=>{
+    this.wallet.db.write("/candidates/"+transaction.key, transaction).then(()=>{
       Log.out("Tranaction", transaction.payment.id, "is added to /candidates");
       this.wallet.transport.broadcast(PROTOCOLS_TRANSACTION, transaction);
     });

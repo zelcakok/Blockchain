@@ -7,7 +7,7 @@ MerkleTree.algo("sha256");
 
 class Block {
   constructor(prevHash, payload){
-    this.merkleRoot = new MerkleTree();
+    this.merkleRoot = new MerkleTree().attach(payload).hash();
     this.target = 6; //Fixed difficulty, 6 leading zeros.
     this.payload = payload; //Fixed to one transaction for now.
     this.timestamp = moment().valueOf();
