@@ -29,7 +29,7 @@ class Broker {
       var isTransExist = await this.wallet.db.containsKey("/candidates/"+payload.key);
       if(isTransExist) {
         Log.out("WIPE candidates");
-        // this.wallet.db.wipe("/candidates/"+payload.key);
+        this.wallet.db.wipe("/candidates/"+payload.key);
       }
     });
   }
