@@ -9,6 +9,7 @@ const Entry = require('./Entry');
 const Wallet = require("../Wallet/Wallet");
 const Cryptographic = require("../Transaction/Cryptographic");
 const Shell = require("../Shell/Shell");
+const Block = require("../Blocks/Block");
 
 var Log = null;
 
@@ -182,12 +183,14 @@ class Zetabase {
     return true;
   }
 
-  sysStart(){
+  async sysStart(){
     this.structure = new Entry({
       peers: new Object(),
       blocks: new Object(),
       candidates: new Object()
     })._checksum();
+    var genesisBlk = Block.genesisBlock();
+    this.structure.slot.blocks["GENESIS"] = genesisBlk;
     this.invalidate();
   }
 
