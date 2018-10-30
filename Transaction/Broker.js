@@ -71,10 +71,8 @@ class Broker {
       var isTransExist = await this.wallet.db.containsKey("/candidates/"+payload.key);
       if(isTransExist){
         Log.out("BLK exist in candidates, wipe it.");
-        // this.wallet.db.write("/blocks/"+payload.key, newBlk).then(()=>{
-          // Log.out("A new block is added to /blocks");
-        // })
-        this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+payload.key, newBlk);
+        this.wallet.db.wipe("/candidates/"+payload.key);
+        // this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+payload.key, newBlk);
       }
     });
   }
