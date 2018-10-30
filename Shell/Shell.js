@@ -77,7 +77,13 @@ class Shell {
       },
       portal: {
         Desc: "NULL".padEnd(20) + "Open the web interface.",
-        func: ()=>opn("http://localhost:8080")
+        func: ()=>{
+          try {
+            opn("http://localhost:8080")
+          } catch(err){
+            Log.out("Please visit http://localhost:8080 manually.");
+          }
+        }
       }
     }
     this.addOperations(operations);
