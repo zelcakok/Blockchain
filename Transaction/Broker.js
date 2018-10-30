@@ -25,13 +25,13 @@ class Broker {
 
   fillDBProtocols(){
     this.wallet.db.monitor("/blocks", async (newBlk)=>{
-      console.log(newBlk);
+      var payload = newBlk.payload;
       // var payload = JSON.parse(newBlk.payload);
-      // var isTransExist = await this.wallet.db.containsKey("/candidates/"+payload.key);
-      // if(isTransExist) {
-        // Log.out("WIPE candidates");
+      var isTransExist = await this.wallet.db.containsKey("/candidates/"+payload.key);
+      if(isTransExist) {
+        Log.out("WIPE candidates");
         // this.wallet.db.wipe("/candidates/"+payload.key);
-      // }
+      }
     });
   }
 
@@ -55,8 +55,6 @@ class Broker {
           newBlk.setDifficulty(4);
           await Block.mining(newBlk);
           newBlk.payload = JSON.parse(newBlk.payload);
-          console.log(newBlk);
-
           this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+trans.key, newBlk);
 
         } else {
