@@ -54,7 +54,7 @@ class Broker {
 
           // this.negotiate(PROTOCOLS_NEW_BLK, "/blocks/"+trans.key, newBlk);
 
-          this.wallet.db.write("/blocks/"+trans.key, newBlk).then(()=>{
+          this.wallet.db.write("/blocks/"+trans.key, JSON.stringify(newBlk)).then(()=>{
             Log.out("A new block is added to /blocks, broadcasting...");
 
           })
