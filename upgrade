@@ -1,2 +1,2 @@
 #!/bin/bash
-git pull && rm .zetabase.json ; node index.js
+git pull && rm .zetabase.json; node index.js
