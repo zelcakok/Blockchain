@@ -95,7 +95,6 @@ class Zetabase {
   }
 
   wipe(path){
-    console.log("DB WIPE: ", path);
     return new Promise(async (resolve, reject)=>{
       if(path === "/") {
         await Zetabase.removeDB(this.dbPath);
