@@ -73,7 +73,7 @@ class Broker {
       if(isTransExist){
         Log.out("BLK exist in candidates, wipe it.");
         this.wallet.db.wipe("/candidates/"+payload.key);
-        // this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+payload.key, newBlk);
+        this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+payload.key, newBlk);
       }
     });
   }
