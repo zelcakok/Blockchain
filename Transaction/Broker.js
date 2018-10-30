@@ -29,7 +29,7 @@ class Broker {
       var isTransExist = await this.wallet.db.containsKey("/candidates/"+payload.key);
       if(isTransExist) {
         Log.out("WIPE candidates");
-        this.wallet.db.wipe("/candidates/"+payload.key);
+        // this.wallet.db.wipe("/candidates/"+payload.key);
       }
     });
   }
@@ -54,7 +54,9 @@ class Broker {
           newBlk.setDifficulty(4);
           await Block.mining(newBlk);
 
-          this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+trans.key, newBlk);
+          console.log(newBlk);
+
+          // this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+trans.key, newBlk);
 
         } else {
           // Log.out("Drop the invalid transaction.");
@@ -68,12 +70,12 @@ class Broker {
       var newBlk = msg.message;
       var payload = JSON.parse(newBlk.payload);
       var isTransExist = await this.wallet.db.containsKey("/candidates/"+payload.key);
-      if(isTransExist){
+      // if(isTransExist){
         // Log.out("BLK exist in candidates:", isTransExist);
-        this.wallet.db.write("/blocks/"+payload.key, newBlk).then(()=>{
+        // this.wallet.db.write("/blocks/"+payload.key, newBlk).then(()=>{
           // Log.out("A new block is added to /blocks");
-        })
-      }
+        // })
+      // }
         // this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+payload.key, newBlk);
     });
   }

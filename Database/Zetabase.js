@@ -103,11 +103,8 @@ class Zetabase {
       }
       this.prepare().then(()=>{
         var url = this.traverse(path);
-        console.log("DB WIPE: ", url.dir);
         url.dir[url.ptr] = null;
         delete url.dir[url.ptr];
-        delete url.dir;
-        console.log("DB RESULT: ", url);
         this.eventEmitter.emit('onChanges', path, null);
         resolve();
       }).catch((err)=>{if(err) {console.log(err); this.wallet.emergency()}});
