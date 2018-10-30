@@ -22,7 +22,7 @@ class Broker {
     this.fillDBProtocols();
   }
 
-  fillDBProtocols(){
+  async fillDBProtocols(){
     var newBlk = await this.wallet.db.monitor("/blocks");
     console.log(newBlk);
   }
