@@ -41,8 +41,7 @@ class Broker {
           newBlk.setDifficulty(4);
           await Block.mining(newBlk);
 
-          var key = Cryptographic.encryptTimestamp(moment().valueOf());
-          this.wallet.db.write("/blocks/"+key, newBlk).then(()=>{
+          this.wallet.db.write("/blocks/"+trans.key, newBlk).then(()=>{
             Log.out("A new block is added to /blocks");
           })
 
