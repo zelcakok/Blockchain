@@ -65,7 +65,9 @@ class Broker {
     })
 
     this.wallet.transport.addProtocol(PROTOCOLS_NEW_BLK, async (msg)=>{
-      console.log("RECEIVE: ", msg);
+      var newBlk = msg.message;
+      var payload = JSON.parse(newBlk.payload);
+      console.log(payload.key);
     });
   }
 
