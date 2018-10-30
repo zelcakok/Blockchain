@@ -52,9 +52,7 @@ class Broker {
           newBlk.setDifficulty(4);
           await Block.mining(newBlk);
 
-          this.wallet.db.write("/blocks/"+trans.key, newBlk).then(()=>{
-            Log.out("A new block is added to /blocks");
-          })
+          this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+trans.key, newBlk);
 
         } else {
           Log.out("Drop the invalid transaction.");
@@ -119,7 +117,7 @@ class Broker {
 
   propagate(protocol, key, payload){
     this.wallet.db.write(key, payload).then(()=>{
-      this.wallet.transport.broadcast(PROTOCOLS_TRANSACTION, payload);
+      this.wallet.transport.broadcast(protocol, payload);
     })
   }
 }
