@@ -27,6 +27,7 @@ class Broker {
     this.wallet.db.monitor("/blocks", async (newBlk)=>{
       var payload = newBlk.payload;
       var isTransExist = await this.wallet.db.containsKey("/candidates/"+payload.key);
+      console.log("ISEXIST: ", isTransExist);
       if(isTransExist) {
         Log.out("WIPE candidates");
         this.wallet.db.wipe("/candidates/"+payload.key);
