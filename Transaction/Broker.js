@@ -24,7 +24,8 @@ class Broker {
 
   fillDBProtocols(){
     this.wallet.db.monitor("/blocks", (newBlk)=>{
-      console.log("NEW BLK", newBlk);
+      var isTransExist = await this.wallet.db.containsKey("/candidates/"+newBlk.payload.key);
+      console.log("IS EXIST ?", isTransExist);
     });
   }
 
