@@ -43,8 +43,7 @@ class Crawler {
       var receivedLatest = JSON.stringify(msg.message);
       var latest = JSON.stringify(await this.database.read("/latest"));
 
-      console.log("RECEIVE: ", receivedLatest);
-      console.log("Latest:", latest);
+      console.log("MATCH:", receivedLatest === latest);
 
 
       var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
