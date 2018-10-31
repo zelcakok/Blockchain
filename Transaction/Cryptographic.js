@@ -34,7 +34,7 @@ class Cryptographic {
     strTimestamp = strTimestamp.toString();
     var c1 = Cryptographic.expand(strTimestamp);
     var c2 = Cryptographic.num2Char(c1);
-    return c2;
+    return JSON.stringify(encodeURI(c2));
   }
 
   // static encryptTimestamp(strTimestamp){
