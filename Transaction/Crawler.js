@@ -35,7 +35,8 @@ class Crawler {
   fillProtocols(){
     this.transport.addProtocol(PROTOCOLS_QUERY_LATEST_KEY, async (msg)=>{
       Transport.dePacket(msg);
-
+      var key = Cryptographic.md5((peer.ipAddr + peer.port).split(".").join(""));
+      console.log("Do I have this socket?", this.transport.socketClients[key]);
     })
   }
 
