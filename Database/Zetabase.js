@@ -102,9 +102,8 @@ class Zetabase {
       }
       this.prepare().then(()=>{
         var url = this.traverse(path);
-        // console.log(url.dir[url.ptr]);
-        // url.dir[url.ptr] = null;
-        // delete url.dir[url.ptr];
+        url.dir[url.ptr] = null;
+        delete url.dir[url.ptr];
         // this.eventEmitter.emit('onChanges', path, null);
         this.eventEmitter.emit('onChanges', path, "WIPE");
         resolve();
