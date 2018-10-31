@@ -46,7 +46,7 @@ class Broker {
       this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+trans.key, newBlk);
 
       //Update the latest block timestamp
-      this.propagate(PROTOCOLS_LATEST_TIMESTAMP, "/latest", trans.key);
+      this.propagate(PROTOCOLS_LATEST_TIMESTAMP, "/latest/key", trans.key);
     });
   }
 
@@ -124,7 +124,7 @@ class Broker {
   }
 
   async getLatestBlockHash(){
-    var latestTimestamp = await this.wallet.db.read("/latest");
+    var latestTimestamp = await this.wallet.db.read("/latest/key");
     var latestBlk = await this.wallet.db.read("/blocks/"+latestTimestamp);
     latestBlk = JSON.parse(latestBlk);
     console.log("CHK", latestBlk.hash);

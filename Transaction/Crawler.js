@@ -29,7 +29,12 @@ class Crawler {
       Ask a peer to transfer the blocks after that key.
   */
   async _scout(){
-    var latestKey = await this.database.read("/latest");
+    var blocks = await this.database.read("/blocks");
+    Object.keys(blocks).map((key)=>{
+      console.log(key);
+    })
+
+    var latestKey = await this.database.read("/latest/key");
     this.transport.broadcast(PROTOCOLS_QUERY_LATEST_KEY, latestKey);
   }
 
