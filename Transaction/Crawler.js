@@ -1,4 +1,5 @@
 const Cryptographic = require("./Cryptographic");
+const Transport = require("../Network/Transport");
 
 var Log = null;
 var PROTOCOLS_QUERY_LATEST_KEY = Cryptographic.md5("&pquerylatestkey");
@@ -34,7 +35,7 @@ class Crawler {
 
   fillProtocols(){
     this.transport.addProtocol(PROTOCOLS_QUERY_LATEST_KEY, async (msg)=>{
-      console.log("Crawler receives msg: ", msg);
+      Transport.dePacket(msg);
 
     })
   }
