@@ -48,11 +48,11 @@ class Crawler {
       var latest = await this.database.read("/latest");
       var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
 
-      if(receivedLatest.key > latest.key) {
+      if(parseInt(receivedLatest.key) > parseInt(latest.key)) {
         console.log("The receivedLatest key is " + receivedLatest.key);
         console.log("I don't have the latest block, asking " + msg.ipAddr + "...");
         this.transport.sendViaKey(PROTOCOLS_QUERY_LATEST_KEY, latest.key, key);
-      } else if (receivedLatest.key === latest.key && receivedLatest.hash !== latest.hash) {
+      } else if (parseInt(receivedLatest.key) === parseInt(latest.key) && receivedLatest.hash !== latest.hash) {
         console.log("I miss some blocks, asking " + msg.ipAddr + "...");
         this.transport.sendViaKey(PROTOCOLS_QUERY_BLOCKS, "", key);
       }
