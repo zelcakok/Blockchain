@@ -16,7 +16,7 @@ class Crawler {
   scout(){
     if(!this.worker) Log.out("Crawler service is started","");
     this.worker = this._scout();
-    return (this.worker = setInterval(this._scout, this.interval));
+    return (this.worker = setInterval(()=>this._scout(), this.interval));
   }
 
   /*
@@ -35,6 +35,7 @@ class Crawler {
   fillProtocols(){
     this.transport.addProtocol(PROTOCOLS_QUERY_LATEST_KEY, async (msg)=>{
       console.log("Crawler receives msg: ", msg);
+
     })
   }
 
