@@ -40,12 +40,12 @@ class Crawler {
 
   fillProtocols(){
     this.transport.addProtocol(PROTOCOLS_QUERY_LATEST_KEY, async (msg)=>{
-      var receivedLatest = msg.message;
-      var latest = await this.database.read("/latest");
+      var receivedLatest = JSON.stringify(msg.message);
+      var latest = JSON.stringify(await this.database.read("/latest"));
 
       console.log("RECEIVE: ", receivedLatest);
       console.log("Latest:", latest);
-      console.log(receivedLatest === latest);
+
 
       var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
       this.transport.sendViaKey(PROTOCOLS_ANSWER_LATEST_KEY, "ANSWER KEY", key);
