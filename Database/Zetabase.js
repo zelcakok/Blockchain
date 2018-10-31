@@ -23,8 +23,6 @@ class Zetabase {
     this.eventEmitter.on('onChanges', (path, value)=>this.onChanges(path, value));
     this.monitorList = [];
     this.wallet = wallet;
-
-    console.log(ACTION_CODE_WIPE);
   }
 
   async prepare(){
@@ -105,6 +103,7 @@ class Zetabase {
     }
     this.prepare().then(()=>{
       var url = this.traverse(path);
+      url.dir[url.ptr] = null;
       delete url.dir[url.ptr];
       this.eventEmitter.emit('onChanges', path, ACTION_CODE_WIPE);
     });
