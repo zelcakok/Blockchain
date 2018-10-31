@@ -13,6 +13,8 @@ const Block = require("../Blocks/Block");
 
 var Log = null;
 
+const ACTION_CODE_WIPE = Cryptographic.md5("&actWipe;");
+
 class Zetabase {
   constructor(dbPath, logger, wallet){
     Log = logger;
@@ -103,7 +105,7 @@ class Zetabase {
     this.prepare().then(()=>{
       var url = this.traverse(path);
       delete url.dir[url.ptr];
-      this.eventEmitter.emit('onChanges', path, "WIPE");
+      this.eventEmitter.emit('onChanges', path, ACTION_CODE_WIPE);
     });
   }
 

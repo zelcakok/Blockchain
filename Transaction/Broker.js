@@ -4,6 +4,7 @@ const Cryptographic = require("./Cryptographic");
 const Payment = require("./Payment");
 const Transaction = require("./Payment");
 const Block = require("../Blocks/Block");
+const Zetabase = require("../Database/Zetabase");
 
 const PROTOCOLS_TRANSACTION = Cryptographic.md5("&ptrans;");
 const PROTOCOLS_NEW_BLK = Cryptographic.md5("&pnewblk;");
@@ -33,7 +34,7 @@ class Broker {
       }
     });
     this.wallet.db.monitor("/candidates", async (trans)=>{
-      Log.out("Start mine the new block", trans);
+      Log.out("Start mine the new block", trans, trans === Zetabase.ACTION_CODE_WIPE);
       var blocks = await this.wallet.db.read("/blocks/GENESIS",false);
       var newBlk = new Block(blocks.hash, trans);
       newBlk.setDifficulty(4);
