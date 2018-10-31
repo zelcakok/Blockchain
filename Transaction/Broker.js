@@ -34,7 +34,7 @@ class Broker {
     });
     this.wallet.db.monitor("/candidates", async (trans)=>{
       Log.out("Start mine the new block");
-      var blocks = await this.wallet.db.read("/blocks/GENESIS");
+      var blocks = await this.wallet.db.read("/blocks/GENESIS",false);
       var newBlk = new Block(blocks.hash, trans);
       newBlk.setDifficulty(4);
       await Block.mining(newBlk);
