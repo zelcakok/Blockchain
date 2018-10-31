@@ -23,7 +23,7 @@ class Wallet {
     this.transport = new Transport(transportPort, Log);
     this.web = new Web(webPort,this, Log);
     this.broker = new Broker(this, Log);
-    // this.crawler = new Crawler(this.transport, this.db, 5000, Log);
+    this.crawler = new Crawler(this.transport, this.db, 5000, Log);
     this.initialize()
   }
 
