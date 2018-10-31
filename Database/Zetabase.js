@@ -104,10 +104,10 @@ class Zetabase {
     this.prepare().then(()=>{
       var url = this.traverse(path);
 
-      console.log(Object.keys(url));
+      console.log(Object.keys(url.dir));
 
-      url.dir[url.ptr] = null;
-      delete url.dir[url.ptr];
+      // url.dir[url.ptr] = null;
+      // delete url.dir[url.ptr];
       this.eventEmitter.emit('onChanges', path, ACTION_CODE_WIPE);
     });
   }
