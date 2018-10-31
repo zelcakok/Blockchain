@@ -2,8 +2,11 @@ const Cryptographic = require("./Cryptographic");
 const Transport = require("../Network/Transport");
 
 var Log = null;
+const PROTOCOLS_BROADCAST_LATEST_KEY = Cryptographic.md5("&pbroadcastlatestkey");
 const PROTOCOLS_QUERY_LATEST_KEY = Cryptographic.md5("&pquerylatestkey");
+const PROTOCOLS_QUERY_BLOCKS = Cryptographic.md5("&pqueryblocks");
 const PROTOCOLS_ANSWER_LATEST_KEY = Cryptographic.md5("&panswerlatestkey");
+const PROTOCOLS_ANSWER_BLOCKS = Cryptographic.md5("&panswerblocks");
 
 class Crawler {
   constructor(transport, database, interval, logger){
@@ -36,23 +39,36 @@ class Crawler {
     await this.database.write("/latest/hash", latest.hash);
 
     latest.key = await this.database.read("/latest/key");
-    this.transport.broadcast(PROTOCOLS_QUERY_LATEST_KEY, latest);
+    this.transport.broadcast(PROTOCOLS_BROADCAST_LATEST_KEY, latest);
   }
 
   fillProtocols(){
-    this.transport.addProtocol(PROTOCOLS_QUERY_LATEST_KEY, async (msg)=>{
-      var receivedLatest = JSON.stringify(msg.message);
-      var latest = JSON.stringify(await this.database.read("/latest"));
-      if(receivedLatest !== latest) {
-        console.log(msg.ipAddr, msg.port, "does not have the latest block.");
-        var blocks = JSON.stringify(await this.database.read("/blocks"));
-        var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
-        this.transport.sendViaKey(PROTOCOLS_ANSWER_LATEST_KEY, blocks, key);
+    this.transport.addProtocol(PROTOCOLS_BROADCAST_LATEST_KEY, async (msg)=>{
+      var receivedLatest = msg.message;
+      var latest = await this.database.read("/latest");
+
+      if(receivedLatest.key > latest.key) {
+        console.log("I don't have the latest block, asking " + msg.ipAddr + "...");
+        this.transport.sendViaKey(PROTOCOLS_QUERY_LATEST_KEY, latest.key, key);
+      } else if (receivedLatest.hash !== latest.hash) {
+        console.log("I miss some blocks, asking " + msg.ipAddr + "...");
+        this.transport.sendViaKey(PROTOCOLS_QUERY_BLOCKS, "", key);
       }
     })
 
     this.transport.addProtocol(PROTOCOLS_ANSWER_LATEST_KEY, async (msg)=>{
-      Transport.dePacket(msg);
+      var blocks = await this.database.read("/blocks");
+      var sendBlks = [];
+      Object.keys(blocks).map((key)=>sendBlks.push(blocks[key]));
+      console.log("SEND",sendBlks, "to " + msg.ipAddr);
+      // var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
+      // this.transport.sendViaKey(PROTOCOLS_ANSWER_LATEST_KEY, , key);
+    });
+
+    this.transport.addProtocol(PROTOCOLS_QUERY_BLOCKS, async (msg)=>{
+      // var blocks = JSON.stringify(await this.database.read("/blocks"));
+      // var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
+      // this.transport.sendViaKey(PROTOCOLS_ANSWER_BLOCKS, blocks, key);
     });
   }
 
