@@ -187,7 +187,10 @@ class Zetabase {
       peers: new Object(),
       blocks: new Object(),
       candidates: new Object(),
-      latest: "GENESIS"
+      latest: {
+        key: "GENESIS",
+        hash: Cryptographic.sha256("GENESIS")
+      }
     })._checksum();
     var genesisBlk = Block.genesisBlock();
     this.structure.slot.blocks["GENESIS"] = JSON.stringify(genesisBlk);
