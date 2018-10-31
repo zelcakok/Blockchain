@@ -44,7 +44,7 @@ class Crawler {
 
   fillProtocols(){
     this.transport.addProtocol(PROTOCOLS_QUERY_LATEST_KEY, async (msg)=>{
-      Transport.dePacket(msg);
+      console.log(msg.message);
       // var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
       // this.transport.sendViaKey(PROTOCOLS_ANSWER_LATEST_KEY, "ANSWER KEY", key);
     })
