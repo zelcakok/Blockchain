@@ -29,24 +29,20 @@ class Crawler {
       Ask a peer to transfer the blocks after that key.
   */
   async _scout(){
-    var plaintext = "";
+    var latest = {key: null, hash: ""}
     var blocks = await this.database.read("/blocks");
-    Object.keys(blocks).map((key)=>plaintext+=key);
+    Object.keys(blocks).map((key)=>latest.hash+=key);
+    latest.hash = Cryptographic.sha256(latest.hash);
 
-    var hash = Cryptographic.sha256(plaintext);
-
-    var latestKey = await this.database.read("/latest/key");
-    this.transport.broadcast(PROTOCOLS_QUERY_LATEST_KEY, {
-      key: latestKey,
-      hash: hash
-    });
+    latest.key = await this.database.read("/latest/key");
+    this.transport.broadcast(PROTOCOLS_QUERY_LATEST_KEY, latest);
   }
 
   fillProtocols(){
     this.transport.addProtocol(PROTOCOLS_QUERY_LATEST_KEY, async (msg)=>{
       console.log(msg.message);
-      // var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
-      // this.transport.sendViaKey(PROTOCOLS_ANSWER_LATEST_KEY, "ANSWER KEY", key);
+      var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
+      this.transport.sendViaKey(PROTOCOLS_ANSWER_LATEST_KEY, "ANSWER KEY", key);
     })
 
     this.transport.addProtocol(PROTOCOLS_ANSWER_LATEST_KEY, async (msg)=>{
