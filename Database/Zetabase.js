@@ -33,7 +33,6 @@ class Zetabase {
   onChanges(path, value){
     Object.keys(this.monitorList).map((monitorPath, index)=>{
       if(this.isSubset(monitorPath, path)) {
-        console.log("Trigger:", path, value);
         this.monitorList[monitorPath](value);
       }
     })
