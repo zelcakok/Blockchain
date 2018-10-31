@@ -52,7 +52,7 @@ class Crawler {
         console.log("The receivedLatest key is " + receivedLatest.key);
         console.log("I don't have the latest block, asking " + msg.ipAddr + "...");
         this.transport.sendViaKey(PROTOCOLS_QUERY_LATEST_KEY, latest.key, key);
-      } else if (receivedLatest.hash !== latest.hash) {
+      } else if (receivedLatest.key === latest.key && receivedLatest.hash !== latest.hash) {
         console.log("I miss some blocks, asking " + msg.ipAddr + "...");
         this.transport.sendViaKey(PROTOCOLS_QUERY_BLOCKS, "", key);
       }
