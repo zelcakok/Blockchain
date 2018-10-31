@@ -33,13 +33,13 @@ class Broker {
         // Log.out("WIPE candidates");
         await this.wallet.db.wipe("/candidates/"+payload.key);
       }
-      Log.out("A new transaction is registered:",payload.key);
+      Log.out("New transaction:",payload.key);
     });
 
     this.wallet.db.monitor("/candidates", async (trans)=>{
       if(Zetabase.isWipe(trans)) return;
       var prevHash = await this.getLatestBlockHash();
-      Log.out("Start mine the new block, refer to prevHash: " + prevHash);
+      // Log.out("Start mine the new block, refer to prevHash: " + prevHash);
       var newBlk = new Block(prevHash, trans);
       newBlk.setDifficulty(4);
       await Block.mining(newBlk);
