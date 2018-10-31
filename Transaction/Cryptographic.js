@@ -45,10 +45,16 @@ class Cryptographic {
   // }
 
   static decryptTimestamp(cipher){
-    var c2 = Cryptographic.decodeURI(cipher);
+    var c2 = decodeURI(JSON.parse(cipher));
     var c1 = Cryptographic.char2Num(c2);
-    return collapse(c1);
+    return Cryptographic.collapse(c1);
   }
+
+  // static decryptTimestamp(cipher){
+  //   var c2 = Cryptographic.decodeURI(cipher);
+  //   var c1 = Cryptographic.char2Num(c2);
+  //   return collapse(c1);
+  // }
 
   static num2Char(str){
     var res = "";
