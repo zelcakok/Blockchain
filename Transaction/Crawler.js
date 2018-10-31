@@ -42,12 +42,11 @@ class Crawler {
     this.transport.addProtocol(PROTOCOLS_QUERY_LATEST_KEY, async (msg)=>{
       var receivedLatest = JSON.stringify(msg.message);
       var latest = JSON.stringify(await this.database.read("/latest"));
-
-      console.log("MATCH:", receivedLatest === latest);
-
-
-      var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
-      this.transport.sendViaKey(PROTOCOLS_ANSWER_LATEST_KEY, "ANSWER KEY", key);
+      if(receivedLatest !== latest) {
+        var blocks = JSON.stringify(await this.database.read("/blocks"));
+        var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
+        this.transport.sendViaKey(PROTOCOLS_ANSWER_LATEST_KEY, blocks, key);
+      }
     })
 
     this.transport.addProtocol(PROTOCOLS_ANSWER_LATEST_KEY, async (msg)=>{
