@@ -105,7 +105,7 @@ class Zetabase {
         url.dir[url.ptr] = null;
         delete url.dir[url.ptr];
         // this.eventEmitter.emit('onChanges', path, null);
-        this.eventEmitter.emit('onChanges', path, "WIPE");
+        // this.eventEmitter.emit('onChanges', path, "WIPE");
         resolve();
       }).catch((err)=>{if(err) {console.log(err); this.wallet.emergency()}});
     });
