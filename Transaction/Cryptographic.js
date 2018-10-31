@@ -31,47 +31,11 @@ class Cryptographic {
   }
 
   static encryptTimestamp(strTimestamp){
-    strTimestamp = strTimestamp.toString();
-    var c1 = Cryptographic.expand(strTimestamp);
-    var c2 = Cryptographic.num2Char(c1);
-    return JSON.stringify(encodeURI(c2));
+    return Cryptographic.expand(strTimestamp.toString());
   }
-
-  // static encryptTimestamp(strTimestamp){
-  //   strTimestamp = strTimestamp.toString();
-  //   var c1 = Cryptographic.expand(strTimestamp);
-  //   var c2 = Cryptographic.num2Char(c1);
-  //   return encodeURI(c2);
-  // }
 
   static decryptTimestamp(cipher){
-    var c2 = decodeURI(JSON.parse(cipher));
-    var c1 = Cryptographic.char2Num(c2);
-    return Cryptographic.collapse(c1);
-  }
-
-  // static decryptTimestamp(cipher){
-  //   var c2 = Cryptographic.decodeURI(cipher);
-  //   var c1 = Cryptographic.char2Num(c2);
-  //   return collapse(c1);
-  // }
-
-  static num2Char(str){
-    var res = "";
-    for(var i=0; i<str.length; i+=2){
-      var num = str[i+1]? [str[i],str[i+1]].join("") : [str[i],"0"].join("");
-      res += String.fromCharCode(num);
-    }
-    return res;
-  }
-
-  static char2Num(str){
-    var res = "", num = "";
-    for(var i=0; i<str.length; i++){
-      num = str[i].charCodeAt(0);
-      res += parseInt(num) < 10 ? "0"+num : num;
-    }
-    return (res = res.slice(0, -1));
+    return Cryptographic.collapse(cipher);
   }
 
   static expand(str){
