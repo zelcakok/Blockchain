@@ -111,6 +111,8 @@ class Broker {
     var payment = new Payment(null, tarAddr, amount);
     var sig = await Wallet.WALLET_IDENTITY.sign(payment);
 
+    var latest = await this.getLatestBlockHash();
+
     var transaction = {
       key: Cryptographic.encryptTimestamp(moment().valueOf()),
       scriptSig: {
@@ -122,6 +124,11 @@ class Broker {
     }
 
     this.propagate(PROTOCOLS_TRANSACTION, "/candidates/"+transaction.key, transaction);
+  }
+
+  async getLatestBlockHash(){
+    var latestTimestamp = await this.wallet.db.read("/latest");
+    console.log("latestTimestamp", latestTimestamp);
   }
 
   propagate(protocol, key, payload){

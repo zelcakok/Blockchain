@@ -186,7 +186,8 @@ class Zetabase {
     this.structure = new Entry({
       peers: new Object(),
       blocks: new Object(),
-      candidates: new Object()
+      candidates: new Object(),
+      latest: "GENESIS"
     })._checksum();
     var genesisBlk = Block.genesisBlock();
     this.structure.slot.blocks["GENESIS"] = genesisBlk;
