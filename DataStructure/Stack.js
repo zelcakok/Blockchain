@@ -1,4 +1,4 @@
-const Node = require("./Node");
+const StackNode = require("./StackNode");
 
 class Stack {
   constructor(){
@@ -6,7 +6,7 @@ class Stack {
   }
 
   push(data){
-    var n = new Node(data);
+    var n = new StackNode(data);
     if(this.front === null) this.front = n;
     else {
       n.next = this.front;

@@ -1,7 +1,7 @@
-class Node {
+class StackNode {
   constructor(data){
     this.data = data;
     this.next = null;
   }
 }
-module.exports = Node;
+module.exports = StackNode;

@@ -8,6 +8,7 @@ const Zetabase = require("../Database/Zetabase");
 
 const PROTOCOLS_TRANSACTION = Cryptographic.md5("&ptrans;");
 const PROTOCOLS_NEW_BLK = Cryptographic.md5("&pnewblk;");
+const PROTOCOLS_LATEST_TIMESTAMP = Cryptographic.md5("&ptimestamp;");
 
 var Log = null;
 
@@ -42,6 +43,9 @@ class Broker {
       await Block.mining(newBlk);
       newBlk.payload = JSON.parse(newBlk.payload);
       this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+trans.key, newBlk);
+
+      //Update the latest block timestamp
+      this.propagate(PROTOCOLS_LATEST_TIMESTAMP, "/blocks/latest", trans.key);
     });
   }
 
@@ -67,16 +71,11 @@ class Broker {
       }
     })
 
-    // this.wallet.transport.addProtocol(PROTOCOLS_NEW_BLK, async (msg)=>{
-    //   var newBlk = msg.message;
-    //   var payload = newBlk.payload;
-    //   var isTransExist = await this.wallet.db.containsKey("/candidates/"+payload.key);
-    //   if(isTransExist){
-    //     Log.out("BLK exist in candidates, wipe it.");
-    //     // this.wallet.db.wipe("/candidates/"+payload.key);
-    //     // this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+payload.key, newBlk);
-    //   }
-    // });
+    this.wallet.transport.addProtocol(PROTOCOLS_LATEST_TIMESTAMP, async (msg)=>{
+      var timestamp = msg.message;
+      console.log("The latest timestamp is ", timestamp);
+    });
+
   }
 
   fillShellProtocols(){
