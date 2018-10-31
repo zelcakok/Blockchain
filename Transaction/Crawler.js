@@ -10,6 +10,7 @@ class Crawler {
     this.database = database;
     this.worker = null;
     this.interval = interval;
+    this.fillProtocols();
   }
 
   scout(){
