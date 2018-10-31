@@ -37,10 +37,9 @@ class Broker {
 
     this.wallet.db.monitor("/candidates", async (trans)=>{
       if(Zetabase.isWipe(trans)) return;
-      await this.getLatestBlockHash();
-      // Log.out("Start mine the new block, refer to /blocks/"+latestTimestamp);
-      var blocks = await this.wallet.db.read("/blocks/GENESIS",false);
-      var newBlk = new Block(blocks.hash, trans);
+      var prevHash = await this.getLatestBlockHash();
+      Log.out("Start mine the new block, refer to prevHash: " + prevHash);
+      var newBlk = new Block(prevHash, trans);
       newBlk.setDifficulty(4);
       await Block.mining(newBlk);
       newBlk.payload = JSON.parse(newBlk.payload);
