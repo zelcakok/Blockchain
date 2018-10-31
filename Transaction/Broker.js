@@ -49,13 +49,13 @@ class Broker {
       var scriptSig = trans.scriptSig;
       var payment = trans.payment;
 
-      var isTransExist = await this.wallet.db.containsKey("/candidates/"+trans.key);
-      isTransExist = isTransExist || await this.wallet.db.containsKey("/blocks/"+trans.key);
+      var isTransExist = await this.wallet.db.containsKey("/candidates/"+trans.key) ||
+                         await this.wallet.db.containsKey("/blocks/"+trans.key);
       if(!isTransExist){
         var verification = await Payment.verify(scriptSig.pubKey, scriptSig.sig, payment);
         // Log.out("New transaction comes, verification: ", verification);
         if(verification) {
-          // Log.out("The transaction is valid, forwarding to peers.");
+          Log.out("The transaction is valid, forwarding to peers.");
           this.propagate(PROTOCOLS_TRANSACTION, "/candidates/"+trans.key, trans);
         } else {
           // Log.out("Drop the invalid transaction.");
