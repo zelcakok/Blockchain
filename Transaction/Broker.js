@@ -127,6 +127,7 @@ class Broker {
   async getLatestBlockHash(){
     var latestTimestamp = await this.wallet.db.read("/latest");
     var latestBlk = await this.wallet.db.read("/blocks/"+latestTimestamp);
+    latestBlk = JSON.parse(latestBlk);
     console.log("CHK", latestBlk.hash);
     return latestBlk.hash;
   }

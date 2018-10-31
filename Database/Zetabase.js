@@ -190,7 +190,7 @@ class Zetabase {
       latest: "GENESIS"
     })._checksum();
     var genesisBlk = Block.genesisBlock();
-    this.structure.slot.blocks["GENESIS"] = genesisBlk;
+    this.structure.slot.blocks["GENESIS"] = JSON.stringify(genesisBlk);
     this.invalidate();
   }
 
