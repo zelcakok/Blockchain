@@ -32,8 +32,10 @@ class Zetabase {
 
   onChanges(path, value){
     Object.keys(this.monitorList).map((monitorPath, index)=>{
-      if(this.isSubset(monitorPath, path))
+      if(this.isSubset(monitorPath, path)) {
+        console.log("Trigger:", path, value);
         this.monitorList[monitorPath](value);
+      }
     })
     this.invalidate();
   }
@@ -100,9 +102,9 @@ class Zetabase {
       return Promise.resolve(this.sysStart());
     }
     this.prepare().then(()=>{
-      console.log("Path: ", path);
       var url = this.traverse(path);
-      console.log("URL:", url);
+      delete url.dir[url.ptr];
+      this.eventEmitter.emit('onChanges', path, "WIPE");
     });
   }
 

@@ -55,7 +55,7 @@ class Broker {
         var verification = await Payment.verify(scriptSig.pubKey, scriptSig.sig, payment);
         // Log.out("New transaction comes, verification: ", verification);
         if(verification) {
-          Log.out("The transaction is valid, forwarding to peers.");
+          Log.out("The transaction is valid, forwarding to peers.", trans.key);
           this.propagate(PROTOCOLS_TRANSACTION, "/candidates/"+trans.key, trans);
         } else {
           // Log.out("Drop the invalid transaction.");
