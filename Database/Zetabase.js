@@ -188,7 +188,7 @@ class Zetabase {
       blocks: new Object(),
       candidates: new Object(),
       latest: {
-        key: Cryptographic.encryptTimestamp(moment("1993-12-31T00:00:00")),
+        key: Cryptographic.encryptTimestamp(moment("1993-12-31T00:00:00").valueOf()),
         hash: Cryptographic.sha256("GENESIS")
       }
     })._checksum();
