@@ -34,6 +34,7 @@ class Broker {
         await this.wallet.db.wipe("/candidates/"+payload.key);
       }
     });
+
     this.wallet.db.monitor("/candidates", async (trans)=>{
       if(Zetabase.isWipe(trans)) return;
       Log.out("Start mine the new block");
@@ -45,7 +46,7 @@ class Broker {
       this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+trans.key, newBlk);
 
       //Update the latest block timestamp
-      this.propagate(PROTOCOLS_LATEST_TIMESTAMP, "/blocks/latest", trans.key);
+      this.propagate(PROTOCOLS_LATEST_TIMESTAMP, "/latest", trans.key);
     });
   }
 
