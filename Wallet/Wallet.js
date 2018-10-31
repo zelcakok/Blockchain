@@ -64,7 +64,7 @@ class Wallet {
     this.transport.listen();
     this.broadcast();
     this.web.listen(this);
-    setTimeout(function () {
+    setTimeout(()=>{
       this.crawler.scout();
     }, 5000);
   }
