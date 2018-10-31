@@ -105,7 +105,7 @@ class Zetabase {
         url.dir[url.ptr] = null;
         delete url.dir[url.ptr];
         // this.eventEmitter.emit('onChanges', path, null);
-        // this.eventEmitter.emit('onChanges', path, "WIPE");
+        this.eventEmitter.emit('onChanges', path, "WIPE");
         resolve();
       }).catch((err)=>{if(err) {console.log(err); this.wallet.emergency()}});
     });
@@ -208,7 +208,7 @@ class Zetabase {
   saveState(){
     var data = this.prepareState();
     console.log("SAVE DATA: ", JSON.stringify(data,null,2), '\n\n');
-    fs.writeFile(this.dbPath, this.prepareState(), (err)=>{      
+    fs.writeFile(this.dbPath, this.prepareState(), (err)=>{
       if(err) throw err;
     })
   }
