@@ -101,8 +101,8 @@ class Zetabase {
         return resolve(this.sysStart());
       }
       this.prepare().then(()=>{
-        var url = this.traverse(path);
-        url.dir[url.ptr] = "WIPED";
+        // var url = this.traverse(path);
+        // url.dir[url.ptr] = "WIPED";
         // delete url.dir[url.ptr];
         // this.eventEmitter.emit('onChanges', path, null);
         this.eventEmitter.emit('onChanges', path, "WIPE");
