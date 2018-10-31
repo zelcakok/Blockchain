@@ -76,7 +76,6 @@ class Broker {
       var timestamp = msg.message;
       console.log("The latest timestamp is ", timestamp);
     });
-
   }
 
   fillShellProtocols(){

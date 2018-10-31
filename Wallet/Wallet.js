@@ -7,8 +7,8 @@ const Crypto = require("crypto");
 const Log = require("./Log");
 const Shell = require("../Shell/Shell");
 const Web = require("../Web/WebServer");
-
 const Broker = require("../Transaction/Broker");
+const Crawler = require("../Transaction/Crawler");
 
 var WALLET_IDENTITY = null;
 
@@ -23,6 +23,7 @@ class Wallet {
     this.transport = new Transport(transportPort, Log);
     this.web = new Web(webPort,this, Log);
     this.broker = new Broker(this, Log);
+    this.crawler = new Crawler(this.transport, this.db, 60000, Log);
     this.initialize()
   }
 
@@ -63,6 +64,7 @@ class Wallet {
     this.transport.listen();
     this.broadcast();
     this.web.listen(this);
+    this.crawler.scout();
   }
 
   resetDatabase(){
