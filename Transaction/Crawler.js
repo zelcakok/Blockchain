@@ -46,6 +46,7 @@ class Crawler {
     this.transport.addProtocol(PROTOCOLS_BROADCAST_LATEST_KEY, async (msg)=>{
       var receivedLatest = msg.message;
       var latest = await this.database.read("/latest");
+      var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
 
       if(receivedLatest.key > latest.key) {
         console.log("I don't have the latest block, asking " + msg.ipAddr + "...");
