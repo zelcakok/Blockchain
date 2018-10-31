@@ -16,11 +16,14 @@ Main();
 //
 // var a = moment().valueOf();
 // var b = moment().add(1, "hour").valueOf();
+// var c = moment().add(2, "hour").valueOf();
 //
 // var ca = Cryptographic.encryptTimestamp(a);
 // var cb = Cryptographic.encryptTimestamp(b);
+// var cc = Cryptographic.encryptTimestamp(c);
 //
 // console.log(ca, Cryptographic.decryptTimestamp(ca));
 // console.log(cb, Cryptographic.decryptTimestamp(cb));
+// console.log(cc, Cryptographic.decryptTimestamp(cc));
 //
-// console.log(ca < cb);
+// console.log(ca < cb, ca < cc, cb < cc);
