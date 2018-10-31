@@ -94,22 +94,34 @@ class Zetabase {
     });
   }
 
-  wipe(path){
-    return new Promise(async (resolve, reject)=>{
-      if(path === "/") {
-        await Zetabase.removeDB(this.dbPath);
-        return resolve(this.sysStart());
-      }
-      this.prepare().then(()=>{
-        // var url = this.traverse(path);
-        // url.dir[url.ptr] = "WIPED";
-        // delete url.dir[url.ptr];
-        // this.eventEmitter.emit('onChanges', path, null);
-        this.eventEmitter.emit('onChanges', path, "WIPE");
-        resolve();
-      }).catch((err)=>{if(err) {console.log(err); this.wallet.emergency()}});
+  async wipe(path){
+    if(path === "/") {
+      await Zetabase.removeDB(this.dbPath);
+      return Promise.resolve(this.sysStart());
+    }
+    this.prepare().then(()=>{
+      console.log("Path: ", path);
+      var url = this.traverse(path);
+      console.log("URL:", url);
     });
   }
+
+  // wipe(path){
+  //   return new Promise(async (resolve, reject)=>{
+  //     if(path === "/") {
+  //       await Zetabase.removeDB(this.dbPath);
+  //       return resolve(this.sysStart());
+  //     }
+  //     this.prepare().then(()=>{
+  //       // var url = this.traverse(path);
+  //       // url.dir[url.ptr] = "WIPED";
+  //       // delete url.dir[url.ptr];
+  //       // this.eventEmitter.emit('onChanges', path, null);
+  //       this.eventEmitter.emit('onChanges', path, "WIPE");
+  //       resolve();
+  //     }).catch((err)=>{if(err) {console.log(err); this.wallet.emergency()}});
+  //   });
+  // }
 
   monitor(path, cb){
     return new Promise((resolve, reject)=>{
