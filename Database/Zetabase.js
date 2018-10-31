@@ -183,17 +183,18 @@ class Zetabase {
   }
 
   async sysStart(){
+    var GENESIS_TIME = Cryptographic.encryptTimestamp(moment("1993-12-31T00:00:00").valueOf());
     this.structure = new Entry({
       peers: new Object(),
       blocks: new Object(),
       candidates: new Object(),
       latest: {
-        key: Cryptographic.encryptTimestamp(moment("1993-12-31T00:00:00").valueOf()),
-        hash: Cryptographic.sha256("GENESIS")
+        key: GENESIS_TIME,
+        hash: Cryptographic.sha256(GENESIS_TIME)
       }
     })._checksum();
     var genesisBlk = Block.genesisBlock();
-    this.structure.slot.blocks["GENESIS"] = JSON.stringify(genesisBlk);
+    this.structure.slot.blocks[GENESIS_TIME] = JSON.stringify(genesisBlk);
     this.invalidate();
   }
 
