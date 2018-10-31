@@ -32,17 +32,10 @@ class Cryptographic {
 
   static encryptTimestamp(strTimestamp){
     strTimestamp = strTimestamp.toString();
-    // var c1 = Cryptographic.expand(strTimestamp);
-    // var c2 = Cryptographic.num2Char(c1);
-    return encodeURI(strTimestamp);
+    var c1 = Cryptographic.expand(strTimestamp);
+    var c2 = Cryptographic.num2Char(c1);
+    return encodeURI(c2);
   }
-
-  // static encryptTimestamp(strTimestamp){
-  //   strTimestamp = strTimestamp.toString();
-  //   var c1 = Cryptographic.expand(strTimestamp);
-  //   var c2 = Cryptographic.num2Char(c1);
-  //   return encodeURI(c2);
-  // }
 
   static decryptTimestamp(cipher){
     var c2 = Cryptographic.decodeURI(cipher);

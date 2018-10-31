@@ -10,3 +10,14 @@ async function Main(){
 }
 
 Main();
+
+// const moment = require("moment");
+// const Cryptographic = require("./Transaction/Cryptographic");
+//
+// var a = moment().valueOf();
+// var b = moment().add(1,'year').valueOf();
+//
+// var ca = Cryptographic.encryptTimestamp(a);
+// var cb = Cryptographic.encryptTimestamp(b);
+//
+// console.log(ca < cb);

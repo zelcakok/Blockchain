@@ -2,9 +2,9 @@
   "name": "blockchain",
   "version": "1.0.0",
   "description": "",
-  "main": "Wallet.js",
+  "main": "index.js",
   "scripts": {
-    "test": "node Wallet.js"
+    "test": "node index.js"
   },
   "author": "",
   "license": "ISC",
