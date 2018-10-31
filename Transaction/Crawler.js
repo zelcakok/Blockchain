@@ -29,7 +29,6 @@ class Crawler {
   */
   async _scout(){
     var latestKey = await this.database.read("/latest");
-    Log.out("Crawler latestKey: ", latestKey);
     this.transport.broadcast(PROTOCOLS_QUERY_LATEST_KEY, latestKey);
   }
 
