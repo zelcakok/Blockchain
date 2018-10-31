@@ -206,8 +206,9 @@ class Zetabase {
   }
 
   saveState(){
-    fs.writeFile(this.dbPath, this.prepareState(), (err)=>{
-      console.log("DB state is saved.");
+    var data = this.prepareState();
+    console.log("SAVE DATA: ", JSON.stringify(data,null,2), '\n\n');
+    fs.writeFile(this.dbPath, this.prepareState(), (err)=>{      
       if(err) throw err;
     })
   }
