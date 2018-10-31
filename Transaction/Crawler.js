@@ -45,6 +45,7 @@ class Crawler {
 
       console.log("RECEIVE: ", receivedLatest);
       console.log("Latest:", latest);
+      console.log(receivedLatest === latest);
 
       var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
       this.transport.sendViaKey(PROTOCOLS_ANSWER_LATEST_KEY, "ANSWER KEY", key);
