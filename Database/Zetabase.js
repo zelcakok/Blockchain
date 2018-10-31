@@ -103,11 +103,8 @@ class Zetabase {
     }
     this.prepare().then(()=>{
       var url = this.traverse(path);
-
-      console.log(Object.keys(url.dir));
-
-      // url.dir[url.ptr] = null;
-      // delete url.dir[url.ptr];
+      url.dir[url.ptr] = "";
+      delete url.dir[url.ptr];
       this.eventEmitter.emit('onChanges', path, ACTION_CODE_WIPE);
     });
   }
@@ -208,7 +205,7 @@ class Zetabase {
 
   saveState(){
     var data = this.prepareState();
-    fs.writeFile(this.dbPath, this.prepareState(), (err)=>{
+    fs.writeFileSync(this.dbPath, this.prepareState(), (err)=>{
       if(err) throw err;
     })
   }
