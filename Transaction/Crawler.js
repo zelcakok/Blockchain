@@ -2,7 +2,8 @@ const Cryptographic = require("./Cryptographic");
 const Transport = require("../Network/Transport");
 
 var Log = null;
-var PROTOCOLS_QUERY_LATEST_KEY = Cryptographic.md5("&pquerylatestkey");
+const PROTOCOLS_QUERY_LATEST_KEY = Cryptographic.md5("&pquerylatestkey");
+const PROTOCOLS_ANSWER_LATEST_KEY = Cryptographic.md5("&panswerlatestkey");
 
 class Crawler {
   constructor(transport, database, interval, logger){
@@ -36,8 +37,12 @@ class Crawler {
     this.transport.addProtocol(PROTOCOLS_QUERY_LATEST_KEY, async (msg)=>{
       Transport.dePacket(msg);
       var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
-      console.log("Do I have this socket?", this.transport.socketClients[key]);
+      this.transport.sendViaKey(PROTOCOLS_ANSWER_LATEST_KEY, "ANSWER KEY", key);
     })
+
+    this.transport.addProtocol(PROTOCOLS_ANSWER_LATEST_KEY, async (msg)=>{
+      Transport.dePacket(msg);
+    });
   }
 
   stop(){
