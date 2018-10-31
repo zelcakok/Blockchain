@@ -33,6 +33,7 @@ class Crawler {
     var blocks = await this.database.read("/blocks");
     Object.keys(blocks).map((key)=>latest.hash+=key);
     latest.hash = Cryptographic.sha256(latest.hash);
+    await this.database.write("/latest/hash", latest.hash);
 
     latest.key = await this.database.read("/latest/key");
     this.transport.broadcast(PROTOCOLS_QUERY_LATEST_KEY, latest);
@@ -43,6 +44,7 @@ class Crawler {
       var receivedLatest = JSON.stringify(msg.message);
       var latest = JSON.stringify(await this.database.read("/latest"));
       if(receivedLatest !== latest) {
+        console.log(msg.ipAddr, msg.port, "does not have the latest block.");
         var blocks = JSON.stringify(await this.database.read("/blocks"));
         var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
         this.transport.sendViaKey(PROTOCOLS_ANSWER_LATEST_KEY, blocks, key);
