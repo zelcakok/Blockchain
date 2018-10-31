@@ -34,7 +34,9 @@ class Broker {
       }
     });
     this.wallet.db.monitor("/candidates", async (trans)=>{
-      Log.out("Start mine the new block", trans, trans === Zetabase.ACTION_CODE_WIPE);
+      console.log(trans);
+      console.log(Zetabase.ACTION_CODE_WIPE);
+      Log.out("Start mine the new block");
       var blocks = await this.wallet.db.read("/blocks/GENESIS",false);
       var newBlk = new Block(blocks.hash, trans);
       newBlk.setDifficulty(4);
