@@ -12,7 +12,6 @@ const Shell = require("../Shell/Shell");
 const Block = require("../Blocks/Block");
 
 var Log = null;
-
 const ACTION_CODE_WIPE = Cryptographic.md5("&actWipe;");
 
 class Zetabase {
@@ -24,6 +23,8 @@ class Zetabase {
     this.eventEmitter.on('onChanges', (path, value)=>this.onChanges(path, value));
     this.monitorList = [];
     this.wallet = wallet;
+
+    console.log(ACTION_CODE_WIPE);
   }
 
   async prepare(){
@@ -247,6 +248,10 @@ class Zetabase {
     return new Promise((resolve, reject)=>{
       fs.unlink(dbPath, ()=>resolve());
     });
+  }
+
+  static isWipe(str){
+    return str === ACTION_CODE_WIPE;
   }
 }
 module.exports = Zetabase;
