@@ -37,7 +37,8 @@ class Broker {
 
     this.wallet.db.monitor("/candidates", async (trans)=>{
       if(Zetabase.isWipe(trans)) return;
-      Log.out("Start mine the new block");
+      // var latestTimestamp = await this.getLatestBlockHash();
+      // Log.out("Start mine the new block, refer to /blocks/"+latestTimestamp);
       var blocks = await this.wallet.db.read("/blocks/GENESIS",false);
       var newBlk = new Block(blocks.hash, trans);
       newBlk.setDifficulty(4);
@@ -111,8 +112,6 @@ class Broker {
     var payment = new Payment(null, tarAddr, amount);
     var sig = await Wallet.WALLET_IDENTITY.sign(payment);
 
-    var latest = await this.getLatestBlockHash();
-
     var transaction = {
       key: Cryptographic.encryptTimestamp(moment().valueOf()),
       scriptSig: {
@@ -128,7 +127,9 @@ class Broker {
 
   async getLatestBlockHash(){
     var latestTimestamp = await this.wallet.db.read("/latest");
-    console.log("latestTimestamp", latestTimestamp);
+    var latestBlk = await this.wallet.db.read("/blocks/"+latestTimestamp);
+    console.log(latestBlk);
+    return latestBlk.hash;
   }
 
   propagate(protocol, key, payload){
