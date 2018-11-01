@@ -54,7 +54,7 @@ class Crawler {
         this.transport.sendViaKey(PROTOCOLS_QUERY_LATEST_KEY, latest.key, key);
       } else if (parseInt(receivedLatest.key) === parseInt(latest.key) && receivedLatest.hash !== latest.hash) {
         console.log("I miss some blocks, asking " + msg.ipAddr + "...");
-        // this.transport.sendViaKey(PROTOCOLS_QUERY_BLOCKS, "", key);
+        this.transport.sendViaKey(PROTOCOLS_QUERY_BLOCKS, "", key);
       }
     })
 
@@ -62,12 +62,13 @@ class Crawler {
       var blocks = await this.database.read("/blocks");
       var sendBlks = [];
       Object.keys(blocks).map((key)=>sendBlks.push(blocks[key]));
-      console.log("SEND the latest key to " + msg.ipAddr);
+      Log.out("SEND the latest key to " + msg.ipAddr);
       // var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
       // this.transport.sendViaKey(PROTOCOLS_ANSWER_LATEST_KEY, , key);
     });
 
     this.transport.addProtocol(PROTOCOLS_QUERY_BLOCKS, async (msg)=>{
+      Log.out(msg.ipAddr, "is asking the blocks");
       var latestKey = await this.database.read("/latest/key");
       var blocks = await this.database.read("/blocks");
       var payload = JSON.stringify({key: latestKey, blocks: blocks});
