@@ -84,8 +84,8 @@ class Crawler {
       var blocks = payload.blocks;
 
       Object.keys(blocks).map((key)=>latest.hash+=key);
-      console.log(latest);
-      console.log("FINISh");
+      console.log("LATEST", latest);
+      console.log("FINISH");
       // this.database.write("/blocks", blocks).then(()=>{
       //   Log.out("My blocks is updated.");
       // });
