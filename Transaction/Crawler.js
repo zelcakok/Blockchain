@@ -62,15 +62,31 @@ class Crawler {
       var blocks = await this.database.read("/blocks");
       var sendBlks = [];
       Object.keys(blocks).map((key)=>sendBlks.push(blocks[key]));
-      console.log("SEND",sendBlks, "to " + msg.ipAddr);
+      console.log("SEND the latest key to " + msg.ipAddr);
       // var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
       // this.transport.sendViaKey(PROTOCOLS_ANSWER_LATEST_KEY, , key);
     });
 
     this.transport.addProtocol(PROTOCOLS_QUERY_BLOCKS, async (msg)=>{
-      // var blocks = JSON.stringify(await this.database.read("/blocks"));
-      // var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
-      // this.transport.sendViaKey(PROTOCOLS_ANSWER_BLOCKS, blocks, key);
+      var latestKey = await this.database.read("/latest/key");
+      var blocks = await this.database.read("/blocks");
+      var package = JSON.stringify({key: latestKey, blocks: blocks});
+      var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
+      this.transport.sendViaKey(PROTOCOLS_ANSWER_BLOCKS, package, key);
+    });
+
+    this.transport.addProtocol(PROTOCOLS_ANSWER_BLOCKS, async (msg)=>{
+      Log.out(msg.ipAddr,"sends the blocks to me.");
+      var latest = {key: null, hash: ""}
+      var package = JSON.parse(msg.message);
+      var blocks = package.blocks;
+      Object.keys(blocks).map((key)=>latest.hash+=key);
+      this.database.write("/blocks", blocks).then(()=>{
+        Log.out("My blocks is updated.");
+      });
+      this.database.write("/latest", latest).then(()=>{
+        Log.out("My latest is updated.");
+      });
     });
   }
 
