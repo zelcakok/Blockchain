@@ -70,16 +70,16 @@ class Crawler {
     this.transport.addProtocol(PROTOCOLS_QUERY_BLOCKS, async (msg)=>{
       var latestKey = await this.database.read("/latest/key");
       var blocks = await this.database.read("/blocks");
-      var package = JSON.stringify({key: latestKey, blocks: blocks});
+      var payload = JSON.stringify({key: latestKey, blocks: blocks});
       var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
-      this.transport.sendViaKey(PROTOCOLS_ANSWER_BLOCKS, package, key);
+      this.transport.sendViaKey(PROTOCOLS_ANSWER_BLOCKS, payload, key);
     });
 
     this.transport.addProtocol(PROTOCOLS_ANSWER_BLOCKS, async (msg)=>{
       Log.out(msg.ipAddr,"sends the blocks to me.");
       var latest = {key: null, hash: ""}
-      var package = JSON.parse(msg.message);
-      var blocks = package.blocks;
+      var payload = JSON.parse(msg.message);
+      var blocks = payload.blocks;
       Object.keys(blocks).map((key)=>latest.hash+=key);
       this.database.write("/blocks", blocks).then(()=>{
         Log.out("My blocks is updated.");
