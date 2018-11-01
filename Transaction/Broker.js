@@ -26,15 +26,15 @@ class Broker {
   }
 
   fillDBProtocols(){
-    this.wallet.db.monitor("/blocks", async (newBlk)=>{
-      var payload = newBlk.payload;
-      var isTransExist = await this.wallet.db.containsKey("/candidates/"+payload.key);
-      if(isTransExist) {
-        // Log.out("WIPE candidates");
-        await this.wallet.db.wipe("/candidates/"+payload.key);
-      }
-      Log.out("New transaction:",payload.key);
-    });
+    // this.wallet.db.monitor("/blocks", async (newBlk)=>{
+    //   var payload = newBlk.payload;
+    //   var isTransExist = await this.wallet.db.containsKey("/candidates/"+payload.key);
+    //   if(isTransExist) {
+    //     // Log.out("WIPE candidates");
+    //     await this.wallet.db.wipe("/candidates/"+payload.key);
+    //   }
+    //   Log.out("New transaction:",payload.key);
+    // });
 
     this.wallet.db.monitor("/candidates", async (trans)=>{
       if(Zetabase.isWipe(trans)) return;
