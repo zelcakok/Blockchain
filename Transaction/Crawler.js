@@ -59,12 +59,10 @@ class Crawler {
     })
 
     this.transport.addProtocol(PROTOCOLS_QUERY_LATEST_KEY, async (msg)=>{
-      var blocks = await this.database.read("/blocks");
-      var sendBlks = [];
-      Object.keys(blocks).map((key)=>sendBlks.push(blocks[key]));
+      var latestKey = await this.database.read("/latest/key");
       Log.out("SEND the latest key to " + msg.ipAddr);
-      // var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
-      // this.transport.sendViaKey(PROTOCOLS_ANSWER_LATEST_KEY, , key);
+      var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
+      this.transport.sendViaKey(PROTOCOLS_ANSWER_LATEST_KEY, latestKey, key);
     });
 
     this.transport.addProtocol(PROTOCOLS_QUERY_BLOCKS, async (msg)=>{
