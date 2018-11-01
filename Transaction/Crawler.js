@@ -58,7 +58,7 @@ class Crawler {
       }
     })
 
-    this.transport.addProtocol(PROTOCOLS_ANSWER_LATEST_KEY, async (msg)=>{
+    this.transport.addProtocol(PROTOCOLS_QUERY_LATEST_KEY, async (msg)=>{
       var blocks = await this.database.read("/blocks");
       var sendBlks = [];
       Object.keys(blocks).map((key)=>sendBlks.push(blocks[key]));
