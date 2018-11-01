@@ -89,9 +89,6 @@ class Crawler {
       this.database.write("/blocks", blocks).then(()=>{
         Log.out("My blocks is updated.");
       });
-      this.database.write("/latest", latest).then(()=>{
-        Log.out("My latest is updated.");
-      });
     });
   }
 
