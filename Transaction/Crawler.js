@@ -81,7 +81,10 @@ class Crawler {
       Log.out(msg.ipAddr,"sends the blocks to me.");
       var latest = {key: null, hash: ""}
       var payload = JSON.parse(msg.message);
+      latest.key = payload.key;
       var blocks = payload.blocks;
+
+      Log.out("Blocks keys", Object.keys(blocks));
 
       Object.keys(blocks).map((key)=>latest.hash+=key);
       console.log("LATEST", latest);
