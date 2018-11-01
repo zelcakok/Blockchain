@@ -80,8 +80,10 @@ class Crawler {
       Log.out(msg.ipAddr,"sends the blocks to me.");
       var latest = {key: null, hash: ""}
       var payload = JSON.parse(msg.message);
-      var blocks = payload.blocks;
-      console.log(blocks);
+      console.log("Payload",payload);
+      console.log("FINISH");
+      // var blocks = payload.blocks;
+
       // Object.keys(blocks).map((key)=>latest.hash+=key);
       // this.database.write("/blocks", blocks).then(()=>{
       //   Log.out("My blocks is updated.");
