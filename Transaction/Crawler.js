@@ -69,7 +69,7 @@ class Crawler {
 
     this.transport.addProtocol(PROTOCOLS_QUERY_BLOCKS, async (msg)=>{
       Log.out(msg.ipAddr, "is asking the blocks");
-      // var latestKey = await this.database.read("/latest/key");
+      var latestKey = await this.database.read("/latest/key");
       // var blocks = await this.database.read("/blocks");
       // var payload = JSON.stringify({key: latestKey, blocks: blocks});
       // var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
