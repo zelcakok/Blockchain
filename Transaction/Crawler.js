@@ -65,6 +65,13 @@ class Crawler {
       this.transport.sendViaKey(PROTOCOLS_ANSWER_LATEST_KEY, latestKey, key);
     });
 
+    this.transport.addProtocol(PROTOCOLS_ANSWER_LATEST_KEY, async (msg)=>{
+      var latestKey = msg.message;
+      this.database.write("/latest/key", latestKey).then(()=>{
+        Log.out("My latest key is updated:", latestKey);
+      })
+    });
+
     this.transport.addProtocol(PROTOCOLS_QUERY_BLOCKS, async (msg)=>{
       Log.out(msg.ipAddr, "is asking the blocks");
       var latestKey = await this.database.read("/latest/key");
