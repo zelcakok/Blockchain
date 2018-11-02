@@ -16,6 +16,7 @@ class Crawler {
     this.database = database;
     this.worker = null;
     this.interval = interval;
+    this.isTransportEnabled = false;
     this.fillProtocols();
   }
 
@@ -38,13 +39,22 @@ class Crawler {
     Object.keys(blocks).map((key)=>latest.hash+=key);
     latest.hash = Cryptographic.sha256(latest.hash);
     await this.database.write("/latest/hash", latest.hash);
-
     latest.key = await this.database.read("/latest/key");
+    this.enableTransport();
     this.transport.broadcast(PROTOCOLS_BROADCAST_LATEST_KEY, latest);
+  }
+
+  disableTransport(){
+    this.isTransportEnabled = false;
+  }
+
+  enableTransport(){
+    this.isTransportEnabled = true;
   }
 
   fillProtocols(){
     this.transport.addProtocol(PROTOCOLS_BROADCAST_LATEST_KEY, async (msg)=>{
+      if(!this.isTransportEnabled) return;
       var receivedLatest = msg.message;
       var latest = await this.database.read("/latest");
       var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
@@ -60,6 +70,7 @@ class Crawler {
     })
 
     this.transport.addProtocol(PROTOCOLS_QUERY_LATEST_KEY, async (msg)=>{
+      if(!this.isTransportEnabled) return;
       var outdatedKey = msg.message;
 
       var latestKey = await this.database.read("/latest/key");
@@ -74,6 +85,7 @@ class Crawler {
     });
 
     this.transport.addProtocol(PROTOCOLS_ANSWER_LATEST_KEY, async (msg)=>{
+      if(!this.isTransportEnabled) return;
       var latestKey = msg.message;
       this.database.write("/latest/key", latestKey).then(()=>{
         Log.out("My latest key is updated:", latestKey);
@@ -81,6 +93,7 @@ class Crawler {
     });
 
     this.transport.addProtocol(PROTOCOLS_QUERY_BLOCKS, async (msg)=>{
+      if(!this.isTransportEnabled) return;
       Log.out(msg.ipAddr, "is asking the blocks");
       var latestKey = await this.database.read("/latest/key");
       var blocks = await this.database.read("/blocks");
@@ -116,6 +129,7 @@ class Crawler {
 
   stop(){
     clearInterval(this.worker);
+    this.disableTransport();
   }
 }
 module.exports = Crawler;
