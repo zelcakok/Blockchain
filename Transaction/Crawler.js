@@ -90,7 +90,7 @@ class Crawler {
       var blocks = payload.blocks;
       Object.keys(blocks).map((key)=>latest.hash+=key);
       latest.hash = Cryptographic.sha256(latest.hash);
-      Log.out("BLOCKS:",blocks);
+      console.log("BLK", blocks);
     });
   }
 
