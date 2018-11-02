@@ -87,7 +87,8 @@ class Crawler {
       var latest = {key: null, hash: ""}
       var payload = JSON.parse(msg.message);
       latest.key = payload.key;
-      var blocks = JSON.parse(payload.blocks);
+      var blocks = payload.blocks;
+      console.log("BLK keys", Object.keys(blocks));
       Object.keys(blocks).map((key)=>latest.hash+=key);
       latest.hash = Cryptographic.sha256(latest.hash);
 
