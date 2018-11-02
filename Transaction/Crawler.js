@@ -88,17 +88,17 @@ class Crawler {
       var payload = JSON.parse(msg.message);
       latest.key = payload.key;
       var blocks = payload.blocks;
-      console.log("BLK keys", Object.keys(blocks));
       Object.keys(blocks).map((key)=>latest.hash+=key);
       latest.hash = Cryptographic.sha256(latest.hash);
 
-      console.log(latest);
-      // this.database.write("/latest", latest).then(()=>{
-        // Log.out("I've updated the latest defination.");
-        // this.database.write("/blocks", blocks).then(()=>{
-        //   Log.out("My blocks are updated.");
-        // })
-      // })
+      await this.database.write("/latest/hash", latest.hash);
+      await this.database.write("/latest/key", latest.key);
+      Log.out("Defination is updated");
+
+      this.database.write("/blocks", blocks).then(()=>{
+        Log.out("My blocks are updated.");
+      })
+
 
 
     });
