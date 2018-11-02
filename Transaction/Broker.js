@@ -35,6 +35,7 @@ class Broker {
       newBlk.setDifficulty(6);
       Log.out("Mining: " + trans.key + " refer to prevHash" + prevHash);
       Log.out("Difficulty is " + newBlk.target);
+      Promise.resolve();
       Block.mining(newBlk, (newBlk)=>{
         newBlk.payload = JSON.parse(newBlk.payload);
         Log.out("Block is mined for tranaction: " + trans.key + " forward to peers.");
