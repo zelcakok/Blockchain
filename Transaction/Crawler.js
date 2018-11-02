@@ -49,7 +49,7 @@ class Crawler {
       var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
 
       if(parseInt(receivedLatest.key) > parseInt(latest.key)) {
-        Log.out("The receivedLatest key is " + receivedLatest.key);
+        Log.out("The receivedLatest key is " + receivedLatest.key + " while I got " + latest.key);
         Log.out("I don't have the latest block, asking " + msg.ipAddr + "...");
         this.transport.sendViaKey(PROTOCOLS_QUERY_LATEST_KEY, latest.key, key);
       } else if (parseInt(receivedLatest.key) === parseInt(latest.key) && receivedLatest.hash !== latest.hash) {
