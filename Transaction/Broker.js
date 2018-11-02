@@ -29,7 +29,7 @@ class Broker {
   fillDBProtocols(){
     this.wallet.db.monitor("/candidates", async (trans)=>{
       if(Zetabase.isWipe(trans)) return;
-      Log.out("New pending transaction is added to /candidate");
+      Log.out("Tranaction: " + trans.key + " is added /candidate.");
       // var prevHash = await this.getLatestBlockHash();
       // Log.out("Start mine the new block, refer to prevHash: " + prevHash);
       // var newBlk = new Block(prevHash, trans);
@@ -55,13 +55,13 @@ class Broker {
         var verification = await Payment.verify(scriptSig.pubKey, scriptSig.sig, payment);
         Log.out("New transaction comes, verification: ", verification);
         if(verification) {
-          Log.out("The transaction is valid, forwarding to peers.", trans.key);
+          Log.out("Valid transaction: " + trans.key + " forward to peers.");
           this.propagate(PROTOCOLS_NEW_PENDING_TRANSACTION, "/candidates/"+trans.key, trans);
         } else {
-          Log.out("Drop the invalid transaction.");
+          Log.out("Invalid transaction: " + trans.key);
         }
       } else {
-        Log.out("The transaction is exist in database.");
+        Log.out("Duplicate transaction: " + trans.key);
       }
     })
 
