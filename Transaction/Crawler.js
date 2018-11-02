@@ -96,17 +96,14 @@ class Crawler {
 
       // await this.database.write("/latest/hash", latest.hash);
       // await this.database.write("/latest/key", latest.key);
-      var structure = await this.database.getStructure0();
-      console.log("???",structure.slot.latest);
-      Log.out("Defination is updated");
+      this.database.maintenance((structure)=>{
+        structure.slot.latest = latest;
+        Log.out("Defination is updated");
+        structure.slot.blocks = blocks;
+        Log.out("Blocks are updated");
+        this.scout();
+      })
 
-
-      //
-      // this.database.write("/blocks", blocks).then(()=>{
-      //   Log.out("My blocks are updated.");
-      //   this.scout();
-      // })
-      this.scout();
     });
   }
 
