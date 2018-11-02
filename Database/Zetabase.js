@@ -117,12 +117,18 @@ class Zetabase {
   }
 
   async getStructure(){
-    return new Promise((resolve, reject)=>{
-      this.prepare().then(()=>{
-        resolve(this.structure);
-      }).catch((err)=>{if(err) {console.log(err); this.wallet.emergency()}});
-    });
+    await this.prepare().then(()=>{
+      return this.structure;
+    }).catch((err)=>{if(err) {console.log(err); this.wallet.emergency()}});
   }
+
+  // getStructure(){
+  //   return new Promise((resolve, reject)=>{
+  //     this.prepare().then(()=>{
+  //       resolve(this.structure);
+  //     }).catch((err)=>{if(err) {console.log(err); this.wallet.emergency()}});
+  //   });
+  // }
 
   isSubset(pathA, pathB){
     if(pathA === '/' || pathB === '/') return true;
