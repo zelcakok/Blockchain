@@ -27,7 +27,7 @@ class Broker {
   }
 
   fillDBProtocols(){
-    this.wallet.db.monitor("/candidates", async (trans)=>{
+    this.wallet.db.monitor("/candidates", (trans)=>{
       if(Zetabase.isWipe(trans)) return;
       Log.out("Tranaction: " + trans.key + " is added /candidate.");
       var prevHash = await this.getLatestBlockHash();
@@ -35,7 +35,6 @@ class Broker {
       newBlk.setDifficulty(6);
       Log.out("Mining: " + trans.key + " refer to prevHash" + prevHash);
       Log.out("Difficulty is " + newBlk.target);
-      Promise.resolve();
       Block.mining(newBlk, (newBlk)=>{
         newBlk.payload = JSON.parse(newBlk.payload);
         Log.out("Block is mined for tranaction: " + trans.key + " forward to peers.");
