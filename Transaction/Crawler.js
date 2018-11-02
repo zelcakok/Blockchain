@@ -83,6 +83,7 @@ class Crawler {
     });
 
     this.transport.addProtocol(PROTOCOLS_ANSWER_BLOCKS, async (msg)=>{
+      this.stop();
       Log.out(msg.ipAddr,"sends the blocks to me.");
       var latest = {key: null, hash: ""}
       var payload = msg.message;
@@ -97,6 +98,7 @@ class Crawler {
 
       this.database.write("/blocks", blocks).then(()=>{
         Log.out("My blocks are updated.");
+        this.scout();
       })
 
 
