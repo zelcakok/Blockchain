@@ -41,7 +41,7 @@ class Broker {
       var prevHash = await this.getLatestBlockHash();
       // Log.out("Start mine the new block, refer to prevHash: " + prevHash);
       var newBlk = new Block(prevHash, trans);
-      newBlk.setDifficulty(4);
+      newBlk.setDifficulty(6);
       await Block.mining(newBlk);
       newBlk.payload = JSON.parse(newBlk.payload);
       this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+trans.key, newBlk);
