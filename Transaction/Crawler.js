@@ -111,8 +111,9 @@ class Crawler {
       Log.out(msg.ipAddr,"sends the blocks to me.");
       var payload = msg.message;
       var blocks = payload.blocks;
-      Object.keys(blocks).map((key)=>latest.hash+=key);
-      var blockHash = Cryptographic.sha256(latest.hash);
+      var blockHash = "";
+      Object.keys(blocks).map((key)=>blockHash+=key);
+      var blockHash = Cryptographic.sha256(blockHash);
 
 
       var latest = await this.database.read("/latest");
