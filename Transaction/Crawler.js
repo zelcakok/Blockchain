@@ -40,7 +40,7 @@ class Crawler {
     latest.hash = Cryptographic.sha256(latest.hash);
     await this.database.write("/latest/hash", latest.hash);
     latest.key = await this.database.read("/latest/key");
-    this.enableTransport();
+    await this.enableTransport();
     this.transport.broadcast(PROTOCOLS_BROADCAST_LATEST_KEY, latest);
   }
 
@@ -48,8 +48,11 @@ class Crawler {
     this.isTransportEnabled = false;
   }
 
-  enableTransport(){
-    this.isTransportEnabled = true;
+  async enableTransport(){
+    await setTimeout(()=>{
+      Log.out("Transport enabled");
+      this.isTransportEnabled = true;
+    }, 1000);
   }
 
   fillProtocols(){
