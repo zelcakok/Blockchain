@@ -97,7 +97,7 @@ class Crawler {
       // await this.database.write("/latest/hash", latest.hash);
       // await this.database.write("/latest/key", latest.key);
       var structure = await this.database.getStructure();
-      console.log(structure.latest);
+      console.log("???",structure.latest);
       Log.out("Defination is updated");
 
 
