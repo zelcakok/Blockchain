@@ -116,7 +116,7 @@ class Zetabase {
     });
   }
 
-  getStructure(){
+  async getStructure(){
     return new Promise((resolve, reject)=>{
       this.prepare().then(()=>{
         resolve(this.structure);
