@@ -87,9 +87,10 @@ class Crawler {
       var latest = {key: null, hash: ""}
       var payload = JSON.parse(msg.message);
       latest.key = payload.key;
-      var blocks = payload.blocks;
+      var blocks = JSON.parse(payload.blocks);
       Object.keys(blocks).map((key)=>latest.hash+=key);
       latest.hash = Cryptographic.sha256(latest.hash);
+
       this.database.write("/blocks", blocks).then(()=>{
         Log.out("My blocks are updated.");
       })
