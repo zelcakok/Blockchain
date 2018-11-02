@@ -77,7 +77,7 @@ class Crawler {
       var latestKey = await this.database.read("/latest/key");
       var blocks = await this.database.read("/blocks");
       var payload = JSON.stringify({key: latestKey, blocks: blocks});
-      Log.out("SEND", payload, "to " + msg.ipAddr);
+      Log.out("SEND blocks to " + msg.ipAddr);
       var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
       this.transport.sendViaKey(PROTOCOLS_ANSWER_BLOCKS, payload, key);
     });
@@ -90,7 +90,9 @@ class Crawler {
       var blocks = payload.blocks;
       Object.keys(blocks).map((key)=>latest.hash+=key);
       latest.hash = Cryptographic.sha256(latest.hash);
-      console.log("BLK", blocks);
+      this.database.write("/blocks", blocks).then(()=>{
+        Log.out("My blocks are updated.");
+      })
     });
   }
 
