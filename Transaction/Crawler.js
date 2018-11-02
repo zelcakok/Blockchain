@@ -7,6 +7,7 @@ const PROTOCOLS_QUERY_LATEST_KEY = Cryptographic.md5("&pquerylatestkey");
 const PROTOCOLS_QUERY_BLOCKS = Cryptographic.md5("&pqueryblocks");
 const PROTOCOLS_ANSWER_LATEST_KEY = Cryptographic.md5("&panswerlatestkey");
 const PROTOCOLS_ANSWER_BLOCKS = Cryptographic.md5("&panswerblocks");
+const PROTOCOLS_WIPE_CANDIDATE = Cryptographic.md5("&pwipecandidate");
 
 class Crawler {
   constructor(transport, database, interval, logger){
@@ -59,10 +60,17 @@ class Crawler {
     })
 
     this.transport.addProtocol(PROTOCOLS_QUERY_LATEST_KEY, async (msg)=>{
+      var outdatedKey = msg.message;
+
       var latestKey = await this.database.read("/latest/key");
-      Log.out("SEND the latest key to " + msg.ipAddr);
+      Log.out("The blocks of " + msg.ipAddr + " is outdated, sending the missing blocks to it.");
+      var blocks = await this.database.read("/blocks");
+      var missingBlk = [];
+      Object.keys(blocks).map((key)=>{if(key > outdatedKey) missingBlk.push(blocks[key])});
+
+      var payload = {key: latestKey, blocks: missingBlk};
       var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
-      this.transport.sendViaKey(PROTOCOLS_ANSWER_LATEST_KEY, latestKey, key);
+      this.transport.sendViaKey(PROTOCOLS_ANSWER_BLOCKS, payload, key);
     });
 
     this.transport.addProtocol(PROTOCOLS_ANSWER_LATEST_KEY, async (msg)=>{
@@ -94,8 +102,6 @@ class Crawler {
       latest.hash = Cryptographic.sha256(latest.hash);
       Log.out("Calculate the blk hash: " + latest.hash);
 
-      // await this.database.write("/latest/hash", latest.hash);
-      // await this.database.write("/latest/key", latest.key);
       this.database.maintenance((structure)=>{
         structure.slot.latest = latest;
         Log.out("Defination is updated");
@@ -103,8 +109,9 @@ class Crawler {
         Log.out("Blocks are updated");
         this.scout();
       })
-
     });
+
+
   }
 
   stop(){
