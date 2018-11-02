@@ -6,7 +6,7 @@ const Transaction = require("./Payment");
 const Block = require("../Blocks/Block");
 const Zetabase = require("../Database/Zetabase");
 
-const PROTOCOLS_TRANSACTION = Cryptographic.md5("&ptrans;");
+const PROTOCOLS_NEW_PENDING_TRANSACTION = Cryptographic.md5("&pnewpendingtrans;");
 const PROTOCOLS_NEW_BLK = Cryptographic.md5("&pnewblk;");
 const PROTOCOLS_LATEST_TIMESTAMP = Cryptographic.md5("&ptimestamp;");
 
@@ -16,6 +16,7 @@ class Broker {
   constructor(wallet, logger){
     Log = logger;
     this.wallet = wallet;
+    this.miners = []; //Use candidate key as key.
     this.fillProtocols();
   }
 
@@ -26,33 +27,24 @@ class Broker {
   }
 
   fillDBProtocols(){
-    // this.wallet.db.monitor("/blocks", async (newBlk)=>{
-    //   var payload = newBlk.payload;
-    //   var isTransExist = await this.wallet.db.containsKey("/candidates/"+payload.key);
-    //   if(isTransExist) {
-    //     // Log.out("WIPE candidates");
-    //     await this.wallet.db.wipe("/candidates/"+payload.key);
-    //   }
-    //   Log.out("New transaction:",payload.key);
-    // });
-
     this.wallet.db.monitor("/candidates", async (trans)=>{
       if(Zetabase.isWipe(trans)) return;
-      var prevHash = await this.getLatestBlockHash();
+      Log.out("New pending transaction is added to /candidate");
+      // var prevHash = await this.getLatestBlockHash();
       // Log.out("Start mine the new block, refer to prevHash: " + prevHash);
-      var newBlk = new Block(prevHash, trans);
-      newBlk.setDifficulty(6);
-      await Block.mining(newBlk);
-      newBlk.payload = JSON.parse(newBlk.payload);
-      this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+trans.key, newBlk);
-
-      //Update the latest block timestamp
-      this.propagate(PROTOCOLS_LATEST_TIMESTAMP, "/latest/key", trans.key);
+      // var newBlk = new Block(prevHash, trans);
+      // newBlk.setDifficulty(6);
+      // await Block.mining(newBlk);
+      // newBlk.payload = JSON.parse(newBlk.payload);
+      // this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+trans.key, newBlk);
+      //
+      // //Update the latest block timestamp
+      // this.propagate(PROTOCOLS_LATEST_TIMESTAMP, "/latest/key", trans.key);
     });
   }
 
   fillTransportProtocols(){
-    this.wallet.transport.addProtocol(PROTOCOLS_TRANSACTION, async (msg)=>{
+    this.wallet.transport.addProtocol(PROTOCOLS_NEW_PENDING_TRANSACTION, async (msg)=>{
       var trans = msg.message;
       var scriptSig = trans.scriptSig;
       var payment = trans.payment;
@@ -61,15 +53,15 @@ class Broker {
                          await this.wallet.db.containsKey("/blocks/"+trans.key);
       if(!isTransExist){
         var verification = await Payment.verify(scriptSig.pubKey, scriptSig.sig, payment);
-        // Log.out("New transaction comes, verification: ", verification);
+        Log.out("New transaction comes, verification: ", verification);
         if(verification) {
-          // Log.out("The transaction is valid, forwarding to peers.", trans.key);
-          this.propagate(PROTOCOLS_TRANSACTION, "/candidates/"+trans.key, trans);
+          Log.out("The transaction is valid, forwarding to peers.", trans.key);
+          this.propagate(PROTOCOLS_NEW_PENDING_TRANSACTION, "/candidates/"+trans.key, trans);
         } else {
-          // Log.out("Drop the invalid transaction.");
+          Log.out("Drop the invalid transaction.");
         }
       } else {
-        // Log.out("The transaction is exist in database.");
+        Log.out("The transaction is exist in database.");
       }
     })
 
@@ -110,7 +102,6 @@ class Broker {
     tarAddr = Wallet.WALLET_IDENTITY.getBitcoinAddress();
     var payment = new Payment(null, tarAddr, amount);
     var sig = await Wallet.WALLET_IDENTITY.sign(payment);
-
     var transaction = {
       key: Cryptographic.encryptTimestamp(moment().valueOf()),
       scriptSig: {
@@ -120,8 +111,7 @@ class Broker {
       payment: payment,
       scriptPubKey: Cryptographic.base58Decode(tarAddr).toString(16)
     }
-
-    this.propagate(PROTOCOLS_TRANSACTION, "/candidates/"+transaction.key, transaction);
+    this.propagate(PROTOCOLS_NEW_PENDING_TRANSACTION, "/candidates/"+transaction.key, transaction);
   }
 
   async getLatestBlockHash(){
