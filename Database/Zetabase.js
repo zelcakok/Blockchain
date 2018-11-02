@@ -116,10 +116,8 @@ class Zetabase {
     });
   }
 
-  async getStructure(){
-    await this.prepare().then(()=>{
-      return this.structure;
-    }).catch((err)=>{if(err) {console.log(err); this.wallet.emergency()}});
+  getStructure(){
+    return this.structure;
   }
 
   // getStructure(){
