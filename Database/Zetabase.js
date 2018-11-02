@@ -116,7 +116,7 @@ class Zetabase {
     });
   }
 
-  getStructure(){
+  getStructure0(){
     return this.structure;
   }
 
