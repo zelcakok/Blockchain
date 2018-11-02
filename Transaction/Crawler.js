@@ -77,7 +77,8 @@ class Crawler {
       var latestKey = await this.database.read("/latest/key");
       var blocks = await this.database.read("/blocks");
       var payload = {key: latestKey, blocks: blocks};
-      Log.out("SEND blocks to " + msg.ipAddr);
+      var latestHash = await this.database.read("/latest/hash");
+      Log.out("SEND blocks to " + msg.ipAddr + " blk hash: " + latestHash);
       var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
       this.transport.sendViaKey(PROTOCOLS_ANSWER_BLOCKS, payload, key);
     });
@@ -91,18 +92,17 @@ class Crawler {
       var blocks = payload.blocks;
       Object.keys(blocks).map((key)=>latest.hash+=key);
       latest.hash = Cryptographic.sha256(latest.hash);
+      Log.out("Calculate the blk hash: " + latest.hash);
 
-      await this.database.write("/latest/hash", latest.hash);
-      await this.database.write("/latest/key", latest.key);
-      Log.out("Defination is updated");
-
-      this.database.write("/blocks", blocks).then(()=>{
-        Log.out("My blocks are updated.");
-        this.scout();
-      })
-
-
-
+      // await this.database.write("/latest/hash", latest.hash);
+      // await this.database.write("/latest/key", latest.key);
+      // Log.out("Defination is updated");
+      //
+      // this.database.write("/blocks", blocks).then(()=>{
+      //   Log.out("My blocks are updated.");
+      //   this.scout();
+      // })
+      this.scout();
     });
   }
 
