@@ -30,7 +30,7 @@ class Broker {
     this.wallet.db.monitor("/candidates", (trans)=>{
       if(Zetabase.isWipe(trans)) return;
       Log.out("Tranaction: " + trans.key + " is added /candidate.");
-      var prevHash = await this.getLatestBlockHash();
+      var prevHash = this.getLatestBlockHash();
       var newBlk = new Block(prevHash, trans);
       newBlk.setDifficulty(6);
       Log.out("Mining: " + trans.key + " refer to prevHash" + prevHash);
