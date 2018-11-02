@@ -94,9 +94,9 @@ class Crawler {
       latest.hash = Cryptographic.sha256(latest.hash);
       Log.out("Calculate the blk hash: " + latest.hash);
 
-      // await this.database.write("/latest/hash", latest.hash);
-      // await this.database.write("/latest/key", latest.key);
-      // Log.out("Defination is updated");
+      await this.database.write("/latest/hash", latest.hash);
+      await this.database.write("/latest/key", latest.key);
+      Log.out("Defination is updated");
       //
       // this.database.write("/blocks", blocks).then(()=>{
       //   Log.out("My blocks are updated.");
