@@ -50,7 +50,6 @@ class Crawler {
 
   async enableTransport(){
     await setTimeout(()=>{
-      Log.out("Transport enabled");
       this.isTransportEnabled = true;
     }, 1000);
   }
@@ -110,12 +109,20 @@ class Crawler {
     this.transport.addProtocol(PROTOCOLS_ANSWER_BLOCKS, async (msg)=>{
       this.stop();
       Log.out(msg.ipAddr,"sends the blocks to me.");
-      var latest = {key: null, hash: ""}
       var payload = msg.message;
-      latest.key = payload.key;
       var blocks = payload.blocks;
       Object.keys(blocks).map((key)=>latest.hash+=key);
-      latest.hash = Cryptographic.sha256(latest.hash);
+      var blockHash = Cryptographic.sha256(latest.hash);
+
+
+      var latest = await this.database.read("/latest");
+      if(parseInt(latest.key)===parseInt(payload.key) && latest.hash === blockHash){
+        Log.out("I already have the latest defination.");
+        return;
+      }
+
+      latest.hash = blockHash;
+      latest.key = payload.key;
       Log.out("Calculate the blk hash: " + latest.hash);
 
       this.database.maintenance((structure)=>{
