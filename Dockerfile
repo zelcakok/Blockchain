@@ -12,4 +12,4 @@ EXPOSE 3049
 EXPOSE 3000
 EXPOSE 8080
 
-CMD ["npm", "test"]
+# CMD ["npm", "test"]
