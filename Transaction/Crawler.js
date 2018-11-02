@@ -76,7 +76,7 @@ class Crawler {
       Log.out(msg.ipAddr, "is asking the blocks");
       var latestKey = await this.database.read("/latest/key");
       var blocks = await this.database.read("/blocks");
-      var payload = JSON.stringify({key: latestKey, blocks: blocks});
+      var payload = {key: latestKey, blocks: blocks};
       Log.out("SEND blocks to " + msg.ipAddr);
       var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
       this.transport.sendViaKey(PROTOCOLS_ANSWER_BLOCKS, payload, key);
@@ -85,7 +85,7 @@ class Crawler {
     this.transport.addProtocol(PROTOCOLS_ANSWER_BLOCKS, async (msg)=>{
       Log.out(msg.ipAddr,"sends the blocks to me.");
       var latest = {key: null, hash: ""}
-      var payload = JSON.parse(msg.message);
+      var payload = msg.message;
       latest.key = payload.key;
       var blocks = payload.blocks;
       Object.keys(blocks).map((key)=>latest.hash+=key);
