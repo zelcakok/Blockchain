@@ -92,12 +92,13 @@ class Crawler {
       Object.keys(blocks).map((key)=>latest.hash+=key);
       latest.hash = Cryptographic.sha256(latest.hash);
 
-      this.database.write("/latest", latest).then(()=>{
-        Log.out("I've updated the latest defination.");
-        this.database.write("/blocks", blocks).then(()=>{
-          Log.out("My blocks are updated.");
-        })
-      })
+      console.log(latest);
+      // this.database.write("/latest", latest).then(()=>{
+        // Log.out("I've updated the latest defination.");
+        // this.database.write("/blocks", blocks).then(()=>{
+        //   Log.out("My blocks are updated.");
+        // })
+      // })
 
 
     });
