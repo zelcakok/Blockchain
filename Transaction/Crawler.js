@@ -66,11 +66,11 @@ class Crawler {
       var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
 
       if(parseInt(receivedLatest.key) > parseInt(latest.key)) {
-        Log.out("The receivedLatest key is " + receivedLatest.key + " while I got " + latest.key);
-        Log.out("I don't have the latest block, asking " + msg.ipAddr + "...");
+        // Log.out("The receivedLatest key is " + receivedLatest.key + " while I got " + latest.key);
+        // Log.out("I don't have the latest block, asking " + msg.ipAddr + "...");
         this.transport.sendViaKey(PROTOCOLS_QUERY_LATEST_KEY, latest.key, key);
       } else if (parseInt(receivedLatest.key) === parseInt(latest.key) && receivedLatest.hash !== latest.hash) {
-        Log.out("I miss some blocks, asking " + msg.ipAddr + "...");
+        // Log.out("I miss some blocks, asking " + msg.ipAddr + "...");
         this.transport.sendViaKey(PROTOCOLS_QUERY_BLOCKS, "", key);
       }
     })
@@ -80,7 +80,7 @@ class Crawler {
       var outdatedKey = msg.message;
 
       var latestKey = await this.database.read("/latest/key");
-      Log.out("The blocks of " + msg.ipAddr + " is outdated, sending the missing blocks to it.");
+      // Log.out("The blocks of " + msg.ipAddr + " is outdated, sending the missing blocks to it.");
       var blocks = await this.database.read("/blocks");
       var missingBlk = [];
       Object.keys(blocks).map((key)=>{if(key > outdatedKey) missingBlk.push(blocks[key])});
@@ -94,25 +94,25 @@ class Crawler {
       if(!this.isTransportEnabled) return;
       var latestKey = msg.message;
       this.database.write("/latest/key", latestKey).then(()=>{
-        Log.out("My latest key is updated:", latestKey);
+        // Log.out("My latest key is updated:", latestKey);
       })
     });
 
     this.transport.addProtocol(PROTOCOLS_QUERY_BLOCKS, async (msg)=>{
       if(!this.isTransportEnabled) return;
-      Log.out(msg.ipAddr, "is asking the blocks");
+      // Log.out(msg.ipAddr, "is asking the blocks");
       var latestKey = await this.database.read("/latest/key");
       var blocks = await this.database.read("/blocks");
       var payload = {key: latestKey, blocks: blocks};
       var latestHash = await this.database.read("/latest/hash");
-      Log.out("SEND blocks to " + msg.ipAddr + " blk hash: " + latestHash);
+      // Log.out("SEND blocks to " + msg.ipAddr + " blk hash: " + latestHash);
       var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
       this.transport.sendViaKey(PROTOCOLS_ANSWER_BLOCKS, payload, key);
     });
 
     this.transport.addProtocol(PROTOCOLS_ANSWER_BLOCKS, async (msg)=>{
       this.stop();
-      Log.out(msg.ipAddr,"sends the blocks to me.");
+      // Log.out(msg.ipAddr,"sends the blocks to me.");
       var payload = msg.message;
       var blocks = payload.blocks;
       var blockHash = "";
@@ -128,12 +128,12 @@ class Crawler {
       }
       latest.hash = blockHash;
       latest.key = payload.key;
-      Log.out("Calculate the blk hash: " + latest.hash);
+      // Log.out("Calculate the blk hash: " + latest.hash);
       this.database.maintenance((structure)=>{
         structure.slot.latest = latest;
-        Log.out("Defination is updated");
+        // Log.out("Defination is updated");
         structure.slot.blocks = blocks;
-        Log.out("Blocks are updated");
+        // Log.out("Blocks are updated");
         this.scout();
       })
     });
