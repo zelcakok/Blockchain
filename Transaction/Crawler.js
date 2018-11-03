@@ -81,7 +81,7 @@ class Crawler {
       var outdatedKey = msg.message;
 
       var latestKey = await this.database.read("/latest/key");
-      // Log.out("The blocks of " + msg.ipAddr + " is outdated, sending the missing blocks to it.");
+      Log.out("The blocks of " + msg.ipAddr + " is outdated, sending the missing blocks to it.");
       var blocks = await this.database.read("/blocks");
       var missingBlk = [];
       Object.keys(blocks).map((key)=>{if(key > outdatedKey) missingBlk.push(blocks[key])});
@@ -92,16 +92,13 @@ class Crawler {
     });
 
     this.transport.addProtocol(PROTOCOLS_ANSWER_MISSING_BLOCKS, async (msg)=>{
+      Log.out(msg.ipAddr + " sent the missing blocks to me.");
       this.stop();
       var payload = msg.message;
       var blocks = payload.blocks;
       var key = payload.key;
-
       this.database.maintenance((structure)=>{
-        var latest = {
-          key: key,
-          hash: ""
-        }
+        var latest = {key: key,hash: ""}
         Object.keys(blocks).map((key)=>structure.slot.blocks[key] = blocks[key])
         Object.keys(blocks).map((key)=>latest.hash+=key);
         latest.hash = Cryptographic.sha256(latest.hash);
