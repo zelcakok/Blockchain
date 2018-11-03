@@ -88,9 +88,10 @@ class Crawler {
       var missingBlk = [];
       Object.keys(blocks).map((key)=>{if(key > outdatedKey) missingBlk.push(blocks[key])});
 
-      var payload = {key: latestKey, blocks: missingBlk};
+      // var payload = {key: latestKey, blocks: missingBlk};
+      var payload = {key: latestKey, blocks: blocks};
       var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
-      this.transport.sendViaKey(PROTOCOLS_ANSWER_MISSING_BLOCKS, payload, key);
+      this.transport.sendViaKey(PROTOCOLS_ANSWER_BLOCKS, payload, key);
     });
 
     this.transport.addProtocol(PROTOCOLS_ANSWER_MISSING_BLOCKS, async (msg)=>{
