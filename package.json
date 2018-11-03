@@ -24,6 +24,7 @@
     "prompt-password": "^1.2.0",
     "ripemd160": "^2.0.2",
     "socket.io": "^2.1.1",
+    "threads": "^0.12.0",
     "utf8": "^3.0.0"
   }
 }

@@ -8,6 +8,7 @@ MerkleTree.algo("sha256");
 class Block {
   constructor(prevHash, payload){
     this.merkleRoot = new MerkleTree().attach(payload).hash();
+    this.nonce = 0;
     this.target = 6; //Fixed difficulty, 6 leading zeros.
     this.payload = JSON.stringify(payload); //Fixed to one transaction for now.
     this.timestamp = moment().valueOf();
@@ -16,16 +17,6 @@ class Block {
 
   setDifficulty(diff){
     this.target = diff;
-  }
-
-  static mining(block, callback){
-    var nonce = 0;
-    do {
-      var plaintext = JSON.stringify(block) + (nonce++).toString();
-      var hash = crypto.createHash("sha256").update(plaintext).digest("hex");
-    } while(hash.substr(0,block.target).split("0").join("").length!==0)
-    block.hash = hash;
-    return callback(block);
   }
 
   static genesisBlock(){

@@ -5,6 +5,7 @@ const Payment = require("./Payment");
 const Transaction = require("./Payment");
 const Block = require("../Blocks/Block");
 const Zetabase = require("../Database/Zetabase");
+const MinerManager = require("../Blocks/MinerManager");
 
 const PROTOCOLS_NEW_PENDING_TRANSACTION = Cryptographic.md5("&pnewpendingtrans;");
 const PROTOCOLS_NEW_BLK = Cryptographic.md5("&pnewblk;");
@@ -16,7 +17,7 @@ class Broker {
   constructor(wallet, logger){
     Log = logger;
     this.wallet = wallet;
-    this.miners = []; //Use candidate key as key.
+    this.minerMgr = new MinerManager();
     this.fillProtocols();
   }
 
@@ -24,6 +25,9 @@ class Broker {
     this.fillTransportProtocols();
     this.fillShellProtocols();
     this.fillDBProtocols();
+    this.minerMgr.on("onMined", (transKey, block)=>{
+      console.log(transKey, " is mined", block.hash);
+    })
   }
 
   fillDBProtocols(){
@@ -36,13 +40,13 @@ class Broker {
       Log.out("Mining: " + trans.key + " refer to prevHash " + prevHash);
       Log.out("Difficulty is " + newBlk.target);
 
-      Block.mining(newBlk, (newBlk)=>{
-        newBlk.payload = JSON.parse(newBlk.payload);
-        Log.out("Block is mined for tranaction: " + trans.key + " forward to peers.");
-        this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+trans.key, newBlk);
-        // Update the latest block timestamp
-        this.propagate(PROTOCOLS_LATEST_TIMESTAMP, "/latest/key", trans.key);
-      });
+      this.minerMgr.assign(trans.key, newBlk);
+
+      // newBlk.payload = JSON.parse(newBlk.payload);
+      // Log.out("Block is mined for tranaction: " + trans.key + " forward to peers.");
+      // this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+trans.key, newBlk);
+      // // Update the latest block timestamp
+      // this.propagate(PROTOCOLS_LATEST_TIMESTAMP, "/latest/key", trans.key);
     });
   }
 
