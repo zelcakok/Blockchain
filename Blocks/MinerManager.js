@@ -29,7 +29,7 @@ class MinerManager extends EventEmitter{
 
   dismiss(transKey){
     var keys = Object.keys(this.miners);
-    console.log(keys.includes(keys));
+    console.log(keys.includes(transKey));
   }
 }
 
