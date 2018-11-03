@@ -34,8 +34,6 @@ class Broker {
       this.wallet.db.write("/blocks/"+transKey, block);
       this.eliminate(PROTOCOLS_WIPE_CANDIDATE, "/candidates/"+transKey);
       this.propagate(PROTOCOLS_LATEST_TIMESTAMP, "/latest/key", transKey);
-
-      this.ledger.process(JSON.parse(block.payload));
     })
   }
 

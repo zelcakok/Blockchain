@@ -116,10 +116,7 @@ class Crawler {
       var payload = msg.message;
       var blocks = payload.blocks;
       var blockHash = "";
-      Object.keys(blocks).map((key)=>{
-        this.ledger.process(JSON.parse(blocks[key]));
-        blockHash+=key;
-      });
+      Object.keys(blocks).map((key)=>blockHash+=key);
       var blockHash = Cryptographic.sha256(blockHash);
       var latest = await this.database.read("/latest");
       if(parseInt(latest.key)===parseInt(payload.key) && latest.hash === blockHash){
