@@ -31,11 +31,13 @@ class Broker {
     this.minerMgr.on("onMined", (transKey, block)=>{
       Log.out("Block is mined for tranaction: " + transKey.substr(0,10)+"..." + " forward to peers.");
       this.wallet.transport.broadcast(PROTOCOLS_NEW_BLOCK_ADDRESS, transKey);
-      this.wallet.db.write("/blocks/"+transKey, block);
+
       this.eliminate(PROTOCOLS_WIPE_CANDIDATE, "/candidates/"+transKey);
       this.propagate(PROTOCOLS_LATEST_TIMESTAMP, "/latest/key", transKey);
 
-      this.auditor.audit();      
+      this.wallet.db.write("/blocks/"+transKey, block).then(()=>{
+        this.auditor.audit();
+      });
     })
 
     this.auditor.on("onLedgerUpdate", (ledger)=>{
