@@ -29,6 +29,7 @@ class Broker {
       Log.out("Block is mined for tranaction: " + transKey + " forward to peers.");
       this.wallet.transport.broadcast(PROTOCOLS_NEW_BLOCK_ADDRESS, transKey);
       this.wallet.db.write("/blocks/"+transKey, block);
+      this.eliminate(PROTOCOLS_WIPE_CANDIDATE, "/candidates/"+transKey);
       this.propagate(PROTOCOLS_LATEST_TIMESTAMP, "/latest/key", transKey);
     })
   }
@@ -70,6 +71,10 @@ class Broker {
 
     this.wallet.transport.addProtocol(PROTOCOLS_NEW_BLOCK_ADDRESS, async (msg)=>{
       this.minerMgr.dismiss(msg.message);
+    });
+
+    this.wallet.transport.addProtocol(PROTOCOLS_WIPE_CANDIDATE, async (msg)=>{
+      this.wallet.db.wipe(msg.message);
     });
   }
 
@@ -126,6 +131,11 @@ class Broker {
   propagate(protocol, key, payload){
     this.wallet.transport.broadcast(protocol, payload);
     this.wallet.db.write(key, payload);
+  }
+
+  eliminate(protocol, key){
+    this.wallet.transport.broadcast(protocol, key);
+    this.wallet.db.wipe(key);
   }
 }
 
