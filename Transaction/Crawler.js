@@ -112,24 +112,18 @@ class Crawler {
       this.stop();
       Log.out(msg.ipAddr,"sends the blocks to me.");
       var payload = msg.message;
-
-      console.log("CHECK ME", payload);
-
       var blocks = payload.blocks;
       var blockHash = "";
       Object.keys(blocks).map((key)=>blockHash+=key);
       var blockHash = Cryptographic.sha256(blockHash);
-
       var latest = await this.database.read("/latest");
       if(parseInt(latest.key)===parseInt(payload.key) && latest.hash === blockHash){
         Log.out("I already have the latest defination.");
         return;
       }
-
       latest.hash = blockHash;
       latest.key = payload.key;
       Log.out("Calculate the blk hash: " + latest.hash);
-
       this.database.maintenance((structure)=>{
         structure.slot.latest = latest;
         Log.out("Defination is updated");
