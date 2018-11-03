@@ -52,7 +52,7 @@ class Broker {
   }
 
   fillTransportProtocols(){
-    this.wallet.transport.addProtocol(PROTOCOLS_NEW_PENDING_TRANSACTION, async (msg)=>{
+    this.wallet.transport.addProtocol(PROTOCOLS_NEW_BLK, async (msg)=>{
       var trans = msg.message;
       var scriptSig = trans.scriptSig;
       var payment = trans.payment;
@@ -73,9 +73,8 @@ class Broker {
       }
     })
 
-    this.wallet.transport.addProtocol(PROTOCOLS_LATEST_TIMESTAMP, async (msg)=>{
-      var timestamp = msg.message;
-      // console.log("The latest timestamp is ", timestamp);
+    this.wallet.transport.addProtocol(PROTOCOLS_NEW_BLK, async (msg)=>{
+      console.log(msg.message);
     });
   }
 
