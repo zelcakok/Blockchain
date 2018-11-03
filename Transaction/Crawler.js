@@ -103,9 +103,9 @@ class Crawler {
         Object.keys(blocks).map((key)=>latest.hash+=key);
         latest.hash = Cryptographic.sha256(latest.hash);
         structure.slot.latest = latest;
-        Log.out("Defination is updated");
+        Log.out("PAMB: Defination is updated");
         structure.slot.blocks = blocks;
-        Log.out("Blocks are updated");
+        Log.out("PAMB: Blocks are updated");
         this.scout();
       })
     })
@@ -140,9 +140,9 @@ class Crawler {
       // Log.out("Calculate the blk hash: " + latest.hash);
       this.database.maintenance((structure)=>{
         structure.slot.latest = latest;
-        Log.out("Defination is updated");
+        Log.out("PAB: Defination is updated");
         structure.slot.blocks = blocks;
-        Log.out("Blocks are updated");
+        Log.out("PAB: Blocks are updated");
         this.scout();
       })
     });
