@@ -112,7 +112,7 @@ class Crawler {
       this.stop();
       Log.out(msg.ipAddr,"sends the blocks to me.");
       var payload = msg.message;
-      this.minerMgr.dismiss(payload.key)
+      // this.minerMgr.dismiss(payload.key)
 
       var blocks = payload.blocks;
       var blockHash = "";
