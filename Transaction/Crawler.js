@@ -9,6 +9,7 @@ const PROTOCOLS_QUERY_LATEST_KEY = Cryptographic.md5("&pquerylatestkey");
 const PROTOCOLS_QUERY_BLOCKS = Cryptographic.md5("&pqueryblocks");
 const PROTOCOLS_ANSWER_LATEST_KEY = Cryptographic.md5("&panswerlatestkey");
 const PROTOCOLS_ANSWER_BLOCKS = Cryptographic.md5("&panswerblocks");
+const PROTOCOLS_ANSWER_MISSING_BLOCKS = Cryptographic.md5("&panswermissingblocks");
 const PROTOCOLS_WIPE_CANDIDATE = Cryptographic.md5("&pwipecandidate");
 
 class Crawler {
@@ -87,16 +88,30 @@ class Crawler {
 
       var payload = {key: latestKey, blocks: missingBlk};
       var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
-      this.transport.sendViaKey(PROTOCOLS_ANSWER_BLOCKS, payload, key);
+      this.transport.sendViaKey(PROTOCOLS_ANSWER_MISSING_BLOCKS, payload, key);
     });
 
-    this.transport.addProtocol(PROTOCOLS_ANSWER_LATEST_KEY, async (msg)=>{
-      if(!this.isTransportEnabled) return;
-      var latestKey = msg.message;
-      this.database.write("/latest/key", latestKey).then(()=>{
-        // Log.out("My latest key is updated:", latestKey);
+    this.transport.addProtocol(PROTOCOLS_ANSWER_MISSING_BLOCKS, async (msg)=>{
+      this.stop();
+      var payload = msg.message;
+      var blocks = payload.blocks;
+      var key = payload.key;
+
+      this.database.maintenance((structure)=>{
+        var latest = {
+          key: key,
+          hash: ""
+        }
+        Object.keys(blocks).map((key)=>structure.slot.blocks[key] = blocks[key])
+        Object.keys(blocks).map((key)=>latest.hash+=key);
+        latest.hash = Cryptographic.sha256(latest.hash);
+        structure.slot.latest = latest;
+        Log.out("Defination is updated");
+        structure.slot.blocks = blocks;
+        Log.out("Blocks are updated");
+        this.scout();
       })
-    });
+    })
 
     this.transport.addProtocol(PROTOCOLS_QUERY_BLOCKS, async (msg)=>{
       if(!this.isTransportEnabled) return;
@@ -128,9 +143,9 @@ class Crawler {
       // Log.out("Calculate the blk hash: " + latest.hash);
       this.database.maintenance((structure)=>{
         structure.slot.latest = latest;
-        // Log.out("Defination is updated");
+        Log.out("Defination is updated");
         structure.slot.blocks = blocks;
-        // Log.out("Blocks are updated");
+        Log.out("Blocks are updated");
         this.scout();
       })
     });
