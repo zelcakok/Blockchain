@@ -13,6 +13,7 @@ class Ledger {
   }
 
   process(trans){
+    console.log("ADDR: ", Wallet.WALLET_IDENTITY.getBitcoinAddress());
     var isToMySelf = Wallet.WALLET_IDENTITY.getBitcoinAddress() === trans.tarAddr;
     console.log("To me ?? ", isToMySelf);
   }
