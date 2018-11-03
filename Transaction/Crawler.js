@@ -107,6 +107,9 @@ class Crawler {
         var latest = {key: key,hash: ""}
         Object.keys(blocks).map((key)=>structure.slot.blocks[key] = blocks[key])
         Object.keys(blocks).map((key)=>latest.hash+=key);
+
+        console.log(Object.keys(blocks));
+
         latest.hash = Cryptographic.sha256(latest.hash);
         structure.slot.latest = latest;
         Log.out("PAMB: Defination is updated");
@@ -141,6 +144,7 @@ class Crawler {
       var latest = await this.database.read("/latest");
       if(parseInt(latest.key)===parseInt(payload.key) && latest.hash === blockHash){
         Log.out("I already have the latest defination.");
+        this.scout();
         return;
       }
       latest.hash = blockHash;
