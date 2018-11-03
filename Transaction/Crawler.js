@@ -95,7 +95,6 @@ class Crawler {
 
     this.transport.addProtocol(PROTOCOLS_ANSWER_MISSING_BLOCKS, async (msg)=>{
       Log.out(msg.ipAddr + " sent the missing blocks to me.");
-      // this.stop();
       var payload = msg.message;
       var blocks = payload.blocks;
       var key = payload.key;
@@ -111,7 +110,7 @@ class Crawler {
         Log.out("PAMB: Defination is updated");
         structure.slot.blocks = blocks;
         Log.out("PAMB: Blocks are updated");
-        // this.enableTransport();
+        this.database.saveState();
       })
     })
 
@@ -128,7 +127,6 @@ class Crawler {
     });
 
     this.transport.addProtocol(PROTOCOLS_ANSWER_BLOCKS, async (msg)=>{
-      // this.stop();
       Log.out(msg.ipAddr,"sends the blocks to me.");
       var payload = msg.message;
       var blocks = payload.blocks;
@@ -149,7 +147,7 @@ class Crawler {
         Log.out("PAB: Defination is updated");
         structure.slot.blocks = blocks;
         Log.out("PAB: Blocks are updated");
-        // this.enableTransport();
+        this.database.saveState();
       })
     });
 
