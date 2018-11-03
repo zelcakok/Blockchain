@@ -32,18 +32,17 @@ class Broker {
       Log.out("Tranaction: " + trans.key + " is added /candidate.");
       var prevHash = await this.getLatestBlockHash();
       var newBlk = new Block(prevHash, trans);
-      newBlk.setDifficulty(6);
+      newBlk.setDifficulty(4);
       Log.out("Mining: " + trans.key + " refer to prevHash " + prevHash);
       Log.out("Difficulty is " + newBlk.target);
-      setTimeout(()=>{
-        Block.mining(newBlk, (newBlk)=>{
-          newBlk.payload = JSON.parse(newBlk.payload);
-          Log.out("Block is mined for tranaction: " + trans.key + " forward to peers.");
-          this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+trans.key, newBlk);
-          // Update the latest block timestamp
-          this.propagate(PROTOCOLS_LATEST_TIMESTAMP, "/latest/key", trans.key);
-        });
-      }, 10);
+
+      Block.mining(newBlk, (newBlk)=>{
+        newBlk.payload = JSON.parse(newBlk.payload);
+        Log.out("Block is mined for tranaction: " + trans.key + " forward to peers.");
+        this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+trans.key, newBlk);
+        // Update the latest block timestamp
+        this.propagate(PROTOCOLS_LATEST_TIMESTAMP, "/latest/key", trans.key);
+      });
     });
   }
 
@@ -60,7 +59,7 @@ class Broker {
         Log.out("New transaction comes, verification: ", verification);
         if(verification) {
           Log.out("Valid transaction: " + trans.key + " forward to peers.");
-          this.propagate(PROTOCOLS_NEW_PENDING_TRANSACTION, "/candidates/"+trans.key, trans);
+          // this.propagate(PROTOCOLS_NEW_PENDING_TRANSACTION, "/candidates/"+trans.key, trans);
         } else {
           Log.out("Invalid transaction: " + trans.key);
         }
