@@ -77,7 +77,7 @@ class Crawler {
         Log.out("I miss some blocks, asking " + msg.ipAddr + "...");
         this.transport.sendViaKey(PROTOCOLS_QUERY_BLOCKS, "", key);
       }
-      this.scout();
+      this.enableTransport();
     })
 
     this.transport.addProtocol(PROTOCOLS_QUERY_LATEST_KEY, async (msg)=>{
@@ -94,7 +94,7 @@ class Crawler {
       var payload = {key: latestKey, blocks: missingBlk};
       var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
       this.transport.sendViaKey(PROTOCOLS_ANSWER_MISSING_BLOCKS, payload, key);
-      this.scout();
+      this.enableTransport();
     });
 
     this.transport.addProtocol(PROTOCOLS_ANSWER_MISSING_BLOCKS, async (msg)=>{
@@ -115,7 +115,7 @@ class Crawler {
         Log.out("PAMB: Defination is updated");
         structure.slot.blocks = blocks;
         Log.out("PAMB: Blocks are updated");
-        this.scout();
+        this.enableTransport();
       })
     })
 
@@ -130,7 +130,7 @@ class Crawler {
       Log.out("SEND blocks to " + msg.ipAddr + " blk hash: " + latestHash);
       var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
       this.transport.sendViaKey(PROTOCOLS_ANSWER_BLOCKS, payload, key);
-      this.scout();
+      this.enableTransport();
     });
 
     this.transport.addProtocol(PROTOCOLS_ANSWER_BLOCKS, async (msg)=>{
@@ -144,7 +144,7 @@ class Crawler {
       var latest = await this.database.read("/latest");
       if(parseInt(latest.key)===parseInt(payload.key) && latest.hash === blockHash){
         Log.out("I already have the latest defination.");
-        this.scout();
+        this.enableTransport();
         return;
       }
       latest.hash = blockHash;
@@ -155,7 +155,7 @@ class Crawler {
         Log.out("PAB: Defination is updated");
         structure.slot.blocks = blocks;
         Log.out("PAB: Blocks are updated");
-        this.scout();
+        this.enableTransport();
       })
     });
 
