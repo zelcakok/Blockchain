@@ -29,7 +29,7 @@ class Broker {
     this.fillShellProtocols();
     this.fillDBProtocols();
     this.minerMgr.on("onMined", (transKey, block)=>{
-      Log.out("Block is mined for tranaction: " + transKey + " forward to peers.");
+      Log.out("Block is mined for tranaction: " + transKey.substr(0,10)+"..." + " forward to peers.");
       this.wallet.transport.broadcast(PROTOCOLS_NEW_BLOCK_ADDRESS, transKey);
       this.wallet.db.write("/blocks/"+transKey, block);
       this.eliminate(PROTOCOLS_WIPE_CANDIDATE, "/candidates/"+transKey);
@@ -40,11 +40,11 @@ class Broker {
   fillDBProtocols(){
     this.wallet.db.monitor("/candidates", async (trans)=>{
       if(Zetabase.isWipe(trans)) return;
-      Log.out("Tranaction: " + trans.key + " is added /candidate.");
+      Log.out("Tranaction: " + trans.key.substr(0,10)+"..." + " is added /candidate.");
       var prevHash = await this.getLatestBlockHash();
       var newBlk = new Block(prevHash, trans);
       newBlk.setDifficulty(3);
-      Log.out("Mining: " + trans.key + " refer to prevHash " + prevHash);
+      Log.out("Mining: " + trans.key.substr(0,10)+"..." + " refer to prevHash " + prevHash.substr(0,10)+"...");
       this.minerMgr.assign(trans.key, newBlk);
     });
   }
@@ -61,13 +61,13 @@ class Broker {
         var verification = await Payment.verify(scriptSig.pubKey, scriptSig.sig, payment);
         Log.out("New transaction comes, verification: ", verification);
         if(verification) {
-          Log.out("Valid transaction: " + trans.key + " forward to peers.");
+          Log.out("Valid transaction: " + trans.key.substr(0,10)+"..." + " forward to peers.");
           this.propagate(PROTOCOLS_NEW_PENDING_TRANSACTION, "/candidates/"+trans.key, trans);
         } else {
-          Log.out("Invalid transaction: " + trans.key);
+          Log.out("Invalid transaction: " + trans.key.substr(0,10)+"...");
         }
       } else {
-        Log.out("Duplicate transaction: " + trans.key);
+        Log.out("Duplicate transaction: " + trans.key.substr(0,10)+"...");
       }
     })
 
