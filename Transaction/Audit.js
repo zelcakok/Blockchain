@@ -6,8 +6,10 @@ module.exports = (blocks)=>{
         var payment = JSON.parse(block.payload).payment;
         console.log(payment);
         if(!ledger.includes(payment.tarAddr)) ledger[payment.tarAddr] = 0;
-        ledger[payment.tarAddr] += payment.amount;
+        ledger[payment.tarAddr] += parseFloat(payment.amount);
+        console.log("ADD:",parseFloat(payment.amount));
       }
     })
+    console.log("FINAL:",ledger);
     return Promise.resolve(ledger);
 };
