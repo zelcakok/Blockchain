@@ -26,7 +26,8 @@ class Broker {
     this.fillShellProtocols();
     this.fillDBProtocols();
     this.minerMgr.on("onMined", (transKey, block)=>{
-      console.log(transKey, " is mined", block.hash);
+      Log.out("Block is mined for tranaction: " + transKey + " forward to peers.");
+      this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+trans.key, newBlk);
     })
   }
 
@@ -36,7 +37,7 @@ class Broker {
       Log.out("Tranaction: " + trans.key + " is added /candidate.");
       var prevHash = await this.getLatestBlockHash();
       var newBlk = new Block(prevHash, trans);
-      newBlk.setDifficulty(4);
+      newBlk.setDifficulty(5);
       Log.out("Mining: " + trans.key + " refer to prevHash " + prevHash);
       Log.out("Difficulty is " + newBlk.target);
 
