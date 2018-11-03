@@ -111,15 +111,13 @@ class Crawler {
     this.transport.addProtocol(PROTOCOLS_ANSWER_BLOCKS, async (msg)=>{
       this.stop();
       Log.out(msg.ipAddr,"sends the blocks to me.");
-
-      console.log(this.minerMgr);
-
       var payload = msg.message;
+      this.minerMgr.dismiss(payload.key)
+
       var blocks = payload.blocks;
       var blockHash = "";
       Object.keys(blocks).map((key)=>blockHash+=key);
       var blockHash = Cryptographic.sha256(blockHash);
-
 
       var latest = await this.database.read("/latest");
       if(parseInt(latest.key)===parseInt(payload.key) && latest.hash === blockHash){
