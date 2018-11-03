@@ -19,8 +19,8 @@ class Broker {
   constructor(wallet, logger){
     Log = logger;
     this.wallet = wallet;
-    this.ledger = new Ledger();
     this.minerMgr = MinerManager.getInstance();
+    this.ledger = Ledger.getInstance(this.wallet.db);
     this.fillProtocols();
   }
 
@@ -45,7 +45,7 @@ class Broker {
       Log.out("Tranaction: " + trans.key + " is added /candidate.");
       var prevHash = await this.getLatestBlockHash();
       var newBlk = new Block(prevHash, trans);
-      newBlk.setDifficulty(6);
+      newBlk.setDifficulty(3);
       Log.out("Mining: " + trans.key + " refer to prevHash " + prevHash);
       this.minerMgr.assign(trans.key, newBlk);
     });

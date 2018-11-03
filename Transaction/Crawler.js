@@ -1,6 +1,7 @@
 const Cryptographic = require("./Cryptographic");
 const Transport = require("../Network/Transport");
 const MinerManager = require("../Blocks/MinerManager");
+const Ledger = require("./Ledger");
 
 var Log = null;
 const PROTOCOLS_BROADCAST_LATEST_KEY = Cryptographic.md5("&pbroadcastlatestkey");
@@ -19,6 +20,7 @@ class Crawler {
     this.interval = interval;
     this.isTransportEnabled = false;
     this.minerMgr = MinerManager.getInstance();
+    this.ledger = Ledger.getInstance(database);
     this.fillProtocols();
   }
 
@@ -114,7 +116,10 @@ class Crawler {
       var payload = msg.message;
       var blocks = payload.blocks;
       var blockHash = "";
-      Object.keys(blocks).map((key)=>blockHash+=key);
+      Object.keys(blocks).map((key)=>{
+        this.ledger.process(JSON.parse(blocks[key]));
+        blockHash+=key;
+      });
       var blockHash = Cryptographic.sha256(blockHash);
       var latest = await this.database.read("/latest");
       if(parseInt(latest.key)===parseInt(payload.key) && latest.hash === blockHash){

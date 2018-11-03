@@ -1,11 +1,15 @@
 const Wallet = require("../Wallet/Wallet");
 
-var Log = null;
+var instance = null;
 
 class Ledger {
-  constructor(database, logger){
-    Log = logger;
+  constructor(database){
     this.database = database;
+  }
+
+  static getInstance(database){
+    if(instance === null) instance = new Ledger(database);
+    return instance;
   }
 
   process(trans){
