@@ -10,6 +10,7 @@ const MinerManager = require("../Blocks/MinerManager");
 const PROTOCOLS_NEW_PENDING_TRANSACTION = Cryptographic.md5("&pnewpendingtrans;");
 const PROTOCOLS_NEW_BLOCK_ADDRESS = Cryptographic.md5("&pnewblkarr;");
 const PROTOCOLS_LATEST_TIMESTAMP = Cryptographic.md5("&ptimestamp;");
+const PROTOCOLS_WIPE_CANDIDATE = Cryptographic.md5("&pwipecandidate;");
 
 var Log = null;
 
