@@ -62,7 +62,6 @@ class Crawler {
   fillProtocols(){
     this.transport.addProtocol(PROTOCOLS_BROADCAST_LATEST_KEY, async (msg)=>{
       if(!this.isTransportEnabled) return;
-      this.stop();
       var receivedLatest = msg.message;
       var latest = await this.database.read("/latest");
       var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
@@ -77,12 +76,10 @@ class Crawler {
         Log.out("I miss some blocks, asking " + msg.ipAddr + "...");
         this.transport.sendViaKey(PROTOCOLS_QUERY_BLOCKS, "", key);
       }
-      this.enableTransport();
     })
 
     this.transport.addProtocol(PROTOCOLS_QUERY_LATEST_KEY, async (msg)=>{
       if(!this.isTransportEnabled) return;
-      this.stop();
       var outdatedKey = msg.message;
 
       var latestKey = await this.database.read("/latest/key");
@@ -94,7 +91,6 @@ class Crawler {
       var payload = {key: latestKey, blocks: missingBlk};
       var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
       this.transport.sendViaKey(PROTOCOLS_ANSWER_MISSING_BLOCKS, payload, key);
-      this.enableTransport();
     });
 
     this.transport.addProtocol(PROTOCOLS_ANSWER_MISSING_BLOCKS, async (msg)=>{
@@ -121,7 +117,6 @@ class Crawler {
 
     this.transport.addProtocol(PROTOCOLS_QUERY_BLOCKS, async (msg)=>{
       if(!this.isTransportEnabled) return;
-      this.stop();
       Log.out(msg.ipAddr, "is asking the blocks");
       var latestKey = await this.database.read("/latest/key");
       var blocks = await this.database.read("/blocks");
@@ -130,7 +125,6 @@ class Crawler {
       Log.out("SEND blocks to " + msg.ipAddr + " blk hash: " + latestHash);
       var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
       this.transport.sendViaKey(PROTOCOLS_ANSWER_BLOCKS, payload, key);
-      this.enableTransport();
     });
 
     this.transport.addProtocol(PROTOCOLS_ANSWER_BLOCKS, async (msg)=>{
