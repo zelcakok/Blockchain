@@ -192,6 +192,7 @@ class Zetabase {
       peers: new Object(),
       blocks: new Object(),
       candidates: new Object(),
+      ledger: new Object(),
       latest: {
         key: GENESIS_TIME,
         hash: Cryptographic.sha256(GENESIS_TIME)

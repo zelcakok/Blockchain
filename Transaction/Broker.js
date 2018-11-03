@@ -6,6 +6,7 @@ const Transaction = require("./Payment");
 const Block = require("../Blocks/Block");
 const Zetabase = require("../Database/Zetabase");
 const MinerManager = require("../Blocks/MinerManager");
+const Ledger = require("./Ledger");
 
 const PROTOCOLS_NEW_PENDING_TRANSACTION = Cryptographic.md5("&pnewpendingtrans;");
 const PROTOCOLS_NEW_BLOCK_ADDRESS = Cryptographic.md5("&pnewblkarr;");
@@ -18,6 +19,7 @@ class Broker {
   constructor(wallet, logger){
     Log = logger;
     this.wallet = wallet;
+    this.ledger = new Ledger();
     this.minerMgr = MinerManager.getInstance();
     this.fillProtocols();
   }
@@ -32,6 +34,8 @@ class Broker {
       this.wallet.db.write("/blocks/"+transKey, block);
       this.eliminate(PROTOCOLS_WIPE_CANDIDATE, "/candidates/"+transKey);
       this.propagate(PROTOCOLS_LATEST_TIMESTAMP, "/latest/key", transKey);
+
+      console.log(block.payload, typeof(block.payload));
     })
   }
 
@@ -43,7 +47,6 @@ class Broker {
       var newBlk = new Block(prevHash, trans);
       newBlk.setDifficulty(6);
       Log.out("Mining: " + trans.key + " refer to prevHash " + prevHash);
-      Log.out("Difficulty is " + newBlk.target);
       this.minerMgr.assign(trans.key, newBlk);
     });
   }

@@ -196,7 +196,6 @@ class Shell {
           this.setLabel("Wallet [" + credential.email.split("@")[0]+"]");
           CREDENTIAL_STATE = true;
           //Generate the private key using digest
-          // Wallet.identity = new Identity(credential.signature);
           Wallet.WALLET_IDENTITY = new Identity(credential.signature);
           resolve()
         })
