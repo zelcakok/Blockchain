@@ -1,7 +1,7 @@
 const Cryptographic = require("./Cryptographic");
 const Transport = require("../Network/Transport");
 const MinerManager = require("../Blocks/MinerManager");
-const Ledger = require("./Ledger");
+const Auditor = require("./Auditor");
 
 var Log = null;
 const PROTOCOLS_BROADCAST_LATEST_KEY = Cryptographic.md5("&pbroadcastlatestkey");
@@ -9,7 +9,6 @@ const PROTOCOLS_QUERY_LATEST_KEY = Cryptographic.md5("&pquerylatestkey");
 const PROTOCOLS_QUERY_BLOCKS = Cryptographic.md5("&pqueryblocks");
 const PROTOCOLS_ANSWER_LATEST_KEY = Cryptographic.md5("&panswerlatestkey");
 const PROTOCOLS_ANSWER_BLOCKS = Cryptographic.md5("&panswerblocks");
-const PROTOCOLS_ANSWER_MISSING_BLOCKS = Cryptographic.md5("&panswermissingblocks");
 const PROTOCOLS_WIPE_CANDIDATE = Cryptographic.md5("&pwipecandidate");
 
 class Crawler {
@@ -21,7 +20,6 @@ class Crawler {
     this.interval = interval;
     this.isTransportEnabled = false;
     this.minerMgr = MinerManager.getInstance();
-    this.ledger = Ledger.getInstance(database);
     this.fillProtocols();
   }
 
@@ -93,27 +91,6 @@ class Crawler {
       var key = Cryptographic.md5((msg.ipAddr + msg.port).split(".").join(""));
       this.transport.sendViaKey(PROTOCOLS_ANSWER_BLOCKS, payload, key);
     });
-
-    this.transport.addProtocol(PROTOCOLS_ANSWER_MISSING_BLOCKS, async (msg)=>{
-      Log.out(msg.ipAddr + " sent the missing blocks to me.");
-      var payload = msg.message;
-      var blocks = payload.blocks;
-      var key = payload.key;
-      this.database.maintenance((structure)=>{
-        var latest = {key: key,hash: ""}
-        Object.keys(blocks).map((key)=>structure.slot.blocks[key] = blocks[key])
-        Object.keys(blocks).map((key)=>latest.hash+=key);
-
-        console.log(Object.keys(blocks));
-
-        latest.hash = Cryptographic.sha256(latest.hash);
-        structure.slot.latest = latest;
-        Log.out("PAMB: Defination is updated");
-        structure.slot.blocks = blocks;
-        Log.out("PAMB: Blocks are updated");
-        this.database.saveState();
-      })
-    })
 
     this.transport.addProtocol(PROTOCOLS_QUERY_BLOCKS, async (msg)=>{
       if(!this.isTransportEnabled) return;

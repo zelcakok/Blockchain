@@ -6,7 +6,7 @@ const Transaction = require("./Payment");
 const Block = require("../Blocks/Block");
 const Zetabase = require("../Database/Zetabase");
 const MinerManager = require("../Blocks/MinerManager");
-const Ledger = require("./Ledger");
+const Auditor = require("./Auditor");
 
 const PROTOCOLS_NEW_PENDING_TRANSACTION = Cryptographic.md5("&pnewpendingtrans;");
 const PROTOCOLS_NEW_BLOCK_ADDRESS = Cryptographic.md5("&pnewblkarr;");
@@ -20,7 +20,7 @@ class Broker {
     Log = logger;
     this.wallet = wallet;
     this.minerMgr = MinerManager.getInstance();
-    this.ledger = Ledger.getInstance(this.wallet.db);
+    this.auditor = Auditor.getInstance(this.wallet.db);
     this.fillProtocols();
   }
 
@@ -34,6 +34,12 @@ class Broker {
       this.wallet.db.write("/blocks/"+transKey, block);
       this.eliminate(PROTOCOLS_WIPE_CANDIDATE, "/candidates/"+transKey);
       this.propagate(PROTOCOLS_LATEST_TIMESTAMP, "/latest/key", transKey);
+
+      this.auditor.audit();      
+    })
+
+    this.auditor.on("onLedgerUpdate", (ledger)=>{
+      console.log("Ledger: ", ledger);
     })
   }
 
@@ -108,7 +114,7 @@ class Broker {
 
   async createPayment(tarAddr, amount){
     tarAddr = Wallet.WALLET_IDENTITY.getBitcoinAddress();
-    var payment = new Payment(null, tarAddr, amount);
+    var payment = new Payment(tarAddr, amount);
     var sig = await Wallet.WALLET_IDENTITY.sign(payment);
     var transaction = {
       key: Cryptographic.encryptTimestamp(moment().valueOf()),

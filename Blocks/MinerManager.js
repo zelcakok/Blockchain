@@ -1,7 +1,7 @@
 const threads = require("threads");
 const spawn = threads.spawn;
 
-const PROOF_OF_WORK = "./Blocks/Worker.js";
+const PROOF_OF_WORK = "./Blocks/ProofOfWork.js";
 const EventEmitter = require("events");
 
 var instance = null;
