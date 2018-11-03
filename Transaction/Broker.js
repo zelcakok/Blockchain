@@ -8,7 +8,7 @@ const Zetabase = require("../Database/Zetabase");
 const MinerManager = require("../Blocks/MinerManager");
 
 const PROTOCOLS_NEW_PENDING_TRANSACTION = Cryptographic.md5("&pnewpendingtrans;");
-const PROTOCOLS_NEW_BLK = Cryptographic.md5("&pnewblk;");
+const PROTOCOLS_NEW_BLOCK_ADDRESS = Cryptographic.md5("&pnewblkarr;");
 const PROTOCOLS_LATEST_TIMESTAMP = Cryptographic.md5("&ptimestamp;");
 
 var Log = null;
@@ -27,7 +27,7 @@ class Broker {
     this.fillDBProtocols();
     this.minerMgr.on("onMined", (transKey, block)=>{
       Log.out("Block is mined for tranaction: " + transKey + " forward to peers.");
-      this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+transKey, block);
+      this.wallet.transport.broadcast(PROTOCOLS_NEW_BLOCK_ADDRESS, transKey);
     })
   }
 
@@ -52,7 +52,7 @@ class Broker {
   }
 
   fillTransportProtocols(){
-    this.wallet.transport.addProtocol(PROTOCOLS_NEW_BLK, async (msg)=>{
+    this.wallet.transport.addProtocol(PROTOCOLS_NEW_PENDING_TRANSACTION, async (msg)=>{
       var trans = msg.message;
       var scriptSig = trans.scriptSig;
       var payment = trans.payment;
@@ -73,7 +73,7 @@ class Broker {
       }
     })
 
-    this.wallet.transport.addProtocol(PROTOCOLS_NEW_BLK, async (msg)=>{
+    this.wallet.transport.addProtocol(PROTOCOLS_NEW_BLOCK_ADDRESS, async (msg)=>{
       console.log(msg.message);
     });
   }
