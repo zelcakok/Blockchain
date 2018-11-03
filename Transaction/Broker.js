@@ -37,7 +37,7 @@ class Broker {
       Log.out("Tranaction: " + trans.key + " is added /candidate.");
       var prevHash = await this.getLatestBlockHash();
       var newBlk = new Block(prevHash, trans);
-      newBlk.setDifficulty(6);
+      newBlk.setDifficulty(5);
       Log.out("Mining: " + trans.key + " refer to prevHash " + prevHash);
       Log.out("Difficulty is " + newBlk.target);
 

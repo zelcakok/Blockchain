@@ -4,7 +4,7 @@ const spawn = threads.spawn;
 const PROOF_OF_WORK = "./Blocks/Worker.js";
 const EventEmitter = require("events");
 
-const instance = null;
+var instance = null;
 
 class MinerManager extends EventEmitter{
   constructor(){
