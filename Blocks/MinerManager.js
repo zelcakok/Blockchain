@@ -24,7 +24,7 @@ class MinerManager extends EventEmitter{
       this.result[transKey] = block;
       this.emit("onMined", transKey, block);
     })
-    this.miners[transKey].kill();
+    // this.miners[transKey].kill();
   }
 
   dismiss(transKey){
