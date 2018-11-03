@@ -17,7 +17,7 @@ class Broker {
   constructor(wallet, logger){
     Log = logger;
     this.wallet = wallet;
-    this.minerMgr = new MinerManager();
+    this.minerMgr = MinerManager.getInstance();
     this.fillProtocols();
   }
 

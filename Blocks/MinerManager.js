@@ -2,21 +2,36 @@ const threads = require("threads");
 const spawn = threads.spawn;
 
 const PROOF_OF_WORK = "./Blocks/Worker.js";
-
 const EventEmitter = require("events");
+
+const instance = null;
 
 class MinerManager extends EventEmitter{
   constructor(){
     super();
+    this.result = [];
     this.miners = [];
   }
 
+  static getInstance(){
+    if(instance === null) instance = new MinerManager();
+    return instance;
+  }
+
   assign(transKey, block){
-    var miner = spawn(PROOF_OF_WORK);
-    miner.send(block).on("message", (block)=>{
-      this.miners[transKey] = block;
+    this.miners[transKey] = spawn(PROOF_OF_WORK);
+    this.miners[transKey].on('abort', ()=>{
+      console.log("Miner on " + transKey + " is aborted");
+    })
+    this.miners[transKey].send(block).on("message", (block)=>{
+      this.result[transKey] = block;
       this.emit("onMined", transKey, block);
     })
+  }
+
+  dismiss(transKey){
+    if(Object.keys(this.miners).includes(transKey))
+      this.miners[transKey].abort();
   }
 }
 

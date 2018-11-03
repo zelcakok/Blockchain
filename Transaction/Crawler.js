@@ -1,5 +1,6 @@
 const Cryptographic = require("./Cryptographic");
 const Transport = require("../Network/Transport");
+const MinerManager = require("../Blocks/MinerManager");
 
 var Log = null;
 const PROTOCOLS_BROADCAST_LATEST_KEY = Cryptographic.md5("&pbroadcastlatestkey");
@@ -17,6 +18,7 @@ class Crawler {
     this.worker = null;
     this.interval = interval;
     this.isTransportEnabled = false;
+    this.minerMgr = MinerManager.getInstance();
     this.fillProtocols();
   }
 
@@ -109,6 +111,9 @@ class Crawler {
     this.transport.addProtocol(PROTOCOLS_ANSWER_BLOCKS, async (msg)=>{
       this.stop();
       Log.out(msg.ipAddr,"sends the blocks to me.");
+
+      this.minerMgr.dismiss(payload.key);
+
       var payload = msg.message;
       var blocks = payload.blocks;
       var blockHash = "";
