@@ -7,6 +7,7 @@ var instance = null;
 
 class Auditor extends EventEmitter {
   constructor(database){
+    super();
     this.database = database;
     this.ledger = null;
     this.task = spawn(AUDIT);
