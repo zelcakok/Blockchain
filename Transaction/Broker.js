@@ -35,7 +35,7 @@ class Broker {
       this.eliminate(PROTOCOLS_WIPE_CANDIDATE, "/candidates/"+transKey);
       this.propagate(PROTOCOLS_LATEST_TIMESTAMP, "/latest/key", transKey);
 
-      console.log(block.payload, typeof(block.payload));
+      this.ledger.process(JSON.parse(block.payload));
     })
   }
 

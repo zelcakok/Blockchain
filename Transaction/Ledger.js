@@ -1,3 +1,5 @@
+const Wallet = require("../Wallet");
+
 var Log = null;
 
 class Ledger {
@@ -7,7 +9,8 @@ class Ledger {
   }
 
   process(trans){
-    console.log("\nNew Transaction: " + JSON.stringify(trans, null, 2) + "\n");
+    var isToMySelf = Wallet.WALLET_IDENTITY.getBitcoinAddress() === trans.tarAddr;
+    console.log("To me ?? ", isToMySelf);
   }
 }
 module.exports = Ledger;
