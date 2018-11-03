@@ -28,6 +28,7 @@ class Broker {
     this.minerMgr.on("onMined", (transKey, block)=>{
       Log.out("Block is mined for tranaction: " + transKey + " forward to peers.");
       this.wallet.transport.broadcast(PROTOCOLS_NEW_BLOCK_ADDRESS, transKey);
+      this.wallet.db.write("/blocks/"+transKey, block);
       this.propagate(PROTOCOLS_LATEST_TIMESTAMP, "/latest/key", transKey);
     })
   }
