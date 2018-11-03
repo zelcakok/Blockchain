@@ -102,7 +102,6 @@ class Broker {
         await this.wallet.emergency();
       }
     }
-
     this.wallet.shell.addOperation("resetWallet", resetWallet);
   }
 
