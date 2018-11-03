@@ -30,7 +30,7 @@ class MinerManager extends EventEmitter{
   }
 
   dismiss(transKey){
-    if(Object.keys(this.miners).includes(transKey))
+    if(Object.keys(this.miners).includes(transKey) >= 0)
       this.miners[transKey].abort();
   }
 }
