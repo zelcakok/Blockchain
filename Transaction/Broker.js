@@ -27,7 +27,7 @@ class Broker {
     this.fillDBProtocols();
     this.minerMgr.on("onMined", (transKey, block)=>{
       Log.out("Block is mined for tranaction: " + transKey + " forward to peers.");
-      this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+trans.key, newBlk);
+      this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+transKey, newBlk);
     })
   }
 
