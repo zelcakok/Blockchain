@@ -74,7 +74,7 @@ class Broker {
     })
 
     this.wallet.transport.addProtocol(PROTOCOLS_NEW_BLOCK_ADDRESS, async (msg)=>{
-      console.log(msg.message);
+      this.minerMgr.dismiss(msg.message);
     });
   }
 
