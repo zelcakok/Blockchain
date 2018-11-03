@@ -27,7 +27,7 @@ class Broker {
     this.fillDBProtocols();
     this.minerMgr.on("onMined", (transKey, block)=>{
       Log.out("Block is mined for tranaction: " + transKey + " forward to peers.");
-      this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+transKey, newBlk);
+      this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+transKey, block);
     })
   }
 
@@ -64,7 +64,7 @@ class Broker {
         Log.out("New transaction comes, verification: ", verification);
         if(verification) {
           Log.out("Valid transaction: " + trans.key + " forward to peers.");
-          // this.propagate(PROTOCOLS_NEW_PENDING_TRANSACTION, "/candidates/"+trans.key, trans);
+          this.propagate(PROTOCOLS_NEW_PENDING_TRANSACTION, "/candidates/"+trans.key, trans);
         } else {
           Log.out("Invalid transaction: " + trans.key);
         }
