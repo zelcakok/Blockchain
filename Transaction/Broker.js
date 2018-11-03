@@ -33,15 +33,17 @@ class Broker {
       var prevHash = await this.getLatestBlockHash();
       var newBlk = new Block(prevHash, trans);
       newBlk.setDifficulty(6);
-      Log.out("Mining: " + trans.key + " refer to prevHash" + prevHash);
+      Log.out("Mining: " + trans.key + " refer to prevHash " + prevHash);
       Log.out("Difficulty is " + newBlk.target);
-      // Block.mining(newBlk, (newBlk)=>{
-      //   newBlk.payload = JSON.parse(newBlk.payload);
-      //   Log.out("Block is mined for tranaction: " + trans.key + " forward to peers.");
-      //   this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+trans.key, newBlk);
-      //   // Update the latest block timestamp
-      //   this.propagate(PROTOCOLS_LATEST_TIMESTAMP, "/latest/key", trans.key);
-      // });
+      setTimeout(()=>{
+        Block.mining(newBlk, (newBlk)=>{
+          newBlk.payload = JSON.parse(newBlk.payload);
+          Log.out("Block is mined for tranaction: " + trans.key + " forward to peers.");
+          this.propagate(PROTOCOLS_NEW_BLK, "/blocks/"+trans.key, newBlk);
+          // Update the latest block timestamp
+          this.propagate(PROTOCOLS_LATEST_TIMESTAMP, "/latest/key", trans.key);
+        });
+      }, 10);
     });
   }
 
