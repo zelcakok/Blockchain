@@ -57,7 +57,9 @@ class Web {
     //   Log.out("Web service is started", this.serPort);
     // })
     this.httpsServer = https.createServer(options, this.server);
-    this.httpsServer.listen(this.serPort);
+    this.httpsServer.listen(this.serPort, ()=>{
+      Log.out("Web service is started", this.serPort);
+    });
   }
 }
 module.exports = Web;
