@@ -86,7 +86,7 @@ class Shell {
   showWallet(){
     if(!CREDENTIAL_STATE) return Log.out("Error: Please login first.");
     console.log("\n");
-    console.log("".padEnd(3)+"Current amount".padEnd(20)+0+" BTC");
+    console.log("".padEnd(3)+"Current balance".padEnd(20)+0+" BTC");
     console.log("".padEnd(3)+"Wallet Address".padEnd(20)+Wallet.WALLET_IDENTITY.getBitcoinAddress());
     console.log("\n");
   }
