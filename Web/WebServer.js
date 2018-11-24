@@ -27,15 +27,15 @@ class Web {
   }
 
   listen(){
-    this.server.get(pretty({ query: 'pretty' }));
-    this.server.get(express.static(__dirname+"/public"));
-    this.server.get("/db", (req, res)=>{
+    this.server.use(pretty({ query: 'pretty' }));
+    this.server.use(express.static(__dirname+"/public"));
+    this.server.use("/db", (req, res)=>{
       this.blockchain.db.getStructure().then((structure)=>{
-        res.json(structure);
+        res.send(structure);
       })
     })
 
-    this.server.get("/profile", (req,res)=>{
+    this.server.use("/profile", (req,res)=>{
       res.header("Access-Control-Allow-Origin", "*");
       res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
       var uid = req.query.uid;
@@ -46,7 +46,7 @@ class Web {
       res.json(profile);
     })
 
-    this.server.get("/verify", (req,res)=>{
+    this.server.use("/verify", (req,res)=>{
       res.header("Access-Control-Allow-Origin", "*");
       res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
       var privateKey = crypto.createHash("sha256").update(req.query.digest).digest();

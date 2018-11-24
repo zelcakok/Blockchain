@@ -51,7 +51,6 @@ class Broker {
       Log.out("Tranaction: " + trans.key.substr(0,10)+"..." + " is added /candidate.");
       var prevHash = await this.getLatestBlockHash();
       var newBlk = new Block(prevHash, trans);
-      newBlk.setDifficulty(3);
       Log.out("Mining: " + trans.key.substr(0,10)+"..." + " refer to prevHash " + prevHash.substr(0,10)+"...");
       this.minerMgr.assign(trans.key, newBlk);
     });
