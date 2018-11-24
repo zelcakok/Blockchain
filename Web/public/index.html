@@ -25,16 +25,32 @@
     <script src="https://cdn.jsdelivr.net/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
     <script type="text/javascript">
-      $.get("/db", (json)=>{
-        var output = JSON.stringify(json, null, '  ');
+      function toJSON(obj, slotKeys) {
+        Object.keys(obj.slot.peers).map((key)=>{
+          obj.slot.peers[key] = JSON.parse(obj.slot.peers[key]);
+        })
+        Object.keys(obj.slot.blocks).map((key)=>{
+          obj.slot.blocks[key] = JSON.parse(obj.slot.blocks[key]);
+          if(obj.slot.blocks[key].hasOwnProperty("payload")) {
+            obj.slot.blocks[key].payload = JSON.parse(obj.slot.blocks[key].payload);
+            obj.slot.blocks[key].payload.scriptSig.sig.data = obj.slot.blocks[key].payload.scriptSig.sig.data.toString("hex");
+            obj.slot.blocks[key].payload.scriptSig.pubKey.data = obj.slot.blocks[key].payload.scriptSig.pubKey.data.toString("hex");
+          }
+        })
+        return obj;
+      }
+      $.get("/db", (obj)=>{
+        toJSON(obj, ["peers", "blocks"]);
+        var output = JSON.stringify(obj, null, '  ');
         $("#output").html(output);
       })
       setInterval(function () {
-        $.get("/db", (json)=>{
-          var output = JSON.stringify(json, null, '  ');
+        $.get("/db", (obj)=>{
+          toJSON(obj, ["peers","blocks"]);
+          var output = JSON.stringify(obj, null, '  ');
           $("#output").html(output);
         })
-      }, 5000);
+      }, 1000);
     </script>
 
   </body>
