@@ -37,6 +37,11 @@
             obj.slot.blocks[key].payload.scriptSig.pubKey.data = obj.slot.blocks[key].payload.scriptSig.pubKey.data.toString("hex");
           }
         })
+        Object.keys(obj.slot.candidates).map((key)=>{
+          obj.slot.candidates[key] = JSON.parse(obj.slot.candidates[key]);
+          obj.slot.candidates[key].scriptSig.sig.data = obj.slot.candidates[key].scriptSig.sig.data.toString("hex");
+          obj.slot.candidates[key].scriptSig.pubKey.data = obj.slot.candidates[key].scriptSig.pubKey.data.toString("hex");
+        })
         return obj;
       }
       $.get("/db", (obj)=>{
