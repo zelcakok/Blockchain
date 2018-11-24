@@ -3,13 +3,15 @@ const moment = require("moment");
 const MerkleTree = require("./MerkleTree");
 const Cryptographic = require("../Transaction/Cryptographic");
 
+var BLOCK_DIFFICULTY = 6;
+
 MerkleTree.algo("sha256");
 
 class Block {
   constructor(prevHash, payload){
     this.merkleRoot = new MerkleTree().attach(payload).hash();
     this.nonce = 0;
-    this.target = 6; //Fixed difficulty, 6 leading zeros.
+    this.target = BLOCK_DIFFICULTY; //Fixed difficulty, 6 leading zeros.
     this.payload = JSON.stringify(payload); //Fixed to one transaction for now.
     this.timestamp = moment().valueOf();
     this.prevHash = prevHash;
@@ -23,6 +25,14 @@ class Block {
     var GENESIS_BLK = new Object();
     GENESIS_BLK.hash = crypto.createHash("sha256").update("GENESIS_BLK").digest("hex");
     return GENESIS_BLK;
+  }
+
+  static setDifficulty(diff){
+    BLOCK_DIFFICULTY = diff;
+  }
+
+  static getDifficulty(){
+    return BLOCK_DIFFICULTY;
   }
 }
 module.exports = Block;

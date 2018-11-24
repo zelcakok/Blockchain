@@ -10,20 +10,26 @@ const Web = require("../Web/WebServer");
 const Broker = require("../Transaction/Broker");
 const Crawler = require("../Transaction/Crawler");
 
+const threads = require("threads");
+const spawn = threads.spawn;
+
+const ONLINE_CHECKER = "./Wallet/OnlineChecker.js";
+
 var WALLET_IDENTITY = null;
 
 class Wallet {
   constructor(dbPath, beaconSignalPort, transportPort, webPort, verbose){
     this.sysHealth = true;
-    this.shell = new Shell(Log);
-    Log.setVerbose(verbose);
-    Log.bind(this.shell);
     this.db = new Zetabase(dbPath, Log, this);
     this.beacon = new Beacon(beaconSignalPort, transportPort, Log);
     this.transport = new Transport(transportPort, Log);
     this.web = new Web(webPort,this, Log);
     this.broker = new Broker(this, Log);
     this.crawler = new Crawler(this.transport, this.db, 5000, Log);
+
+    this.shell = new Shell(this, this.broker, Log);
+    Log.setVerbose(verbose);
+    Log.bind(this.shell);
     this.initialize()
   }
 

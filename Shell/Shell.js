@@ -4,6 +4,7 @@ const Auth = require("../OAuth/Auth");
 const fs = require('fs');
 const crypto = require("crypto");
 
+const Block = require("../Blocks/Block");
 const Wallet = require("../Wallet/Wallet");
 const Identity = require("../OAuth/Identity");
 const CREDENTIAL_FILE = "./.credential.json";
@@ -14,12 +15,14 @@ var Log = null;
 var CREDENTIAL_STATE = false;
 
 class Shell {
-  constructor(logger){
+  constructor(wallet, broker, logger){
     Log = logger;
     this.io = new IO();
     this.operations = new Object();
     this.auth = Auth.getInstance();
     this.label = "Wallet [Login required]";
+    this.wallet = wallet;
+    this.broker = broker;
     this.loadStandardOpt();
   }
 
@@ -49,9 +52,9 @@ class Shell {
       help: {
         Desc: "NULL".padEnd(20) + "List all commands.",
         func: ()=>{
-          console.log("Command".padEnd(9) + "Argument(s)".padEnd(20) + "Description\n");
+          console.log("Command".padEnd(18) + "Argument(s)".padEnd(20) + "Description\n");
           Object.keys(operations).map((cmd)=>{
-            console.log(cmd.padEnd(9) + operations[cmd].Desc);
+            console.log(cmd.padEnd(18) + operations[cmd].Desc);
           })
         }
       },
@@ -74,6 +77,62 @@ class Shell {
       wallet: {
         Desc: "NULL".padEnd(20) + "Get the wallet information.",
         func: ()=>this.showWallet()
+      },
+      setDifficulty: {
+        Desc: "Integer".padEnd(20) + "Adjust the difficulty for proof of work.",
+        func: (...param)=>{
+          Block.setDifficulty(param[1]);
+          Log.out("The difficulty is changed to ", Block.getDifficulty());
+        }
+      },
+      showDifficulty: {
+        Desc: "NULL".padEnd(20) + "Show the current difficulty for proof of work.",
+        func: ()=>{
+          Log.out("The current difficulty is ", Block.getDifficulty());
+        }
+      },
+      pay : {
+        Desc: "[Wallet Address]".padEnd(20) + "Transfer money to others.",
+        func: (...param)=> {
+          if(!this.isLoggedIn()) return Log.out("Error: Please login first.");
+          if(param.length < 2) return Log.out("Please specify the target address and the amount.");
+          var tarAddr = param[1];
+          var amount = param[2];
+          if(tarAddr === Wallet.WALLET_IDENTITY.getBitcoinAddress())
+            Log.out("Cannot transfer money to yourself.");
+          else
+            this.broker.createPayment(tarAddr, amount);
+        }
+      },
+      resetWallet : {
+        Desc: "NULL".padEnd(20) + "Reset Wallet to default.",
+        func: async ()=>{
+          await this.logout();
+          await this.wallet.emergency();
+        }
+      },
+      showAllUsers: {
+        Desc: "NULL".padEnd(20) + "Show all onilne users.",
+        func: async ()=>{
+          var index = 0;
+          console.log("Index".padEnd(8) + "IP Address".padEnd(18) + "Port");
+          var peers = await this.wallet.db.read("/peers");
+          Object.keys(peers).map((key)=>console.log((index++)+"".padEnd(7) + peers[key]["ipAddr"].padEnd(18) + peers[key]["port"]))
+        }
+      },
+      getBlocks: {
+        Desc: "NULL".padEnd(20) + "Get the blocks from the other nodes.",
+        func: async ()=>{
+          this.operations["showAllUsers"].func();
+          var ans = await this.io.ask("peer", "Please select a peer: ");
+          console.log("You've choose: ", ans.peer);
+        }
+      },
+      inv: {
+        Desc: "NULL".padEnd(20) + "Inform the other nodes what blocks or transactions it has",
+        func: ()=>{
+
+        }
       }
     }
     this.addOperations(operations);
@@ -231,6 +290,7 @@ class Shell {
         if(Array.isArray(cmd)) resolve(this.operations[cmd[0]].func(...cmd));
         else resolve(this.operations[cmd].func());
       } catch(err) {
+        console.log(err);
         console.log("Command not found");
         resolve();
       }

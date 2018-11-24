@@ -26,7 +26,6 @@ class Broker {
 
   fillProtocols(){
     this.fillTransportProtocols();
-    this.fillShellProtocols();
     this.fillDBProtocols();
     this.minerMgr.on("onMined", (transKey, block)=>{
       Log.out("Block is mined for tranaction: " + transKey.substr(0,10)+"..." + " forward to peers.");
@@ -85,32 +84,6 @@ class Broker {
     this.wallet.transport.addProtocol(PROTOCOLS_WIPE_CANDIDATE, async (msg)=>{
       this.wallet.db.wipe(msg.message);
     });
-  }
-
-  fillShellProtocols(){
-    var pay = {
-      Desc: "[Wallet Address]".padEnd(20) + "Transfer money to others.",
-      func: (...param)=> {
-        if(!this.wallet.shell.isLoggedIn()) return Log.out("Error: Please login first.");
-        if(param.length < 2) return Log.out("Please specify the target address and the amount.");
-        var tarAddr = param[1];
-        var amount = param[2];
-        if(tarAddr === Wallet.WALLET_IDENTITY.getBitcoinAddress())
-          Log.out("Cannot transfer money to yourself.");
-        else
-          this.createPayment(tarAddr, amount);
-      }
-    }
-    this.wallet.shell.addOperation("pay", pay);
-
-    var resetWallet = {
-      Desc: "NULL".padEnd(20) + "Reset to default.",
-      func: async ()=>{
-        await this.wallet.shell.logout();
-        await this.wallet.emergency();
-      }
-    }
-    this.wallet.shell.addOperation("resetWallet", resetWallet);
   }
 
   async createPayment(tarAddr, amount){
