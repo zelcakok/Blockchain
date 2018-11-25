@@ -3,9 +3,10 @@ const eccrypto = require("eccrypto");
 const moment = require("moment");
 
 class Payment {
-  constructor(tarAddr, amount){
-    this.id = crypto.createHash("md5").update(tarAddr + amount + moment().valueOf().toString()).digest("hex");
-    this.tarAddr = tarAddr;
+  constructor(payerAddr, payeeAddr, amount){
+    this.id = crypto.createHash("md5").update(payerAddr + payeeAddr + amount + moment().valueOf().toString()).digest("hex");
+    this.payerAddr = payerAddr;
+    this.payeeAddr = payeeAddr;
     this.amount = amount;
     this.timestamp = moment().valueOf();
   }

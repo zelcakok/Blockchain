@@ -86,9 +86,9 @@ class Broker {
     });
   }
 
-  async createPayment(tarAddr, amount){
-    tarAddr = Wallet.WALLET_IDENTITY.getBitcoinAddress();
-    var payment = new Payment(tarAddr, amount);
+  async createPayment(payerAddr, payeeAddr, amount){
+    payerAddr = Wallet.WALLET_IDENTITY.getBitcoinAddress();
+    var payment = new Payment(payerAddr, payeeAddr, amount);
     var sig = await Wallet.WALLET_IDENTITY.sign(payment);
     var transaction = {
       key: Cryptographic.encryptTimestamp(moment().valueOf()),
@@ -97,7 +97,7 @@ class Broker {
         pubKey: Wallet.WALLET_IDENTITY.getPublicKey()
       },
       payment: payment,
-      scriptPubKey: Cryptographic.base58Decode(tarAddr).toString(16)
+      scriptPubKey: Cryptographic.base58Decode(payeeAddr).toString(16)
     }
     this.propagate(PROTOCOLS_NEW_PENDING_TRANSACTION, "/candidates/"+transaction.key, transaction);
   }

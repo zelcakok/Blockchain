@@ -96,12 +96,13 @@ class Shell {
         func: (...param)=> {
           if(!this.isLoggedIn()) return Log.out("Error: Please login first.");
           if(param.length < 2) return Log.out("Please specify the target address and the amount.");
-          var tarAddr = param[1];
+          var payeeAddr = param[1];
           var amount = param[2];
-          if(tarAddr === Wallet.WALLET_IDENTITY.getBitcoinAddress())
+          var payerAddr = Wallet.WALLET_IDENTITY.getBitcoinAddress();
+          if(payeeAddr === payerAddr)
             Log.out("Cannot transfer money to yourself.");
           else
-            this.broker.createPayment(tarAddr, amount);
+            this.broker.createPayment(payerAddr, payeeAddr, amount);
         }
       },
       resetWallet : {
