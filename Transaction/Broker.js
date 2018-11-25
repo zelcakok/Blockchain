@@ -117,6 +117,7 @@ class Broker {
 
   propagate(protocol, key, payload){
     this.wallet.transport.broadcast(protocol, payload);
+    console.log("!!!!!! Write", key, payload);
     this.wallet.db.write(key, payload);
   }
 
