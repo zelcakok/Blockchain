@@ -38,7 +38,6 @@ class Ledger {
 
   parsePayment(payment){
     var isPayer = this.isPayer(payment.payerAddr);
-    console.log("isPayer: ", isPayer);
     return {
       target: this.getTargetAddr(payment, isPayer),
       delta: this.getDelta(payment, isPayer)
