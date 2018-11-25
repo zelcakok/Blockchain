@@ -61,6 +61,13 @@ class Web {
       res.send(privateKey.toString('hex') === Wallet.WALLET_IDENTITY.privateKey.toString('hex'));
     })
 
+    this.server.use("/payment", (req,res)=>{
+      // res.header("Access-Control-Allow-Origin", "*");
+      // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+      // var privateKey = crypto.createHash("sha256").update(req.query.digest).digest();
+      // var
+    })
+
     // this.server.listen(this.serPort, ()=>{
     //   Log.out("Web service is started", this.serPort);
     // })

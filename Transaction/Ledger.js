@@ -41,6 +41,7 @@ class Ledger {
     var isPayer = this.isPayer(payment.payerAddr);
     return {
       target: this.getTargetAddr(payment, isPayer),
+      timestamp: payment.timestamp,
       delta: this.getDelta(payment, isPayer)
     }
   }
@@ -50,7 +51,8 @@ class Ledger {
   }
 
   getTargetAddr(payment, isPayer = true){
-    return isPayer ? payment.payeeAddr : payment.payerAddr;
+    var add= isPayer ? payment.payeeAddr : payment.payerAddr;
+    return add;
   }
 
   isPayer(payerAddr){
