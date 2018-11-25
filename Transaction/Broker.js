@@ -46,6 +46,10 @@ class Broker {
 
       this.eliminate(PROTOCOLS_WIPE_CANDIDATE, "/candidates/"+transKey);
       this.propagate(PROTOCOLS_LATEST_TIMESTAMP, "/latest/key", transKey);
+
+      this.wallet.db.write("/blocks/"+transKey, block).then(()=>{
+        this.auditor.audit();
+      });
     })
   }
 
@@ -117,7 +121,6 @@ class Broker {
 
   propagate(protocol, key, payload){
     this.wallet.transport.broadcast(protocol, payload);
-    console.log("!!!!!! Write", key, payload);
     this.wallet.db.write(key, payload);
   }
 
