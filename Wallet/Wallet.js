@@ -9,7 +9,7 @@ const Shell = require("../Shell/Shell");
 const Web = require("../Web/WebServer");
 const Broker = require("../Transaction/Broker");
 const Crawler = require("../Transaction/Crawler");
-
+const moment = require("moment");
 var WALLET_IDENTITY = null;
 
 class Wallet {
@@ -21,7 +21,6 @@ class Wallet {
     this.web = new Web(webPort,this, Log);
     this.broker = new Broker(this, Log);
     this.crawler = new Crawler(this.transport, this.db, 5000, Log);
-
     this.shell = new Shell(this, this.broker, Log);
     Log.setVerbose(verbose);
     Log.bind(this.shell);
@@ -44,6 +43,7 @@ class Wallet {
 
   setMonitors(){
     this.db.monitor("/peers", (peer)=>{
+      if(Zetabase.isWipe(peer)) return;
       peer = JSON.parse(peer);
       var key = Zetabase.hash((peer.ipAddr + peer.port).split(".").join(""), 'md5');
       if(peer.ipAddr !== NetAddr()) {
@@ -51,6 +51,20 @@ class Wallet {
           Log.d("Connection is established to peer", peer.ipAddr+":"+peer.port);
         })
       }
+    })
+  }
+
+  isOffline(curTime, timestamp){
+    return moment.duration(curTime.diff(timestamp)).asMinutes() >= 1;
+  }
+
+  async removeOffline(){
+    var curTime = moment();
+    var wipeList = [];
+    var peers = await this.db.read("/peers");
+    Object.keys(peers).map((key)=>{
+      if(this.isOffline(curTime, JSON.parse(peers[key]).timestamp))
+        this.db.wipe("/peers/" + key);
     })
   }
 
@@ -73,6 +87,9 @@ class Wallet {
     setTimeout(()=>{
       this.crawler.scout();
     }, 500);
+    setInterval(()=>{
+      // this.removeOffline()
+    }, 5000);
   }
 
   resetDatabase(){
