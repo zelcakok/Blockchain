@@ -62,10 +62,16 @@ class Web {
     })
 
     this.server.use("/payment", (req,res)=>{
-      // res.header("Access-Control-Allow-Origin", "*");
-      // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-      // var privateKey = crypto.createHash("sha256").update(req.query.digest).digest();
-      // var
+      res.header("Access-Control-Allow-Origin", "*");
+      res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+      var privateKey = crypto.createHash("sha256").update(req.query.digest).digest();
+      var verification = privateKey.toString('hex') === Wallet.WALLET_IDENTITY.privateKey.toString('hex');
+      var payerAddr = Wallet.WALLET_IDENTITY.getBitcoinAddress();
+      var payeeAddr = req.query.payeeAddr;
+      var amount = req.query.amount;
+      if(!verification) res.json({status: false, message: "Wrong password"});
+      this.wallet.shell.broker.createPayment(payerAddr, payeeAddr, amount);
+      res.json({status: true});
     })
 
     // this.server.listen(this.serPort, ()=>{

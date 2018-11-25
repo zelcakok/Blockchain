@@ -1,6 +1,7 @@
 const threads = require("threads");
 const spawn = threads.spawn;
 
+const moment = require("moment");
 const Wallet = require("../Wallet/Wallet");
 const Ledger = require("./Ledger");
 
@@ -33,6 +34,7 @@ class Accountant extends EventEmitter {
       for(var i in payments)
         this.ledger.addPayment(payments[i]);
       this.ledger.lastBlockID = result.lastBlockID;
+      this.ledger.lastUpdate = moment().valueOf();
     })
   }
 }

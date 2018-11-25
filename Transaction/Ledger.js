@@ -1,6 +1,7 @@
 /*
   This ledger is for the logged in user only.
 */
+const moment = require("moment");
 var instance = null;
 
 class Ledger {
@@ -8,6 +9,7 @@ class Ledger {
     this.walletAddr = walletAddr;
     this.availBalance = 0;
     this.ledger = new Object();
+    this.lastUpdate = "";
     this.lastBlockID = "757267672000200000000000"; //The last block that read.
   }
 
@@ -21,9 +23,11 @@ class Ledger {
     Object.keys(this.ledger).map((paymentID)=>{
       this.availBalance += this.ledger[paymentID].delta;
     })
+    this.lastUpdate = moment().valueOf();
     return {
       balance: this.availBalance,
-      ledger: this.ledger
+      ledger: this.ledger,
+      lastUpdate: this.lastUpdate
     }
   }
 
