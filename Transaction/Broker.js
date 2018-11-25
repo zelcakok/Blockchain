@@ -6,7 +6,7 @@ const Transaction = require("./Payment");
 const Block = require("../Blocks/Block");
 const Zetabase = require("../Database/Zetabase");
 const MinerManager = require("../Blocks/MinerManager");
-const Auditor = require("./Auditor");
+const Accountant = require("./Accountant");
 
 const PROTOCOLS_NEW_PENDING_TRANSACTION = Cryptographic.md5("&pnewpendingtrans;");
 const PROTOCOLS_NEW_BLOCK_ADDRESS = Cryptographic.md5("&pnewblkarr;");
@@ -20,8 +20,21 @@ class Broker {
     Log = logger;
     this.wallet = wallet;
     this.minerMgr = MinerManager.getInstance(Log);
-    this.auditor = Auditor.getInstance(this.wallet.db);
     this.fillProtocols();
+  }
+
+  enableAccountant(){
+    this.accountant = Accountant.getInstance(this.wallet.db, Log);
+    this.accountant.on("onLedgerUpdate", (ledger)=>{
+      console.log(ledger);
+    })
+    setInterval(()=>{
+      this.accountant.bookKeeping();
+    }, 5000);
+  }
+
+  ledger(){
+    return this.accountant.ledger.balance();
   }
 
   fillProtocols(){
@@ -33,23 +46,16 @@ class Broker {
 
       this.eliminate(PROTOCOLS_WIPE_CANDIDATE, "/candidates/"+transKey);
       this.propagate(PROTOCOLS_LATEST_TIMESTAMP, "/latest/key", transKey);
-
-      this.wallet.db.write("/blocks/"+transKey, block).then(()=>{
-        this.auditor.audit();
-      });
-    })
-
-    this.auditor.on("onLedgerUpdate", (ledger)=>{
-      // console.log("Ledger: ", ledger);
     })
   }
 
+  //Add more trans here
   fillDBProtocols(){
     this.wallet.db.monitor("/candidates", async (trans)=>{
       if(Zetabase.isWipe(trans)) return;
       Log.out("Tranaction: " + trans.key.substr(0,10)+"..." + " is added /candidate.");
       var prevHash = await this.getLatestBlockHash();
-      var newBlk = new Block(prevHash, trans);
+      var newBlk = new Block(prevHash, trans); //Add more trans here
       Log.out("Mining: " + trans.key.substr(0,10)+"..." + " refer to prevHash " + prevHash.substr(0,10)+"...");
       this.minerMgr.assign(trans.key, newBlk);
     });

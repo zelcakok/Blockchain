@@ -4,7 +4,6 @@ const moment = require("moment");
 const Queue = require("./Queue");
 const QueueNode = require("./QueueNode");
 
-
 var ALGO = "md5";
 
 class MerkleTree {

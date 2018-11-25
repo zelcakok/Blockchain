@@ -1,7 +1,7 @@
 const Cryptographic = require("./Cryptographic");
 const Transport = require("../Network/Transport");
 const MinerManager = require("../Blocks/MinerManager");
-const Auditor = require("./Auditor");
+const Accountant = require("./Accountant");
 
 var Log = null;
 const PROTOCOLS_BROADCAST_LATEST_KEY = Cryptographic.md5("&pbroadcastlatestkey");

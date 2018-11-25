@@ -115,10 +115,20 @@ class Shell {
       showAllUsers: {
         Desc: "NULL".padEnd(20) + "Show all onilne users.",
         func: async ()=>{
-          var index = 0;
-          console.log("Index".padEnd(8) + "IP Address".padEnd(18) + "Port");
-          var peers = await this.wallet.db.read("/peers");
-          Object.keys(peers).map((key)=>console.log((index++)+"".padEnd(7) + peers[key]["ipAddr"].padEnd(18) + peers[key]["port"]))
+          try {
+            var index = 0;
+            console.log("\n".padEnd(3)+"Index".padEnd(8) + "IP Address".padEnd(18) + "Port\n");
+            var peers = await this.wallet.db.read("/peers");
+            Object.keys(peers).map((key)=>{
+              var entry = JSON.parse(peers[key]);
+              console.log("".padEnd(3)+(index++).toString().padEnd(8) + entry.ipAddr.padEnd(18) + entry.port);
+            });
+          } catch(err) {
+            console.log(err);
+          } finally {
+            return Promise.resolve();
+          }
+
         }
       },
       getBlocks: {
@@ -146,7 +156,7 @@ class Shell {
   showWallet(){
     if(!CREDENTIAL_STATE) return Log.out("Error: Please login first.");
     console.log("\n");
-    console.log("".padEnd(3)+"Current balance".padEnd(20)+0+" BTC");
+    console.log("".padEnd(3)+"Available balance".padEnd(20)+ this.broker.ledger().balance +" BTC");
     console.log("".padEnd(3)+"Wallet Address".padEnd(20)+Wallet.WALLET_IDENTITY.getBitcoinAddress());
     console.log("\n");
   }
@@ -237,6 +247,7 @@ class Shell {
         if(err) reject(err);
         else resolve();
       });
+      this.broker.enableAccountant();
     });
   }
 
@@ -257,6 +268,7 @@ class Shell {
           CREDENTIAL_STATE = true;
           //Generate the private key using digest
           Wallet.WALLET_IDENTITY = new Identity(credential.signature);
+          this.broker.enableAccountant();
           resolve()
         })
       } catch (err){

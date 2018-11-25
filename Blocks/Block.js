@@ -9,7 +9,7 @@ MerkleTree.algo("sha256");
 
 class Block {
   constructor(prevHash, payload){
-    this.merkleRoot = new MerkleTree().attach(payload).hash();
+    this.merkleRoot = new MerkleTree().attach(payload).hash(); //Change this line if more than 1 transaction.
     this.nonce = 0;
     this.target = BLOCK_DIFFICULTY; //Fixed difficulty, 6 leading zeros.
     this.payload = JSON.stringify(payload); //Fixed to one transaction for now.
