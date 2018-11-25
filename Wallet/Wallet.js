@@ -88,7 +88,7 @@ class Wallet {
       this.crawler.scout();
     }, 500);
     setInterval(()=>{
-      // this.removeOffline()
+      this.removeOffline()
     }, 5000);
   }
 
