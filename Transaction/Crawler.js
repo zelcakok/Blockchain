@@ -126,6 +126,7 @@ class Crawler {
         structure.slot.blocks = blocks;
         Log.d("PAB: Blocks are updated");
         this.database.saveState();
+        Log.out("Blocks are updated");
       })
     });
 
