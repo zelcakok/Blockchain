@@ -9,7 +9,7 @@ const Wallet = require("../Wallet/Wallet");
 const Identity = require("../OAuth/Identity");
 const CREDENTIAL_FILE = "./.credential.json";
 
-const opn = require("opn");
+const moment = require("moment");
 
 var Log = null;
 var CREDENTIAL_STATE = false;
@@ -116,19 +116,20 @@ class Shell {
         Desc: "NULL".padEnd(20) + "Show all onilne users.",
         func: async ()=>{
           try {
+            var curTime = moment();
             var index = 0;
-            console.log("\n".padEnd(3)+"Index".padEnd(8) + "IP Address".padEnd(18) + "Port\n");
+            console.log("\n".padEnd(3)+"Index".padEnd(8) + "IP Address".padEnd(18) + "Port".padEnd(6) + "Last online\n");
             var peers = await this.wallet.db.read("/peers");
             Object.keys(peers).map((key)=>{
               var entry = JSON.parse(peers[key]);
-              console.log("".padEnd(3)+(index++).toString().padEnd(8) + entry.ipAddr.padEnd(18) + entry.port);
+              var duration = moment.duration(curTime.diff(entry.timestamp)).asMinutes();
+              console.log("".padEnd(3)+(index++).toString().padEnd(8) + entry.ipAddr.padEnd(18) + entry.port.padEnd(6) + duration);
             });
           } catch(err) {
             console.log(err);
           } finally {
             return Promise.resolve();
           }
-
         }
       },
       getBlocks: {
