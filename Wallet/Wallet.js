@@ -28,6 +28,10 @@ class Wallet {
     this.initialize()
   }
 
+  getLedger(){
+    return this.broker.ledger();
+  }
+
   broadcast(){
     this.beacon.setAction((signal)=>{
       var msg = JSON.parse(signal);

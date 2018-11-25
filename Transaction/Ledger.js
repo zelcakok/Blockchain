@@ -17,6 +17,7 @@ class Ledger {
   }
 
   balance(){
+    this.availBalance = 0;
     Object.keys(this.ledger).map((paymentID)=>{
       this.availBalance += this.ledger[paymentID].delta;
     })

@@ -16,6 +16,7 @@ class Accountant extends EventEmitter {
     Log = logger;
     this.database = database;
     this.ledger = Ledger.getInstance(Wallet.WALLET_IDENTITY.getBitcoinAddress());
+    this.bookKeeping();
   }
 
   static getInstance(database, logger){
@@ -26,10 +27,12 @@ class Accountant extends EventEmitter {
   async bookKeeping(){
     var blocks = await this.database.read("/blocks", false);
     var task = spawn(BOOKKEEPING);
-    task.send(blocks, this.ledger.lastBlockID).on("message", (payments)=>{
+    task.send(blocks, this.ledger.lastBlockID).on("message", (result)=>{
       task.kill();
+      var payments = result.payments;
       for(var i in payments)
         this.ledger.addPayment(payments[i]);
+      this.ledger.lastBlockID = result.lastBlockID;
     })
   }
 }

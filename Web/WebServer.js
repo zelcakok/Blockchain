@@ -14,11 +14,11 @@ const Wallet = require("../Wallet/Wallet");
 
 var Log = null;
 class Web {
-  constructor(serPort, blockchain, logger){
+  constructor(serPort, wallet, logger){
     Log = logger;
     this.serPort = serPort;
     this.server = express();
-    this.blockchain = blockchain;
+    this.wallet = wallet;
 
     // this.httpsServer = https.createServer(options, (req, res)=>{
     //   res.writeHead(200);
@@ -31,14 +31,14 @@ class Web {
     this.server.use(express.static(__dirname+"/public"));
 
     this.server.use("/portal", (req, res)=>{
-      this.blockchain.db.getStructure().then((structure)=>{
+      this.wallet.db.getStructure().then((structure)=>{
         var token = req.get('host').split(":");
         res.redirect("https://"+[token[0], "3000"].join(":"));
       })
     })
 
     this.server.use("/db", (req, res)=>{
-      this.blockchain.db.getStructure().then((structure)=>{
+      this.wallet.db.getStructure().then((structure)=>{
         res.send(structure);
       })
     })
@@ -49,7 +49,7 @@ class Web {
       var uid = req.query.uid;
       var profile = {
         walletAddr : Wallet.WALLET_IDENTITY.getBitcoinAddress(),
-        balance: 0
+        ledger: this.wallet.getLedger()
       }
       res.json(profile);
     })
