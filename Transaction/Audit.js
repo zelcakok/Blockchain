@@ -7,7 +7,6 @@ module.exports = (blocks)=>{
         console.log(payment);
         if(!ledger.includes(payment.tarAddr)) ledger[payment.tarAddr] = 0;
         ledger[payment.tarAddr] += parseFloat(payment.amount);
-        console.log("ADD:",parseFloat(payment.amount));
       }
     })
     console.log("FINAL:",ledger);

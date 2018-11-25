@@ -19,7 +19,7 @@ class Broker {
   constructor(wallet, logger){
     Log = logger;
     this.wallet = wallet;
-    this.minerMgr = MinerManager.getInstance();
+    this.minerMgr = MinerManager.getInstance(Log);
     this.auditor = Auditor.getInstance(this.wallet.db);
     this.fillProtocols();
   }
@@ -40,7 +40,7 @@ class Broker {
     })
 
     this.auditor.on("onLedgerUpdate", (ledger)=>{
-      console.log("Ledger: ", ledger);
+      // console.log("Ledger: ", ledger);
     })
   }
 
@@ -73,7 +73,7 @@ class Broker {
           Log.out("Invalid transaction: " + trans.key.substr(0,10)+"...");
         }
       } else {
-        Log.out("Duplicate transaction: " + trans.key.substr(0,10)+"...");
+        Log.out("Ignore transaction broadcast for : " + trans.key.substr(0,10)+"...");
       }
     })
 

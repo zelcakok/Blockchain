@@ -122,9 +122,9 @@ class Crawler {
       Log.out("Calculate the blk hash: " + latest.hash.substr(0,10)+"...");
       this.database.maintenance((structure)=>{
         structure.slot.latest = latest;
-        Log.out("PAB: Defination is updated");
+        Log.d("PAB: Defination is updated");
         structure.slot.blocks = blocks;
-        Log.out("PAB: Blocks are updated");
+        Log.d("PAB: Blocks are updated");
         this.database.saveState();
       })
     });

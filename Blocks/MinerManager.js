@@ -4,17 +4,19 @@ const spawn = threads.spawn;
 const PROOF_OF_WORK = "./Blocks/ProofOfWork.js";
 const EventEmitter = require("events");
 
+var Log = null;
 var instance = null;
 
 class MinerManager extends EventEmitter{
-  constructor(){
+  constructor(logger){
     super();
+    Log = logger;
     this.result = [];
     this.miners = [];
   }
 
-  static getInstance(){
-    if(instance === null) instance = new MinerManager();
+  static getInstance(logger){
+    if(instance === null) instance = new MinerManager(logger);
     return instance;
   }
 
@@ -29,7 +31,7 @@ class MinerManager extends EventEmitter{
   dismiss(transKey){
     if(Object.keys(this.miners).includes(transKey) >= 0) {
       this.miners[transKey].kill();
-      console.log("Miner on " + transKey + " is dismissed");
+      Log.out("Miner on " + transKey + " is dismissed");
     }
   }
 }
