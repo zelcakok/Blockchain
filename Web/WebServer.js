@@ -29,6 +29,14 @@ class Web {
   listen(){
     this.server.use(pretty({ query: 'pretty' }));
     this.server.use(express.static(__dirname+"/public"));
+
+    this.server.use("/portal", (req, res)=>{
+      this.blockchain.db.getStructure().then((structure)=>{
+        var token = req.get('host').split(":");
+        res.redirect("https://"+[token[0], "3000"].join(":"));
+      })
+    })
+
     this.server.use("/db", (req, res)=>{
       this.blockchain.db.getStructure().then((structure)=>{
         res.send(structure);
