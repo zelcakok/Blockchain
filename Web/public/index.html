@@ -25,6 +25,11 @@
     <script src="https://cdn.jsdelivr.net/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
     <script type="text/javascript">
+      function toHexString(byteArray) {
+        return Array.from(byteArray, function(byte) {
+          return ('0' + (byte & 0xFF).toString(16)).slice(-2);
+        }).join('')
+      }
       function toJSON(obj, slotKeys) {
         Object.keys(obj.slot.peers).map((key)=>{
           obj.slot.peers[key] = JSON.parse(obj.slot.peers[key]);
@@ -33,14 +38,14 @@
           obj.slot.blocks[key] = JSON.parse(obj.slot.blocks[key]);
           if(obj.slot.blocks[key].hasOwnProperty("payload")) {
             obj.slot.blocks[key].payload = JSON.parse(obj.slot.blocks[key].payload);
-            obj.slot.blocks[key].payload.scriptSig.sig.data = obj.slot.blocks[key].payload.scriptSig.sig.data.toString("hex");
-            obj.slot.blocks[key].payload.scriptSig.pubKey.data = obj.slot.blocks[key].payload.scriptSig.pubKey.data.toString("hex");
+            obj.slot.blocks[key].payload.scriptSig.sig = toHexString(obj.slot.blocks[key].payload.scriptSig.sig.data);
+            obj.slot.blocks[key].payload.scriptSig.pubKey = toHexString(obj.slot.blocks[key].payload.scriptSig.pubKey.data);
           }
         })
         Object.keys(obj.slot.candidates).map((key)=>{
           obj.slot.candidates[key] = JSON.parse(obj.slot.candidates[key]);
-          obj.slot.candidates[key].scriptSig.sig.data = obj.slot.candidates[key].scriptSig.sig.data.toString("hex");
-          obj.slot.candidates[key].scriptSig.pubKey.data = obj.slot.candidates[key].scriptSig.pubKey.data.toString("hex");
+          obj.slot.candidates[key].scriptSig.sig = toHexString(obj.slot.candidates[key].scriptSig.sig.data);
+          obj.slot.candidates[key].scriptSig.pubKey = toHexString(obj.slot.candidates[key].scriptSig.pubKey.data);
         })
         return obj;
       }
@@ -55,7 +60,7 @@
           var output = JSON.stringify(obj, null, '  ');
           $("#output").html(output);
         })
-      }, 1000);
+      }, 5000);
     </script>
 
   </body>
