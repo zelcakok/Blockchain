@@ -118,12 +118,14 @@ class Shell {
           try {
             var curTime = moment();
             var index = 0;
-            console.log("\n".padEnd(3)+"Index".padEnd(8) + "IP Address".padEnd(18) + "Port".padEnd(6) + "Last online\n");
+            console.log();
+            console.log("".padEnd(4) + "Index".padEnd(8) + "IP Address".padEnd(18) + "Port".padEnd(6) + "Last online");
             var peers = await this.wallet.db.read("/peers");
             Object.keys(peers).map((key)=>{
               var entry = JSON.parse(peers[key]);
               var duration = moment.duration(curTime.diff(entry.timestamp)).asMinutes();
-              console.log("".padEnd(3)+(index++).toString().padEnd(8) + entry.ipAddr.padEnd(18) + entry.port.padEnd(6) + duration);
+              duration = duration < 1 ? "NOW" : duration.toFixed(2);
+              console.log("".padEnd(4) + (index++).toString().padEnd(8) + entry.ipAddr.padEnd(18) + entry.port.toString().padEnd(6) + duration);
             });
           } catch(err) {
             console.log(err);

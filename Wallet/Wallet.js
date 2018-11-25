@@ -85,11 +85,11 @@ class Wallet {
     this.broadcast();
     this.web.listen(this);
     setTimeout(()=>{
-      this.crawler.scout();
+      this.crawler.scout(); //Delay 500 milliseconds to start
     }, 500);
     setInterval(()=>{
       this.removeOffline()
-    }, 5000);
+    }, 1000 * 60 * 5); //Wipe the offline users.
   }
 
   resetDatabase(){
