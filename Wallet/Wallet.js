@@ -79,7 +79,7 @@ class Wallet {
   }
 
   initialize(){
-    this.register(this.beacon.getSelfMsg());
+    // this.register(this.beacon.getSelfMsg());
     this.setMonitors();
     this.transport.listen();
     this.broadcast();
