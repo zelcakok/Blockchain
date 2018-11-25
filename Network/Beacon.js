@@ -1,6 +1,7 @@
 const dgram = require('dgram');
 const NetAddr = require('network-address');
 const Zetabase = require('../Database/Zetabase');
+const moment = require("moment");
 var Log = null;
 class Beacon {
   constructor(listenPort, socketPort, logger){
@@ -44,6 +45,7 @@ class Beacon {
     return JSON.stringify({
       ipAddr: NetAddr(),
       port: this.socketPort,
+      timestamp: moment().valueOf(),
       message: Zetabase.hash("BLK_Client", "md5")
     });
   }
@@ -53,6 +55,7 @@ class Beacon {
       var msg = JSON.stringify({
         ipAddr: NetAddr(),
         port: this.socketPort,
+        timestamp: moment().valueOf(),
         message: Zetabase.hash("BLK_Client", "md5")
       });
       this.sender.send(msg,

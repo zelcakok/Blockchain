@@ -10,11 +10,6 @@ const Web = require("../Web/WebServer");
 const Broker = require("../Transaction/Broker");
 const Crawler = require("../Transaction/Crawler");
 
-const threads = require("threads");
-const spawn = threads.spawn;
-
-const ONLINE_CHECKER = "./Wallet/OnlineChecker.js";
-
 var WALLET_IDENTITY = null;
 
 class Wallet {
@@ -59,7 +54,7 @@ class Wallet {
     var info = JSON.parse(beaconInfo);
     var key = Zetabase.hash((info.ipAddr + info.port).split(".").join(""), 'md5');
     delete info.message;
-    beaconInfo = JSON.stringify(info);
+    // beaconInfo = JSON.stringify(info);
     var isExist = await this.db.containsKey("/peers/" + key);
     if(!isExist) this.db.write("/peers/"+key, beaconInfo);
   }
