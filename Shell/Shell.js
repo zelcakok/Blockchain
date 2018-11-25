@@ -246,7 +246,7 @@ class Shell {
         signature: digest
       }
       //Generate the private key using digest
-      Wallet.identity = new Identity(digest);
+      Wallet.WALLET_IDENTITY = new Identity(digest);
       fs.writeFile(CREDENTIAL_FILE, JSON.stringify(credential), (err)=>{
         if(err) reject(err);
         else resolve();
