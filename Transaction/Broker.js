@@ -31,6 +31,7 @@ class Broker {
     setInterval(()=>{
       this.accountant.bookKeeping();
     }, 5000);
+    Log.out("Accounting service is started");
   }
 
   ledger(){

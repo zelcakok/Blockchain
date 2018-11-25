@@ -247,7 +247,7 @@ class Shell {
         if(err) reject(err);
         else resolve();
       });
-      // this.broker.enableAccountant();
+      this.broker.enableAccountant();
     });
   }
 
@@ -268,7 +268,7 @@ class Shell {
           CREDENTIAL_STATE = true;
           //Generate the private key using digest
           Wallet.WALLET_IDENTITY = new Identity(credential.signature);
-          // this.broker.enableAccountant();
+          this.broker.enableAccountant();
           resolve()
         })
       } catch (err){
