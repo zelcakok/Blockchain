@@ -46,12 +46,18 @@ class Web {
     this.server.use("/profile", (req,res)=>{
       res.header("Access-Control-Allow-Origin", "*");
       res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-      var uid = req.query.uid;
       var profile = {
         walletAddr : Wallet.WALLET_IDENTITY.getBitcoinAddress(),
         ledger: this.wallet.getLedger()
       }
       res.json(profile);
+    })
+
+    this.server.use("/blocks", async (req,res)=>{
+      res.header("Access-Control-Allow-Origin", "*");
+      res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+      var blocks = await this.wallet.db.read("/blocks");
+      res.json(blocks);
     })
 
     this.server.use("/verify", (req,res)=>{
