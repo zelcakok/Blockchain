@@ -147,7 +147,7 @@ class Shell {
         func: ()=>{
 
         }
-      }
+      },
     }
     this.addOperations(operations);
   }
@@ -252,6 +252,7 @@ class Shell {
         else resolve();
       });
       this.broker.enableAccountant();
+      this.auth.registerWalletAddress(email, Wallet.WALLET_IDENTITY.getBitcoinAddress());
     });
   }
 

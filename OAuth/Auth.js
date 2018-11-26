@@ -13,11 +13,18 @@ class Auth {
     };
     firebase.initializeApp(config);
     this.fbAuth = firebase.auth();
+    this.dbClient = firebase.database();
   }
 
   static getInstance(){
     if(instance === null) instance = new Auth();
     return instance;
+  }
+
+  registerWalletAddress(email, walletAddr){
+    this.dbClient.ref("/AddressBook/"+walletAddr).set({
+      email: email
+    }).catch((err)=>console.log(err))
   }
 
   emailAuth(email, password){
