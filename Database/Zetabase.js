@@ -244,14 +244,28 @@ class Zetabase {
     return JSON.stringify(this.structure);
   }
 
+  async writeToFile(){
+    var param = {
+      path: this.dbPath,
+      structure: this.prepareState()
+    }
+    var task = spawn(WRITE_TO_FILE);
+    await task.send(param)
+        .on('message', ()=>{
+          task.kill();
+          return Promise.resolve();
+        })
+  }
+
   saveState(){
     if(this.isFileReady) {
       this.isFileReady = false;
-      fs.writeFileSync(this.dbPath, this.prepareState(), (err)=>{
-        if(err) throw err;
-        this.isFileReady = true;
-      })
+      this.writeToFile().then(()=>{this.isFileReady = true})
     } else console.log("BLOCKING");
+  }
+
+  saveStateImmediate(callback){
+    this.writeToFile().then(()=>callback())
   }
 
   retrieveState(){

@@ -60,7 +60,11 @@ class Shell {
       },
       exit: {
         Desc: "NULL".padEnd(20) + "Exit Wallet system.",
-        func: ()=>process.exit(0)
+        func: ()=>{
+          this.wallet.db.saveStateImmediate(()=>{            
+            process.exit(0)
+          })
+        }
       },
       login: {
         Desc: "NULL".padEnd(20) + "Login to Wallet system.",
