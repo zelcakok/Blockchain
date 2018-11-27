@@ -32,7 +32,7 @@ class MinerManager extends EventEmitter{
 
   dismiss(transKey){
     console.log("MinerMgr dismiss key", transKey, Object.keys(this.miners).includes(transKey));
-    if(Object.keys(this.miners).includes(transKey) >= 0) {
+    if(Object.keys(this.miners).includes(transKey)) {
       this.miners[transKey].kill();
       Log.out("Miner on " + transKey + " is dismissed");
     }
