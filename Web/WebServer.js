@@ -83,6 +83,8 @@ class Web {
       res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
       var privateKey = crypto.createHash("sha256").update(req.query.digest).digest();
       var verification = privateKey.toString('hex') === Wallet.WALLET_IDENTITY.privateKey.toString('hex');
+      console.log(privateKey.toString('hex'));
+      console.log(Wallet.WALLET_IDENTITY.privateKey.toString('hex'));
       var payerAddr = req.query.payerAddr;
       var payeeAddr = req.query.payeeAddr;
       var amount = req.query.amount;
