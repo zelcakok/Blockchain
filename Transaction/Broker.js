@@ -57,10 +57,12 @@ class Broker {
     this.wallet.db.monitor("/candidates", async (trans)=>{
       if(Zetabase.isWipe(trans)) return;
       Log.out("Tranaction: " + trans.key.substr(0,10)+"..." + " is added /candidate.");
-      var prevHash = await this.getLatestBlockHash();
-      var newBlk = new Block(prevHash, trans); //Add more trans here
-      Log.out("Mining: " + trans.key.substr(0,10)+"..." + " refer to prevHash " + prevHash.substr(0,10)+"...");
-      this.minerMgr.assign(trans.key, newBlk);
+
+      //Start mining here
+      // var prevHash = await this.getLatestBlockHash();
+      // var newBlk = new Block(prevHash, trans); //Add more trans here
+      // Log.out("Mining: " + trans.key.substr(0,10)+"..." + " refer to prevHash " + prevHash.substr(0,10)+"...");
+      // this.minerMgr.assign(trans.key, newBlk);
     });
   }
 
