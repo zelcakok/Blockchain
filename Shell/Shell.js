@@ -258,6 +258,7 @@ class Shell {
       });
       this.broker.enableAccountant();
       this.broker.enableSelectionService();
+      this.wallet.enableWebService();
       this.auth.registerWalletAddress(email, Wallet.WALLET_IDENTITY.getBitcoinAddress());
     });
   }
@@ -288,6 +289,7 @@ class Shell {
                   if(cred) {
                     this.broker.enableAccountant();
                     this.broker.enableSelectionService();
+                    this.wallet.enableWebService();
                     resolve()
                   }
                   else {

@@ -13,6 +13,8 @@ class MinerManager extends EventEmitter{
     Log = logger;
     this.result = [];
     this.miners = [];
+    this.miningTrans = null;
+    this.isMining = false;
   }
 
   static getInstance(logger){
@@ -20,18 +22,28 @@ class MinerManager extends EventEmitter{
     return instance;
   }
 
-  assign(transKeys, block){
+  assign(transKeys, block, prevHash){
     var transKey = transKeys.join("#");
-    console.log("MinerMgr new key", transKey);
+    if(this.isMining) return;
+    this.isMining = true;
+    this.miningTrans = block.payload;
+    Log.out("Start mining, refer to prevHash " + prevHash.substr(0,10)+"...");
     this.miners[transKey] = spawn(PROOF_OF_WORK);
     this.miners[transKey].send(block).on("message", (block)=>{
+      this.miningTrans = null;
       this.result[transKey] = block;
       this.emit("onMined", transKey, block);
+      this.isMining = false;
     })
+  }
+
+  getMining() {
+    return this.miningTrans;
   }
 
   dismiss(transKey){
     if(Object.keys(this.miners).includes(transKey)) {
+      this.miningTrans = null;
       this.miners[transKey].kill();
       Log.out("Miner on " + transKey + " is dismissed");
     }

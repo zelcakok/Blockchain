@@ -79,12 +79,16 @@ class Wallet {
     this.db.write("/peers/"+key, beaconInfo);
   }
 
+  enableWebService(){
+    this.web.listen(this);
+  }
+
   initialize(){
     // this.register(this.beacon.getSelfMsg());
     this.setMonitors();
     this.transport.listen();
     this.broadcast();
-    this.web.listen(this);
+    // this.web.listen(this);
     setTimeout(()=>{
       this.crawler.scout(); //Delay 500 milliseconds to start
     }, 500);

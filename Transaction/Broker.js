@@ -32,6 +32,10 @@ class Broker {
     this.fillProtocols();
   }
 
+  getMining(){
+    return this.minerMgr.getMining();
+  }
+
   /*
     Selection of candidate
 
@@ -71,8 +75,7 @@ class Broker {
   async prepareMining(selection, transKeys){
     var prevHash = await this.getLatestBlockHash();
     var newBlk = new Block(prevHash, selection);
-    Log.out("Start mining, refer to prevHash " + prevHash.substr(0,10)+"...");
-    this.minerMgr.assign(transKeys, newBlk);
+    this.minerMgr.assign(transKeys, newBlk, prevHash);
   }
 
   enableSelectionService(){

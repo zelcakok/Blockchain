@@ -73,7 +73,7 @@ class Web {
       var amount = req.query.amount;
       if(!verification) res.json({status: false, message: "Wrong password"});
       else {
-        this.wallet.shell.broker.createPayment(payerAddr, payeeAddr, amount);
+        this.wallet.broker.createPayment(payerAddr, payeeAddr, amount);
         res.json({status: true});
       }
     })
@@ -83,17 +83,22 @@ class Web {
       res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
       var privateKey = crypto.createHash("sha256").update(req.query.digest).digest();
       var verification = privateKey.toString('hex') === Wallet.WALLET_IDENTITY.privateKey.toString('hex');
-      console.log(privateKey.toString('hex'));
-      console.log(Wallet.WALLET_IDENTITY.privateKey.toString('hex'));
       var payerAddr = req.query.payerAddr;
       var payeeAddr = req.query.payeeAddr;
       var amount = req.query.amount;
       if(!verification) res.json({status: false, message: "Wrong password"});
       else {
-        this.wallet.shell.broker.createPayment(payerAddr, payeeAddr, amount);
+        this.wallet.broker.createPayment(payerAddr, payeeAddr, amount);
         res.json({status: true});
       }
     })
+
+    this.server.use("/mining", (req,res)=>{
+      res.header("Access-Control-Allow-Origin", "*");
+      res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+      var miningTrans = this.wallet.broker.getMining();
+      res.json({status: true, message: miningTrans});
+    });
 
     this.httpsServer = https.createServer(options, this.server);
     this.httpsServer.listen(this.serPort, ()=>{
