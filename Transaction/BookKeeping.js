@@ -2,7 +2,6 @@ module.exports = (param)=>{
   var blocks = param.blocks;
   var addressBook = param.addressBook;
   var lastBlockID = param.lastBlockID;
-
   var payments = []
   var blockID = null;
   Object.keys(blocks).map((blockAddr)=>{

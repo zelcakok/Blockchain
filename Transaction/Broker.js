@@ -96,7 +96,7 @@ class Broker {
   }
 
   async createPayment(payerAddr, payeeAddr, amount){
-    payerAddr = Wallet.WALLET_IDENTITY.getBitcoinAddress();
+    // payerAddr = Wallet.WALLET_IDENTITY.getBitcoinAddress();
     var payment = new Payment(payerAddr, payeeAddr, amount);
     var sig = await Wallet.WALLET_IDENTITY.sign(payment);
     var transaction = {
