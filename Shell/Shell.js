@@ -257,6 +257,7 @@ class Shell {
         else resolve();
       });
       this.broker.enableAccountant();
+      this.broker.enableSelectionService();
       this.auth.registerWalletAddress(email, Wallet.WALLET_IDENTITY.getBitcoinAddress());
     });
   }
@@ -286,6 +287,7 @@ class Shell {
               this.auth.emailAuth(credential.email, res.password).then((cred)=>{
                   if(cred) {
                     this.broker.enableAccountant();
+                    this.broker.enableSelectionService();
                     resolve()
                   }
                   else {

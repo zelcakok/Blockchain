@@ -20,8 +20,7 @@ class MinerManager extends EventEmitter{
     return instance;
   }
 
-  assign(transKeys, block){
-    var transKey = transKeys.join("#");
+  assign(transKey, block){
     this.miners[transKey] = spawn(PROOF_OF_WORK);
     this.miners[transKey].send(block).on("message", (block)=>{
       this.result[transKey] = block;

@@ -30,7 +30,7 @@
           return ('0' + (byte & 0xFF).toString(16)).slice(-2);
         }).join('')
       }
-      function toJSON(obj, slotKeys) {
+      function toJSON(obj) {
         Object.keys(obj.slot.peers).map((key)=>{
           obj.slot.peers[key] = JSON.parse(obj.slot.peers[key]);
         })
@@ -38,8 +38,11 @@
           obj.slot.blocks[key] = JSON.parse(obj.slot.blocks[key]);
           if(obj.slot.blocks[key].hasOwnProperty("payload")) {
             obj.slot.blocks[key].payload = JSON.parse(obj.slot.blocks[key].payload);
-            obj.slot.blocks[key].payload.scriptSig.sig = toHexString(obj.slot.blocks[key].payload.scriptSig.sig.data);
-            obj.slot.blocks[key].payload.scriptSig.pubKey = toHexString(obj.slot.blocks[key].payload.scriptSig.pubKey.data);
+            for(var i=0; i<obj.slot.blocks[key].payload.length; i++){
+              obj.slot.blocks[key].payload[i] = JSON.parse(obj.slot.blocks[key].payload[i]);
+              obj.slot.blocks[key].payload[i].scriptSig.sig = toHexString(obj.slot.blocks[key].payload[i].scriptSig.sig.data);
+              obj.slot.blocks[key].payload[i].scriptSig.pubKey = toHexString(obj.slot.blocks[key].payload[i].scriptSig.pubKey.data);
+            }
           }
         })
         Object.keys(obj.slot.candidates).map((key)=>{
@@ -50,13 +53,13 @@
         return obj;
       }
       $.get("/db", (obj)=>{
-        toJSON(obj, ["peers", "blocks"]);
+        toJSON(obj);
         var output = JSON.stringify(obj, null, '  ');
         $("#output").html(output);
       })
       setInterval(function () {
         $.get("/db", (obj)=>{
-          toJSON(obj, ["peers","blocks"]);
+          toJSON(obj);
           var output = JSON.stringify(obj, null, '  ');
           $("#output").html(output);
         })

@@ -4,14 +4,18 @@ module.exports = (param)=>{
   var lastBlockID = param.lastBlockID;
   var payments = []
   var blockID = null;
+
   Object.keys(blocks).map((blockAddr)=>{
     if(parseInt(blockAddr) <= parseInt(lastBlockID)) return;
     var block = JSON.parse(blocks[blockAddr]);
     if(block.hasOwnProperty("payload")) {
-      var payment = JSON.parse(block.payload).payment;
-      payment.payerName = addressBook[payment.payerAddr].email.split("@")[0];
-      payment.payeeName = addressBook[payment.payeeAddr].email.split("@")[0];
-      payments.push(payment);
+      var payloads = JSON.parse(block.payload);
+      for(var i=0; i<payloads.length; i++){
+        var payment = JSON.parse(payloads[i]).payment;
+        payment.payerName = addressBook[payment.payerAddr].email.split("@")[0];
+        payment.payeeName = addressBook[payment.payeeAddr].email.split("@")[0];
+        payments.push(payment);
+      }
       blockID = blockAddr;
     }
   })
