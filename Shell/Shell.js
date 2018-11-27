@@ -112,7 +112,7 @@ class Shell {
           await this.wallet.emergency();
         }
       },
-      showAllPeers: {
+      peers: {
         Desc: "NULL".padEnd(20) + "Show all onilne peers.",
         func: async ()=>{
           var curTime = moment();
@@ -138,7 +138,7 @@ class Shell {
       getBlocks: {
         Desc: "NULL".padEnd(20) + "Get the blocks from the other nodes.",
         func: async ()=>{
-          this.operations["showAllUsers"].func();
+          this.operations["peers"].func();
           var ans = await this.io.ask("peer", "Please select a peer: ");
           console.log("You've choose: ", ans.peer);
         }

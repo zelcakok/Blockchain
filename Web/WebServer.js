@@ -19,11 +19,6 @@ class Web {
     this.serPort = serPort;
     this.server = express();
     this.wallet = wallet;
-
-    // this.httpsServer = https.createServer(options, (req, res)=>{
-    //   res.writeHead(200);
-    //   res.end('helloworld\n');
-    // }).listen(this.serPort,'192.168.0.192');
   }
 
   listen(){
@@ -80,10 +75,7 @@ class Web {
       this.wallet.shell.broker.createPayment(payerAddr, payeeAddr, amount);
       res.json({status: true});
     })
-
-    // this.server.listen(this.serPort, ()=>{
-    //   Log.out("Web service is started", this.serPort);
-    // })
+    
     this.httpsServer = https.createServer(options, this.server);
     this.httpsServer.listen(this.serPort, ()=>{
       Log.out("Web service is started", this.serPort);
