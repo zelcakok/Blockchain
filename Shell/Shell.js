@@ -61,7 +61,7 @@ class Shell {
       exit: {
         Desc: "NULL".padEnd(20) + "Exit Wallet system.",
         func: ()=>{
-          this.wallet.db.saveStateImmediate(()=>{            
+          this.wallet.db.saveStateImmediate(()=>{
             process.exit(0)
           })
         }
@@ -332,7 +332,6 @@ class Shell {
         if(Array.isArray(cmd)) resolve(this.operations[cmd[0]].func(...cmd));
         else resolve(this.operations[cmd].func());
       } catch(err) {
-        console.log(err);
         console.log("Command not found");
         resolve();
       }
