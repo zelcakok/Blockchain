@@ -72,21 +72,25 @@ class Web {
       var payeeAddr = req.query.payeeAddr;
       var amount = req.query.amount;
       if(!verification) res.json({status: false, message: "Wrong password"});
-      this.wallet.shell.broker.createPayment(payerAddr, payeeAddr, amount);
-      res.json({status: true});
+      else {
+        this.wallet.shell.broker.createPayment(payerAddr, payeeAddr, amount);
+        res.json({status: true});
+      }
     })
 
     this.server.use("/transfer", (req,res)=>{
       res.header("Access-Control-Allow-Origin", "*");
       res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-      // var privateKey = crypto.createHash("sha256").update(req.query.digest).digest();
-      // var verification = privateKey.toString('hex') === Wallet.WALLET_IDENTITY.privateKey.toString('hex');
+      var privateKey = crypto.createHash("sha256").update(req.query.digest).digest();
+      var verification = privateKey.toString('hex') === Wallet.WALLET_IDENTITY.privateKey.toString('hex');
       var payerAddr = req.query.payerAddr;
       var payeeAddr = req.query.payeeAddr;
       var amount = req.query.amount;
-      // if(!verification) res.json({status: false, message: "Wrong password"});
-      this.wallet.shell.broker.createPayment(payerAddr, payeeAddr, amount);
-      res.json({status: true});
+      if(!verification) res.json({status: false, message: "Wrong password"});
+      else {
+        this.wallet.shell.broker.createPayment(payerAddr, payeeAddr, amount);
+        res.json({status: true});
+      }
     })
 
     this.httpsServer = https.createServer(options, this.server);
