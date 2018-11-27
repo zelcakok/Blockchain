@@ -22,6 +22,7 @@ class MinerManager extends EventEmitter{
 
   assign(transKeys, block){
     var transKey = transKeys.join("#");
+    console.log("MinerMgr new key", transKey);
     this.miners[transKey] = spawn(PROOF_OF_WORK);
     this.miners[transKey].send(block).on("message", (block)=>{
       this.result[transKey] = block;
@@ -30,6 +31,7 @@ class MinerManager extends EventEmitter{
   }
 
   dismiss(transKey){
+    console.log("MinerMgr dismiss key", transKey);
     if(Object.keys(this.miners).includes(transKey) >= 0) {
       this.miners[transKey].kill();
       Log.out("Miner on " + transKey + " is dismissed");
