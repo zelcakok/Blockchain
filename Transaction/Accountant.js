@@ -8,6 +8,8 @@ const Ledger = require("./Ledger");
 const BOOKKEEPING = "./Transaction/BookKeeping.js";
 const EventEmitter = require("events");
 
+const AddressBook = require("../OAuth/AddressBook");
+
 var Log = null;
 var instance = null;
 
@@ -17,7 +19,14 @@ class Accountant extends EventEmitter {
     Log = logger;
     this.database = database;
     this.ledger = Ledger.getInstance(Wallet.WALLET_IDENTITY.getBitcoinAddress());
+    this.addressBook = null;
     this.bookKeeping();
+  }
+
+  async getAddressBook(){
+    if(this.addressBook === null)
+      this.addressBook = await AddressBook.getInstance();
+    return this.addressBook.addressBook;
   }
 
   static getInstance(database, logger){
@@ -26,9 +35,17 @@ class Accountant extends EventEmitter {
   }
 
   async bookKeeping(){
+    var addressBook = await this.getAddressBook();
     var blocks = await this.database.read("/blocks", false);
     var task = spawn(BOOKKEEPING);
-    task.send(blocks, this.ledger.lastBlockID).on("message", (result)=>{
+
+    var param = {
+      blocks: blocks,
+      addressBook: addressBook,
+      lastBlockID: this.ledger.lastBlockID
+    }
+
+    task.send(param).on("message", (result)=>{
       task.kill();
       var payments = result.payments;
       for(var i in payments)

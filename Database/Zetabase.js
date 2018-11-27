@@ -11,11 +11,16 @@ const Cryptographic = require("../Transaction/Cryptographic");
 const Shell = require("../Shell/Shell");
 const Block = require("../Blocks/Block");
 
+const threads = require("threads");
+const spawn = threads.spawn;
+const WRITE_TO_FILE = "./Database/WriteToFile.js";
+
+var CHANGES_THRESHOLD = 0; //0 is disabled
 var Log = null;
 const ACTION_CODE_WIPE = Cryptographic.md5("&actWipe;");
 
 class Zetabase {
-  constructor(dbPath, logger, wallet){
+  constructor(dbPath, logger, wallet, changesThreshold = 0){
     Log = logger;
     this.structure = null;
     this.dbPath = dbPath;
@@ -23,6 +28,30 @@ class Zetabase {
     this.eventEmitter.on('onChanges', (path, value)=>this.onChanges(path, value));
     this.monitorList = [];
     this.wallet = wallet;
+    this.isFileReady = true;
+    this.hasChanges = false;
+    this.changesCounter = 0;
+    CHANGES_THRESHOLD = changesThreshold;
+    this.writeService();
+  }
+
+  //Write the structure to file every 30 seconds
+  writeService(){
+    setInterval(()=>{
+      if(this.hasChanges && this.changesCounter >= CHANGES_THRESHOLD) {
+        var param = {
+          path: this.dbPath,
+          structure: this.prepareState()
+        }
+        var task = spawn(WRITE_TO_FILE);
+        task.send(param)
+            .on('message', ()=>{
+              task.kill();
+              this.hasChanges = false;
+              this.changesCounter = 0;
+            })
+      }
+    }, 1000 * 30);
   }
 
   async prepare(){
@@ -37,7 +66,9 @@ class Zetabase {
         this.monitorList[monitorPath](value);
       }
     })
-    this.invalidate();
+    this.hasChanges = true;
+    this.changesCounter++;
+    this.invalidate(false);
   }
 
   pathParse(url){
@@ -214,10 +245,13 @@ class Zetabase {
   }
 
   saveState(){
-    var data = this.prepareState();
-    fs.writeFileSync(this.dbPath, this.prepareState(), (err)=>{
-      if(err) throw err;
-    })
+    if(this.isFileReady) {
+      this.isFileReady = false;
+      fs.writeFileSync(this.dbPath, this.prepareState(), (err)=>{
+        if(err) throw err;
+        this.isFileReady = true;
+      })
+    } else console.log("BLOCKING");
   }
 
   retrieveState(){

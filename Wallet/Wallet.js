@@ -14,8 +14,9 @@ var WALLET_IDENTITY = null;
 
 class Wallet {
   constructor(dbPath, beaconSignalPort, transportPort, webPort, verbose){
+    this.ipAddr = NetAddr();
     this.sysHealth = true;
-    this.db = new Zetabase(dbPath, Log, this);
+    this.db = new Zetabase(dbPath, Log, this, 10); //10 is for the changes threshold.
     this.beacon = new Beacon(beaconSignalPort, transportPort, Log);
     this.transport = new Transport(transportPort, Log);
     this.web = new Web(webPort,this, Log);
@@ -38,7 +39,7 @@ class Wallet {
         this.register(signal);
     })
     this.beacon.listen();
-    this.beacon.broadcast(1000);
+    this.beacon.broadcast(10000);
   }
 
   setMonitors(){
@@ -46,7 +47,7 @@ class Wallet {
       if(Zetabase.isWipe(peer)) return;
       peer = JSON.parse(peer);
       var key = Zetabase.hash((peer.ipAddr + peer.port).split(".").join(""), 'md5');
-      if(peer.ipAddr !== NetAddr()) {
+      if(peer.ipAddr !== this.ipAddr) {
         this.transport.connect(key, peer.ipAddr, peer.port).then((socket)=>{
           Log.d("Connection is established to peer", peer.ipAddr+":"+peer.port);
         })

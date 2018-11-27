@@ -15,6 +15,7 @@ class Beacon {
       ()=>this.sender.setBroadcast(true)
     );
 
+    this.ipAddr = NetAddr();
     this.socketPort = socketPort;
     this.action = null;
   }
@@ -38,12 +39,12 @@ class Beacon {
 
   isSelf(msg){
     msg = JSON.parse(msg);
-    return msg.ipAddr === NetAddr() && msg.port === this.socketPort;
+    return msg.ipAddr === this.ipAddr && msg.port === this.socketPort;
   }
 
   getSelfMsg(){
     return JSON.stringify({
-      ipAddr: NetAddr(),
+      ipAddr: this.ipAddr,
       port: this.socketPort,
       timestamp: moment().valueOf(),
       message: Zetabase.hash("BLK_Client", "md5")
@@ -53,7 +54,7 @@ class Beacon {
   broadcast(interval = 10000){
     setInterval(()=>{
       var msg = JSON.stringify({
-        ipAddr: NetAddr(),
+        ipAddr: this.ipAddr,
         port: this.socketPort,
         timestamp: moment().valueOf(),
         message: Zetabase.hash("BLK_Client", "md5")

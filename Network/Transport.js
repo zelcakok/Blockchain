@@ -3,18 +3,17 @@ const SocketServer = require('socket.io');
 const SocketClient = require("socket.io-client");
 const promise = require("promise");
 const NetAddr = require("network-address");
-const Zetabase = require("../Database/Zetabase");
 var Log = null;
 
 class Transport {
   constructor(serPort, logger){
     Log = logger;
+    this.ipAddr = NetAddr();
     this.serPort = serPort;
     this.server = require('http').Server(app);
     this.socketServer = null;
     this.sessions = [];
     this.socketClients = [];
-
     this.protocols = [];
   }
 
@@ -50,18 +49,18 @@ class Transport {
   }
 
   send(channel, msg, socketId = null){
-    var payload = {ipAddr: NetAddr(), port: this.serPort, message: msg};
+    var payload = {ipAddr: this.ipAddr, port: this.serPort, message: msg};
     if(socketId) this.socketServer.to(socketId).emit(channel, payload);
     else this.socketServer.emit(channel, payload);
   }
 
   sendViaSocket(channel, msg, socket){
-    var payload = {ipAddr: NetAddr(), port: this.serPort, message: msg};
+    var payload = {ipAddr: this.ipAddr, port: this.serPort, message: msg};
     socket.emit(channel, payload);
   }
 
   sendViaKey(channel, msg, key){
-    var payload = {ipAddr: NetAddr(), port: this.serPort, message: msg};
+    var payload = {ipAddr: this.ipAddr, port: this.serPort, message: msg};
     this.socketClients[key].emit(channel, payload);
   }
 

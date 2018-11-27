@@ -112,26 +112,27 @@ class Shell {
           await this.wallet.emergency();
         }
       },
-      showAllUsers: {
-        Desc: "NULL".padEnd(20) + "Show all onilne users.",
+      showAllPeers: {
+        Desc: "NULL".padEnd(20) + "Show all onilne peers.",
         func: async ()=>{
-          try {
-            var curTime = moment();
-            var index = 0;
-            console.log();
-            console.log("".padEnd(4) + "Index".padEnd(8) + "IP Address".padEnd(18) + "Port".padEnd(6) + "Last online");
-            var peers = await this.wallet.db.read("/peers");
-            Object.keys(peers).map((key)=>{
-              var entry = JSON.parse(peers[key]);
-              var duration = moment.duration(curTime.diff(entry.timestamp)).asMinutes();
-              duration = duration < 1 ? "NOW" : duration.toFixed(2);
-              console.log("".padEnd(4) + (index++).toString().padEnd(8) + entry.ipAddr.padEnd(18) + entry.port.toString().padEnd(6) + duration);
-            });
-          } catch(err) {
-            console.log(err);
-          } finally {
-            return Promise.resolve();
-          }
+          var curTime = moment();
+          var index = 0;
+          console.log();
+          console.log("".padEnd(4) + "Index".padEnd(8) + "IP Address".padEnd(18) + "Port".padEnd(6) + "Last online");
+          var peers = await this.wallet.db.read("/peers");
+          Object.keys(peers).map((key)=>{
+            var entry = JSON.parse(peers[key]);
+            var duration = moment.duration(curTime.diff(entry.timestamp)).asMinutes();
+            duration = duration < 1 ? "NOW" : duration.toFixed(2);
+            console.log("".padEnd(4) + (index++).toString().padEnd(8) + entry.ipAddr.padEnd(18) + entry.port.toString().padEnd(6) + duration);
+          });
+        }
+      },
+      addressbook: {
+        Desc: "NULL".padEnd(20) + "Show all user's wallet address.",
+        func: async ()=>{
+          var addressBook = await this.broker.accountant.getAddressBook();
+          console.log(addressBook);
         }
       },
       getBlocks: {
@@ -269,12 +270,31 @@ class Shell {
       try {
         fs.readFile(CREDENTIAL_FILE, (err, json)=>{
           var credential = JSON.parse(json);
-          this.setLabel("Wallet [" + credential.email.split("@")[0]+"]");
-          CREDENTIAL_STATE = true;
-          //Generate the private key using digest
-          Wallet.WALLET_IDENTITY = new Identity(credential.signature);
-          this.broker.enableAccountant();
-          resolve()
+          this.io.ask("password", "Password [" + credential.email.split("@")[0]+"]", true).then((res)=>{
+            var d = crypto.createHash("sha256").update(credential.email+res.password).digest("hex");
+            if(d === credential.signature) {
+              this.setLabel("Wallet [" + credential.email.split("@")[0]+"]");
+              CREDENTIAL_STATE = true;
+              //Generate the private key using digest
+              Wallet.WALLET_IDENTITY = new Identity(credential.signature);
+
+              //We need to login the Firebase to get the address book
+              this.auth.emailAuth(credential.email, res.password).then((cred)=>{
+                  if(cred) {
+                    this.broker.enableAccountant();
+                    resolve()
+                  }
+                  else {
+                    console.log("Wrong password, wallet exit now.");
+                    process.exit(1);
+                    resolve()
+                  }
+              });
+            } else {
+              console.log("Wrong password, wallet exit now.");
+              process.exit(1);
+            }
+          })
         })
       } catch (err){
         CREDENTIAL_STATE = false;

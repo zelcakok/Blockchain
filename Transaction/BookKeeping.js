@@ -1,4 +1,8 @@
-module.exports = (blocks, lastBlockID)=>{
+module.exports = (param)=>{
+  var blocks = param.blocks;
+  var addressBook = param.addressBook;
+  var lastBlockID = param.lastBlockID;
+
   var payments = []
   var blockID = null;
   Object.keys(blocks).map((blockAddr)=>{
@@ -6,6 +10,8 @@ module.exports = (blocks, lastBlockID)=>{
     var block = JSON.parse(blocks[blockAddr]);
     if(block.hasOwnProperty("payload")) {
       var payment = JSON.parse(block.payload).payment;
+      payment.payerName = addressBook[payment.payerAddr].email.split("@")[0];
+      payment.payeeName = addressBook[payment.payeeAddr].email.split("@")[0];
       payments.push(payment);
       blockID = blockAddr;
     }

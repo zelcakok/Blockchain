@@ -57,7 +57,8 @@ class Web {
       res.header("Access-Control-Allow-Origin", "*");
       res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
       var blocks = await this.wallet.db.read("/blocks");
-      res.json(blocks);
+      var addressBook = await this.wallet.broker.accountant.getAddressBook();
+      res.json({blocks:blocks, addressBook: addressBook});
     })
 
     this.server.use("/verify", (req,res)=>{
