@@ -3,7 +3,7 @@ const moment = require("moment");
 const MerkleTree = require("./MerkleTree");
 const Cryptographic = require("../Transaction/Cryptographic");
 
-var BLOCK_DIFFICULTY = 6;
+var BLOCK_DIFFICULTY = 24;
 
 MerkleTree.algo("sha256");
 

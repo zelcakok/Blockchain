@@ -79,15 +79,14 @@ class Broker {
   }
 
   enableSelectionService(){
-    this.selectCandidateService();
+    setTimeout(()=>{
+      this.selectCandidateService();
+    }, 1000 * SELECT_CANDIDATES_INTERVAL_SECOND);
     Log.out("Mining service is started");
   }
 
   enableAccountant(){
     this.accountant = Accountant.getInstance(this.wallet.db, Log);
-    this.accountant.on("onLedgerUpdate", (ledger)=>{
-      console.log(ledger);
-    })
     setInterval(()=>{
       this.accountant.bookKeeping();
     }, 1000 * 10);

@@ -1,4 +1,4 @@
-var ALGO = "md5"; //Default to md5
+var ALGO = "sha256"; //Default to sha256
 
 class QueueNode {
   constructor(data){

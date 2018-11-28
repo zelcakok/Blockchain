@@ -123,6 +123,7 @@ class Shell {
           var index = 0;
           console.log();
           console.log("".padEnd(4) + "Index".padEnd(8) + "IP Address".padEnd(18) + "Port".padEnd(6) + "Last online");
+          console.log();
           var peers = await this.wallet.db.read("/peers");
           Object.keys(peers).map((key)=>{
             var entry = JSON.parse(peers[key]);
@@ -130,29 +131,53 @@ class Shell {
             duration = duration < 1 ? "NOW" : duration.toFixed(2);
             console.log("".padEnd(4) + (index++).toString().padEnd(8) + entry.ipAddr.padEnd(18) + entry.port.toString().padEnd(6) + duration);
           });
+          console.log();
         }
       },
       addressbook: {
         Desc: "NULL".padEnd(20) + "Show all user's wallet address.",
         func: async ()=>{
+          console.log();
+          console.log("".padEnd(4) + "Wallet Address".padEnd(45) + "Email");
+          console.log();
           var addressBook = await this.broker.accountant.getAddressBook();
-          console.log(addressBook);
+          Object.keys(addressBook).map((walletAddr)=>{
+            console.log("".padEnd(4) + walletAddr.padEnd(45) + addressBook[walletAddr].email);
+          })
+          console.log();
         }
       },
-      getBlocks: {
-        Desc: "NULL".padEnd(20) + "Get the blocks from the other nodes.",
+      showMining: {
+        Desc: "NULL".padEnd(20) + "Show current mining transactions.",
         func: async ()=>{
-          this.operations["peers"].func();
-          var ans = await this.io.ask("peer", "Please select a peer: ");
-          console.log("You've choose: ", ans.peer);
-        }
-      },
-      inv: {
-        Desc: "NULL".padEnd(20) + "Inform the other nodes what blocks or transactions it has",
-        func: ()=>{
+          try {
+            console.log();
+            console.log("".padEnd(4) + "Payer".padEnd(15) + "Payee".padEnd(15) + "Date time".padEnd(32) + "Amount");
+            console.log();
+            var addressBook = await this.broker.accountant.getAddressBook();
+            var miningTrans = this.broker.getMining();
+            if(miningTrans === null) {
+              console.log("".padEnd(4) + "There is no pending transaction waiting for mining.");
+              console.log();
+              return;
+            }
+            var payloads = JSON.parse(miningTrans);
+            for(var i=0; i<payloads.length; i++) {
+              var payment = JSON.parse(payloads[i]).payment;
+              console.log("".padEnd(4) + addressBook[payment.payerAddr].email.split("@")[0].padEnd(15) +
+                                         addressBook[payment.payeeAddr].email.split("@")[0].padEnd(15) +
+                                         moment(payment.timestamp).format("DD/MM/YY hh:mm:ss A").padEnd(30) +
+                                         "HKD " + parseFloat(payment.amount).toFixed(2));
+            }
+            console.log();
+          } catch(err) {
+            console.log(err);
+          } finally {
+            return Promise.resolve();
+          }
 
         }
-      },
+      }
     }
     this.addOperations(operations);
   }
@@ -256,6 +281,7 @@ class Shell {
         if(err) reject(err);
         else resolve();
       });
+      CREDENTIAL_STATE = true;
       this.broker.enableAccountant();
       this.broker.enableSelectionService();
       this.wallet.enableWebService();

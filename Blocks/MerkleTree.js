@@ -4,7 +4,7 @@ const moment = require("moment");
 const Queue = require("./Queue");
 const QueueNode = require("./QueueNode");
 
-var ALGO = "md5";
+var ALGO = "sha256";
 
 class MerkleTree {
   constructor(){
@@ -27,13 +27,29 @@ class MerkleTree {
   }
 
   hash(){
+    if(this.memory.isEmpty()) return null;
+    var memory = new Queue();
     var merkleRoot = null;
     while(!this.memory.isEmpty()) {
       var first = this.memory.pop("data");
       var last = this.memory.popLast("data");
       merkleRoot = MerkleTree.hash(merkleRoot, first, last);
+      memory.push(QueueNode.pack(merkleRoot));
     }
-    return merkleRoot;
+    if(memory.length() === 1) return merkleRoot;
+    return this._hash(memory);
+  }
+
+  _hash(memory){
+    var merkleRoot = null;
+    while(memory.length() > 1) {
+      var first = memory.pop("data");
+      var last = memory.popLast("data");
+      merkleRoot = MerkleTree.hash(merkleRoot, first, last);
+      memory.push(QueueNode.pack(merkleRoot));
+    }
+    if(memory.length() === 1) return merkleRoot;
+    return this._hash(memory);
   }
 
   static algo(algo){
